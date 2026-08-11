@@ -17,7 +17,35 @@
         .season-subtitle {
             text-align: center;
             color: #aaa;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
+        }
+
+        .balance {
+            max-width: 850px;
+            margin: 0 auto 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .balance-box {
+            background: #111;
+            border: 1px solid #d00020;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .balance-box span {
+            display: block;
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .balance-box strong {
+            color: white;
+            font-size: 24px;
         }
 
         .match-list {
@@ -30,13 +58,12 @@
 
         .match-card {
             display: grid;
-            grid-template-columns: 120px 1fr 120px;
+            grid-template-columns: 130px 1fr 130px;
             align-items: center;
             background: #111;
             border: 2px solid #d00020;
             border-radius: 12px;
             padding: 18px;
-            text-decoration: none;
             color: white;
             transition: 0.3s ease;
         }
@@ -54,7 +81,14 @@
         .match-date strong {
             display: block;
             color: white;
-            font-size: 18px;
+            font-size: 17px;
+        }
+
+        .match-date span {
+            display: block;
+            color: #d00020;
+            font-weight: bold;
+            margin-top: 5px;
         }
 
         .match-teams {
@@ -62,14 +96,15 @@
         }
 
         .match-teams h2 {
-            margin: 0;
+            margin: 3px 0;
             font-size: 21px;
         }
 
-        .match-teams span {
+        .match-teams .score {
             display: block;
-            margin-top: 7px;
+            margin: 8px 0;
             color: #d00020;
+            font-size: 26px;
             font-weight: bold;
         }
 
@@ -85,14 +120,14 @@
             margin-bottom: 5px;
         }
 
-        .info-box {
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 20px;
-            background: #111;
-            border-left: 4px solid #d00020;
-            color: #ccc;
-            border-radius: 8px;
+        .win {
+            color: #36c76f !important;
+            font-weight: bold;
+        }
+
+        .loss {
+            color: #e00020 !important;
+            font-weight: bold;
         }
 
         .back-button {
@@ -110,6 +145,10 @@
         }
 
         @media (max-width: 650px) {
+
+            .balance {
+                grid-template-columns: 1fr;
+            }
 
             .match-card {
                 grid-template-columns: 1fr;
@@ -144,55 +183,140 @@
         Testspiele zur Vorbereitung auf die Saison 2026/27
     </p>
 
-    <div class="info-box">
-        <strong>⚽ Vorbereitung 2026/27</strong><br><br>
-        Hier findest du alle Testspiele des ATSV Forchheim
-        vor dem Start der neuen Saison.
-    </div>
+    <section class="balance">
+
+        <div class="balance-box">
+            <span>Spiele</span>
+            <strong>5</strong>
+        </div>
+
+        <div class="balance-box">
+            <span>Siege</span>
+            <strong>4</strong>
+        </div>
+
+        <div class="balance-box">
+            <span>Niederlagen</span>
+            <strong>1</strong>
+        </div>
+
+    </section>
 
     <section class="match-list">
 
-        <!-- TESTSPIEL 1 -->
-        <a href="#" class="match-card">
+        <!-- 12.07.2026 -->
+
+        <article class="match-card">
 
             <div class="match-date">
-                <strong>DATUM</strong>
-                Uhrzeit
+                <strong>12.07.2026</strong>
+                <span>15:00 Uhr</span>
+            </div>
+
+            <div class="match-teams">
+                <h2>SpVgg Jahn Forchheim 2</h2>
+                <span class="score">1 : 4</span>
+                <h2>ATSV Forchheim</h2>
+            </div>
+
+            <div class="match-place">
+                <strong class="win">SIEG</strong>
+                Testspiel
+            </div>
+
+        </article>
+
+
+        <!-- 16.07.2026 -->
+
+        <article class="match-card">
+
+            <div class="match-date">
+                <strong>16.07.2026</strong>
+                <span>19:00 Uhr</span>
+            </div>
+
+            <div class="match-teams">
+                <h2>ASV Möhrendorf</h2>
+                <span class="score">1 : 4</span>
+                <h2>ATSV Forchheim</h2>
+            </div>
+
+            <div class="match-place">
+                <strong class="win">SIEG</strong>
+                Testspiel
+            </div>
+
+        </article>
+
+
+        <!-- 19.07.2026 -->
+
+        <article class="match-card">
+
+            <div class="match-date">
+                <strong>19.07.2026</strong>
+                <span>15:00 Uhr</span>
             </div>
 
             <div class="match-teams">
                 <h2>ATSV Forchheim</h2>
-                <span>vs.</span>
-                <h2>Gegner</h2>
+                <span class="score">4 : 2</span>
+                <h2>DJK Schnaid-Rothensand</h2>
             </div>
 
             <div class="match-place">
-                <strong>Spielort</strong>
+                <strong class="win">SIEG</strong>
                 Testspiel
             </div>
 
-        </a>
+        </article>
 
-        <!-- TESTSPIEL 2 -->
-        <a href="#" class="match-card">
+
+        <!-- 24.07.2026 -->
+
+        <article class="match-card">
 
             <div class="match-date">
-                <strong>DATUM</strong>
-                Uhrzeit
+                <strong>24.07.2026</strong>
+                <span>18:30 Uhr</span>
+            </div>
+
+            <div class="match-teams">
+                <h2>ATSV Erlangen U23 2</h2>
+                <span class="score">0 : 3</span>
+                <h2>ATSV Forchheim</h2>
+            </div>
+
+            <div class="match-place">
+                <strong class="win">SIEG</strong>
+                Testspiel
+            </div>
+
+        </article>
+
+
+        <!-- 02.08.2026 -->
+
+        <article class="match-card">
+
+            <div class="match-date">
+                <strong>02.08.2026</strong>
+                <span>14:30 Uhr</span>
             </div>
 
             <div class="match-teams">
                 <h2>ATSV Forchheim</h2>
-                <span>vs.</span>
-                <h2>Gegner</h2>
+                <span class="score">2 : 5</span>
+                <h2>BSC Erlangen</h2>
             </div>
 
             <div class="match-place">
-                <strong>Spielort</strong>
+                <strong class="loss">NIEDERLAGE</strong>
                 Testspiel
             </div>
 
-        </a>
+        </article>
 
     </section>
 
