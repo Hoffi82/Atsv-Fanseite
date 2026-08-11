@@ -9,31 +9,42 @@
     <link rel="stylesheet" href="css/style.css">
 
     <style>
+        .players-title {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .players-subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
         .player-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 22px;
             margin-top: 30px;
         }
 
         .player-card {
             background: #111;
-            border: 2px solid #b40000;
+            border: 2px solid #d00020;
             border-radius: 12px;
             overflow: hidden;
             text-align: center;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(180, 0, 0, 0.25);
+            transition: 0.3s ease;
+            box-shadow: 0 0 15px rgba(208, 0, 32, 0.22);
         }
 
         .player-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 0 25px rgba(220, 0, 0, 0.5);
+            box-shadow: 0 0 25px rgba(208, 0, 32, 0.5);
         }
 
         .player-card img {
             width: 100%;
-            height: 260px;
+            height: 270px;
             object-fit: cover;
             display: block;
         }
@@ -44,23 +55,47 @@
 
         .player-info h2 {
             margin: 0 0 8px;
-            color: white;
-            font-size: 22px;
+            color: #fff;
+            font-size: 21px;
         }
 
         .player-info p {
-            margin: 4px 0;
+            margin: 5px 0;
             color: #ccc;
         }
 
         .player-number {
-            color: #e00000 !important;
+            color: #e00020 !important;
             font-weight: bold;
         }
 
-        .players-title {
-            text-align: center;
-            margin-top: 25px;
+        .back-button {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 10px 18px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #d00020;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: #d00020;
+        }
+
+        @media (max-width: 600px) {
+            .player-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .player-card img {
+                height: 210px;
+            }
+
+            .player-info h2 {
+                font-size: 17px;
+            }
         }
     </style>
 </head>
@@ -69,13 +104,13 @@
 
 <main class="page">
 
-    <a class="back" href="index.html">← Zurück</a>
+    <a class="back-button" href="index.html">← Zurück</a>
 
     <p class="eyebrow">ATSV FORCHHEIM</p>
 
     <h1 class="players-title">UNSERE SPIELER</h1>
 
-    <p style="text-align:center;">
+    <p class="players-subtitle">
         Der aktuelle Kader des ATSV Forchheim
     </p>
 
@@ -103,6 +138,15 @@
             <img src="bilder/Aymen.jpg" alt="Aymen">
             <div class="player-info">
                 <h2>Aymen</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Berthold,Gorita.jpg" alt="Berthold Gorita">
+            <div class="player-info">
+                <h2>Berthold Gorita</h2>
                 <p class="player-number"># –</p>
                 <p>ATSV Forchheim</p>
             </div>
@@ -184,6 +228,96 @@
             <img src="bilder/Kamil.jpg" alt="Kamil">
             <div class="player-info">
                 <h2>Kamil</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Laza.jpg" alt="Laza">
+            <div class="player-info">
+                <h2>Laza</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Luis.jpg" alt="Luis">
+            <div class="player-info">
+                <h2>Luis</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Marcel.jpg" alt="Marcel">
+            <div class="player-info">
+                <h2>Marcel</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Metehan.jpg" alt="Metehan">
+            <div class="player-info">
+                <h2>Metehan</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Miguel.jpg" alt="Miguel">
+            <div class="player-info">
+                <h2>Miguel</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Onur.jpg" alt="Onur">
+            <div class="player-info">
+                <h2>Onur</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Senad.jpg" alt="Senad">
+            <div class="player-info">
+                <h2>Senad</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Tyrone.jpg" alt="Tyrone">
+            <div class="player-info">
+                <h2>Tyrone</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Wail.jpg" alt="Wail">
+            <div class="player-info">
+                <h2>Wail</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Wassim.jpg" alt="Wassim">
+            <div class="player-info">
+                <h2>Wassim</h2>
                 <p class="player-number"># –</p>
                 <p>ATSV Forchheim</p>
             </div>
