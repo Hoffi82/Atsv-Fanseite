@@ -7,6 +7,115 @@
   <title>ATSV Forchheim – Fanseite</title>
 
   <link rel="stylesheet" href="css/style.css">
+
+  <style>
+
+    /* COUNTDOWN */
+
+    .next-match {
+      position: absolute;
+      top: 120px;
+      right: 6%;
+      width: 360px;
+      padding: 25px;
+      background: rgba(17, 17, 17, 0.92);
+      border: 2px solid #d00020;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(208, 0, 32, 0.25);
+      z-index: 5;
+    }
+
+    .next-match-title {
+      color: #d00020;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .next-match-date {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .next-match-teams {
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .next-match-teams span {
+      display: block;
+      color: #d00020;
+      font-size: 15px;
+      margin: 8px 0;
+    }
+
+    .countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .countdown-box {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 5px;
+    }
+
+    .countdown-box strong {
+      display: block;
+      color: white;
+      font-size: 25px;
+    }
+
+    .countdown-box span {
+      color: #888;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .game-live {
+      color: #d00020;
+      font-size: 24px;
+      font-weight: bold;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.45;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 1000px) {
+
+      .next-match {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: auto;
+        max-width: 500px;
+        margin: 30px auto;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 <body>
@@ -53,6 +162,55 @@
       </a>
 
     </nav>
+
+
+    <!-- NÄCHSTES SPIEL -->
+
+    <div class="next-match">
+
+      <div class="next-match-title">
+        NÄCHSTES SPIEL
+      </div>
+
+      <div class="next-match-date">
+        Samstag · 15.08.2026 · 15:00 Uhr
+      </div>
+
+      <div class="next-match-teams">
+        ATSV Forchheim
+
+        <span>VS.</span>
+
+        ASV Niederndorf
+      </div>
+
+      <div class="countdown">
+
+        <div class="countdown-box">
+          <strong id="days">00</strong>
+          <span>Tage</span>
+        </div>
+
+        <div class="countdown-box">
+          <strong id="hours">00</strong>
+          <span>Std.</span>
+        </div>
+
+        <div class="countdown-box">
+          <strong id="minutes">00</strong>
+          <span>Min.</span>
+        </div>
+
+        <div class="countdown-box">
+          <strong id="seconds">00</strong>
+          <span>Sek.</span>
+        </div>
+
+      </div>
+
+      <div id="live-message"></div>
+
+    </div>
 
   </header>
 
@@ -122,6 +280,66 @@
   <footer>
     ATSV Forchheim · Fanseite · 1903
   </footer>
+
+
+  <!-- COUNTDOWN SCRIPT -->
+
+  <script>
+
+    const matchDate = new Date("2026-08-15T15:00:00");
+
+    function updateCountdown() {
+
+      const now = new Date();
+
+      const difference = matchDate - now;
+
+      if (difference <= 0) {
+
+        document.querySelector(".countdown").style.display = "none";
+
+        document.getElementById("live-message").innerHTML =
+          '<div class="game-live">🔴 DAS SPIEL LÄUFT!</div>';
+
+        return;
+
+      }
+
+      const days = Math.floor(
+        difference / (1000 * 60 * 60 * 24)
+      );
+
+      const hours = Math.floor(
+        (difference / (1000 * 60 * 60)) % 24
+      );
+
+      const minutes = Math.floor(
+        (difference / (1000 * 60)) % 60
+      );
+
+      const seconds = Math.floor(
+        (difference / 1000) % 60
+      );
+
+      document.getElementById("days").textContent =
+        String(days).padStart(2, "0");
+
+      document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
+
+      document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
+
+      document.getElementById("seconds").textContent =
+        String(seconds).padStart(2, "0");
+
+    }
+
+    updateCountdown();
+
+    setInterval(updateCountdown, 1000);
+
+  </script>
 
 </body>
 </html>
