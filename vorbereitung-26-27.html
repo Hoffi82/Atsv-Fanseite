@@ -24,7 +24,7 @@
             max-width: 850px;
             margin: 0 auto 30px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
         }
 
@@ -51,19 +51,16 @@
         .match-list {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 22px;
             max-width: 850px;
             margin: 0 auto;
         }
 
         .match-card {
-            display: grid;
-            grid-template-columns: 130px 1fr 130px;
-            align-items: center;
             background: #111;
             border: 2px solid #d00020;
             border-radius: 12px;
-            padding: 18px;
+            padding: 20px;
             color: white;
             transition: 0.3s ease;
         }
@@ -71,6 +68,13 @@
         .match-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 0 25px rgba(208, 0, 32, 0.45);
+        }
+
+        .match-top {
+            display: grid;
+            grid-template-columns: 130px 1fr 130px;
+            align-items: center;
+            gap: 15px;
         }
 
         .match-date {
@@ -100,34 +104,61 @@
             font-size: 21px;
         }
 
-        .match-teams .score {
+        .score {
             display: block;
             margin: 8px 0;
             color: #d00020;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
         }
 
-        .match-place {
+        .match-result {
             text-align: center;
-            color: #aaa;
-            font-size: 14px;
-        }
-
-        .match-place strong {
-            display: block;
-            color: white;
-            margin-bottom: 5px;
         }
 
         .win {
-            color: #36c76f !important;
+            color: #36c76f;
             font-weight: bold;
         }
 
         .loss {
-            color: #e00020 !important;
+            color: #e00020;
             font-weight: bold;
+        }
+
+        .scorers {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+
+        .scorers h3 {
+            margin: 0 0 12px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .scorer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid #222;
+            color: #ccc;
+        }
+
+        .scorer:last-child {
+            border-bottom: none;
+        }
+
+        .scorer-minute {
+            color: #d00020;
+            font-weight: bold;
+            min-width: 55px;
+        }
+
+        .scorer-name {
+            flex: 1;
         }
 
         .back-button {
@@ -147,23 +178,25 @@
         @media (max-width: 650px) {
 
             .balance {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .match-card {
+            .match-top {
                 grid-template-columns: 1fr;
-                gap: 12px;
-                text-align: center;
             }
 
             .match-date,
             .match-teams,
-            .match-place {
+            .match-result {
                 text-align: center;
             }
 
             .match-teams h2 {
                 font-size: 18px;
+            }
+
+            .scorer {
+                font-size: 14px;
             }
         }
     </style>
@@ -183,6 +216,7 @@
         Testspiele zur Vorbereitung auf die Saison 2026/27
     </p>
 
+
     <section class="balance">
 
         <div class="balance-box">
@@ -200,28 +234,64 @@
             <strong>1</strong>
         </div>
 
+        <div class="balance-box">
+            <span>Tore</span>
+            <strong>14:12</strong>
+        </div>
+
     </section>
 
+
     <section class="match-list">
+
 
         <!-- 12.07.2026 -->
 
         <article class="match-card">
 
-            <div class="match-date">
-                <strong>12.07.2026</strong>
-                <span>15:00 Uhr</span>
+            <div class="match-top">
+
+                <div class="match-date">
+                    <strong>12.07.2026</strong>
+                    <span>15:00 Uhr</span>
+                </div>
+
+                <div class="match-teams">
+                    <h2>SpVgg Jahn Forchheim 2</h2>
+                    <span class="score">1 : 4</span>
+                    <h2>ATSV Forchheim</h2>
+                </div>
+
+                <div class="match-result">
+                    <span class="win">SIEG</span>
+                </div>
+
             </div>
 
-            <div class="match-teams">
-                <h2>SpVgg Jahn Forchheim 2</h2>
-                <span class="score">1 : 4</span>
-                <h2>ATSV Forchheim</h2>
-            </div>
+            <div class="scorers">
 
-            <div class="match-place">
-                <strong class="win">SIEG</strong>
-                Testspiel
+                <h3>⚽ Torschützen</h3>
+
+                <div class="scorer">
+                    <span class="scorer-minute">17'</span>
+                    <span class="scorer-name">Eigentor Jahn Forchheim 2</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">35'</span>
+                    <span class="scorer-name">Emre Kadi</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">57'</span>
+                    <span class="scorer-name">Eren Yasun</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">66'</span>
+                    <span class="scorer-name">Eren Yasun</span>
+                </div>
+
             </div>
 
         </article>
@@ -231,20 +301,49 @@
 
         <article class="match-card">
 
-            <div class="match-date">
-                <strong>16.07.2026</strong>
-                <span>19:00 Uhr</span>
+            <div class="match-top">
+
+                <div class="match-date">
+                    <strong>16.07.2026</strong>
+                    <span>19:00 Uhr</span>
+                </div>
+
+                <div class="match-teams">
+                    <h2>ASV Möhrendorf</h2>
+                    <span class="score">1 : 4</span>
+                    <h2>ATSV Forchheim</h2>
+                </div>
+
+                <div class="match-result">
+                    <span class="win">SIEG</span>
+                </div>
+
             </div>
 
-            <div class="match-teams">
-                <h2>ASV Möhrendorf</h2>
-                <span class="score">1 : 4</span>
-                <h2>ATSV Forchheim</h2>
-            </div>
+            <div class="scorers">
 
-            <div class="match-place">
-                <strong class="win">SIEG</strong>
-                Testspiel
+                <h3>⚽ Torschützen</h3>
+
+                <div class="scorer">
+                    <span class="scorer-minute">39'</span>
+                    <span class="scorer-name">Anouar Ould Oumi</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">56'</span>
+                    <span class="scorer-name">Abderrahim Kaabi</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">84'</span>
+                    <span class="scorer-name">Abderrahim Kaabi</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">88'</span>
+                    <span class="scorer-name">Florian Mananga</span>
+                </div>
+
             </div>
 
         </article>
@@ -254,20 +353,49 @@
 
         <article class="match-card">
 
-            <div class="match-date">
-                <strong>19.07.2026</strong>
-                <span>15:00 Uhr</span>
+            <div class="match-top">
+
+                <div class="match-date">
+                    <strong>19.07.2026</strong>
+                    <span>15:00 Uhr</span>
+                </div>
+
+                <div class="match-teams">
+                    <h2>ATSV Forchheim</h2>
+                    <span class="score">4 : 2</span>
+                    <h2>DJK Schnaid-Rothensand</h2>
+                </div>
+
+                <div class="match-result">
+                    <span class="win">SIEG</span>
+                </div>
+
             </div>
 
-            <div class="match-teams">
-                <h2>ATSV Forchheim</h2>
-                <span class="score">4 : 2</span>
-                <h2>DJK Schnaid-Rothensand</h2>
-            </div>
+            <div class="scorers">
 
-            <div class="match-place">
-                <strong class="win">SIEG</strong>
-                Testspiel
+                <h3>⚽ Torschützen</h3>
+
+                <div class="scorer">
+                    <span class="scorer-minute">57'</span>
+                    <span class="scorer-name">Adham Abu-Zalam</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">69'</span>
+                    <span class="scorer-name">Eren Yasun</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">79'</span>
+                    <span class="scorer-name">Yasir Kamil</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">79'</span>
+                    <span class="scorer-name">Florian Mananga</span>
+                </div>
+
             </div>
 
         </article>
@@ -277,20 +405,44 @@
 
         <article class="match-card">
 
-            <div class="match-date">
-                <strong>24.07.2026</strong>
-                <span>18:30 Uhr</span>
+            <div class="match-top">
+
+                <div class="match-date">
+                    <strong>24.07.2026</strong>
+                    <span>18:30 Uhr</span>
+                </div>
+
+                <div class="match-teams">
+                    <h2>ATSV Erlangen U23 2</h2>
+                    <span class="score">0 : 3</span>
+                    <h2>ATSV Forchheim</h2>
+                </div>
+
+                <div class="match-result">
+                    <span class="win">SIEG</span>
+                </div>
+
             </div>
 
-            <div class="match-teams">
-                <h2>ATSV Erlangen U23 2</h2>
-                <span class="score">0 : 3</span>
-                <h2>ATSV Forchheim</h2>
-            </div>
+            <div class="scorers">
 
-            <div class="match-place">
-                <strong class="win">SIEG</strong>
-                Testspiel
+                <h3>⚽ Torschützen</h3>
+
+                <div class="scorer">
+                    <span class="scorer-minute">8'</span>
+                    <span class="scorer-name">Wassim Nakshabndi</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">54'</span>
+                    <span class="scorer-name">Adham Abu-Zalam</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">83'</span>
+                    <span class="scorer-name">Alexandru Laza</span>
+                </div>
+
             </div>
 
         </article>
@@ -300,23 +452,43 @@
 
         <article class="match-card">
 
-            <div class="match-date">
-                <strong>02.08.2026</strong>
-                <span>14:30 Uhr</span>
+            <div class="match-top">
+
+                <div class="match-date">
+                    <strong>02.08.2026</strong>
+                    <span>14:30 Uhr</span>
+                </div>
+
+                <div class="match-teams">
+                    <h2>ATSV Forchheim</h2>
+                    <span class="score">2 : 5</span>
+                    <h2>BSC Erlangen</h2>
+                </div>
+
+                <div class="match-result">
+                    <span class="loss">NIEDERLAGE</span>
+                </div>
+
             </div>
 
-            <div class="match-teams">
-                <h2>ATSV Forchheim</h2>
-                <span class="score">2 : 5</span>
-                <h2>BSC Erlangen</h2>
-            </div>
+            <div class="scorers">
 
-            <div class="match-place">
-                <strong class="loss">NIEDERLAGE</strong>
-                Testspiel
+                <h3>⚽ Torschützen</h3>
+
+                <div class="scorer">
+                    <span class="scorer-minute">29'</span>
+                    <span class="scorer-name">Alexandru Laza</span>
+                </div>
+
+                <div class="scorer">
+                    <span class="scorer-minute">60'</span>
+                    <span class="scorer-name">Anouar Ould Oumi</span>
+                </div>
+
             </div>
 
         </article>
+
 
     </section>
 
