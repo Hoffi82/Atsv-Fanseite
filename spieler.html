@@ -1,4 +1,197 @@
 <!DOCTYPE html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spieler – ATSV Forchheim</title><link rel="stylesheet" href="css/style.css"></head>
-<body><main class="page"><a class="back" href="index.html">← Zurück</a><p class="eyebrow">ATSV FORCHHEIM</p><h1>Spieler</h1><p>Hier entstehen die Spielerprofile unserer Mannschaften.</p></main></body></html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Spieler – ATSV Forchheim</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .player-card {
+            background: #111;
+            border: 2px solid #b40000;
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(180, 0, 0, 0.25);
+        }
+
+        .player-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0 25px rgba(220, 0, 0, 0.5);
+        }
+
+        .player-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .player-info {
+            padding: 15px;
+        }
+
+        .player-info h2 {
+            margin: 0 0 8px;
+            color: white;
+            font-size: 22px;
+        }
+
+        .player-info p {
+            margin: 4px 0;
+            color: #ccc;
+        }
+
+        .player-number {
+            color: #e00000 !important;
+            font-weight: bold;
+        }
+
+        .players-title {
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <a class="back" href="index.html">← Zurück</a>
+
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+
+    <h1 class="players-title">UNSERE SPIELER</h1>
+
+    <p style="text-align:center;">
+        Der aktuelle Kader des ATSV Forchheim
+    </p>
+
+    <section class="player-grid">
+
+        <article class="player-card">
+            <img src="bilder/Abu.jpg" alt="Abu">
+            <div class="player-info">
+                <h2>Abu</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Anouar.jpg" alt="Anouar">
+            <div class="player-info">
+                <h2>Anouar</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Aymen.jpg" alt="Aymen">
+            <div class="player-info">
+                <h2>Aymen</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Denis.jpg" alt="Denis">
+            <div class="player-info">
+                <h2>Denis</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Eichinger.jpg" alt="Eichinger">
+            <div class="player-info">
+                <h2>Eichinger</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Emre.jpg" alt="Emre">
+            <div class="player-info">
+                <h2>Emre</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Eren.jpg" alt="Eren">
+            <div class="player-info">
+                <h2>Eren</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Flo.jpg" alt="Flo">
+            <div class="player-info">
+                <h2>Flo</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Hazem.jpg" alt="Hazem">
+            <div class="player-info">
+                <h2>Hazem</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Jolani.jpg" alt="Jolani">
+            <div class="player-info">
+                <h2>Jolani</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Kaabi.jpg" alt="Kaabi">
+            <div class="player-info">
+                <h2>Kaabi</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+        <article class="player-card">
+            <img src="bilder/Kamil.jpg" alt="Kamil">
+            <div class="player-info">
+                <h2>Kamil</h2>
+                <p class="player-number"># –</p>
+                <p>ATSV Forchheim</p>
+            </div>
+        </article>
+
+    </section>
+
+</main>
+
+</body>
+</html>
