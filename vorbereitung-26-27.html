@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vorbereitung 26/27 – ATSV Forchheim</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .season-title {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .season-subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 35px;
+        }
+
+        .match-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .match-card {
+            display: grid;
+            grid-template-columns: 120px 1fr 120px;
+            align-items: center;
+            background: #111;
+            border: 2px solid #d00020;
+            border-radius: 12px;
+            padding: 18px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s ease;
+        }
+
+        .match-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 0 25px rgba(208, 0, 32, 0.45);
+        }
+
+        .match-date {
+            text-align: center;
+            color: #aaa;
+        }
+
+        .match-date strong {
+            display: block;
+            color: white;
+            font-size: 18px;
+        }
+
+        .match-teams {
+            text-align: center;
+        }
+
+        .match-teams h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .match-teams span {
+            display: block;
+            margin-top: 7px;
+            color: #d00020;
+            font-weight: bold;
+        }
+
+        .match-place {
+            text-align: center;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .match-place strong {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .info-box {
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #111;
+            border-left: 4px solid #d00020;
+            color: #ccc;
+            border-radius: 8px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 10px 18px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #d00020;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: #d00020;
+        }
+
+        @media (max-width: 650px) {
+
+            .match-card {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .match-date,
+            .match-teams,
+            .match-place {
+                text-align: center;
+            }
+
+            .match-teams h2 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <a class="back-button" href="index.html">← Zurück</a>
+
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+
+    <h1 class="season-title">VORBEREITUNG 26/27</h1>
+
+    <p class="season-subtitle">
+        Testspiele zur Vorbereitung auf die Saison 2026/27
+    </p>
+
+    <div class="info-box">
+        <strong>⚽ Vorbereitung 2026/27</strong><br><br>
+        Hier findest du alle Testspiele des ATSV Forchheim
+        vor dem Start der neuen Saison.
+    </div>
+
+    <section class="match-list">
+
+        <!-- TESTSPIEL 1 -->
+        <a href="#" class="match-card">
+
+            <div class="match-date">
+                <strong>DATUM</strong>
+                Uhrzeit
+            </div>
+
+            <div class="match-teams">
+                <h2>ATSV Forchheim</h2>
+                <span>vs.</span>
+                <h2>Gegner</h2>
+            </div>
+
+            <div class="match-place">
+                <strong>Spielort</strong>
+                Testspiel
+            </div>
+
+        </a>
+
+        <!-- TESTSPIEL 2 -->
+        <a href="#" class="match-card">
+
+            <div class="match-date">
+                <strong>DATUM</strong>
+                Uhrzeit
+            </div>
+
+            <div class="match-teams">
+                <h2>ATSV Forchheim</h2>
+                <span>vs.</span>
+                <h2>Gegner</h2>
+            </div>
+
+            <div class="match-place">
+                <strong>Spielort</strong>
+                Testspiel
+            </div>
+
+        </a>
+
+    </section>
+
+</main>
+
+</body>
+</html>
