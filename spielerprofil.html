@@ -168,20 +168,20 @@
             </div>
 
             <div class="info-box">
-                <span>ATSV Forchheim</span>
-                <strong>1903</strong>
+                <span>Verein</span>
+                <strong>ATSV Forchheim</strong>
             </div>
 
         </div>
 
         <div class="profile-description">
+
             <h2>Über den Spieler</h2>
 
             <p id="playerDescription">
-                Hier entsteht später das persönliche Spielerprofil.
-                Informationen zu Spielweise, Stärken und weiteren Details
-                können hier ergänzt werden.
+                Spieler des ATSV Forchheim.
             </p>
+
         </div>
 
     </section>
@@ -194,67 +194,135 @@ const players = {
 
     abu: {
         name: "Abu",
-        image: "bilder/Abu.jpg",
-        position: "–",
-        number: "–",
-        games: "0",
-        goals: "0",
-        assists: "0",
-        description: "Spieler des ATSV Forchheim."
+        image: "bilder/Abu.jpg"
     },
 
     anouar: {
         name: "Anouar",
-        image: "bilder/Anouar.jpg",
-        position: "–",
-        number: "–",
-        games: "0",
-        goals: "0",
-        assists: "0",
-        description: "Spieler des ATSV Forchheim."
+        image: "bilder/Anouar.jpg"
     },
 
     aymen: {
         name: "Aymen",
-        image: "bilder/Aymen.jpg",
-        position: "–",
-        number: "–",
-        games: "0",
-        goals: "0",
-        assists: "0",
-        description: "Spieler des ATSV Forchheim."
+        image: "bilder/Aymen.jpg"
+    },
+
+    "berthold-gorita": {
+        name: "Berthold Gorita",
+        image: "bilder/Berthold,Gorita.jpg"
+    },
+
+    denis: {
+        name: "Denis",
+        image: "bilder/Denis.jpg"
+    },
+
+    eichinger: {
+        name: "Eichinger",
+        image: "bilder/Eichinger.jpg"
+    },
+
+    emre: {
+        name: "Emre",
+        image: "bilder/Emre.jpg"
+    },
+
+    eren: {
+        name: "Eren",
+        image: "bilder/Eren.jpg"
+    },
+
+    flo: {
+        name: "Flo",
+        image: "bilder/Flo.jpg"
+    },
+
+    hazem: {
+        name: "Hazem",
+        image: "bilder/Hazem.jpg"
+    },
+
+    jolani: {
+        name: "Jolani",
+        image: "bilder/Jolani.jpg"
     },
 
     rahyem: {
         name: "Rahyem",
-        image: "bilder/Kaabi,.jpg",
-        position: "–",
-        number: "–",
-        games: "0",
-        goals: "0",
-        assists: "0",
-        description: "Spieler des ATSV Forchheim."
+        image: "bilder/Kaabi,.jpg"
+    },
+
+    kamil: {
+        name: "Kamil",
+        image: "bilder/Kamil.jpg"
+    },
+
+    laza: {
+        name: "Laza",
+        image: "bilder/Laza.jpg"
+    },
+
+    luis: {
+        name: "Luis",
+        image: "bilder/Luis.jpg"
+    },
+
+    marcel: {
+        name: "Marcel",
+        image: "bilder/Marcel.jpg"
+    },
+
+    metehan: {
+        name: "Metehan",
+        image: "bilder/Metehan.jpg"
+    },
+
+    miguel: {
+        name: "Miguel",
+        image: "bilder/Miguel.jpg"
+    },
+
+    onur: {
+        name: "Onur",
+        image: "bilder/Onur.jpg"
+    },
+
+    senad: {
+        name: "Senad",
+        image: "bilder/Senad.jpg"
+    },
+
+    tyrone: {
+        name: "Tyrone",
+        image: "bilder/Tyrone.jpg"
+    },
+
+    wail: {
+        name: "Wail",
+        image: "bilder/Wail.jpg"
+    },
+
+    wassim: {
+        name: "Wassim",
+        image: "bilder/Wassim.jpg"
     }
 
 };
 
 const params = new URLSearchParams(window.location.search);
+
 const playerKey = params.get("spieler") || "abu";
 
 const player = players[playerKey] || players.abu;
 
 document.getElementById("playerName").textContent = player.name;
-document.getElementById("playerImage").src = player.image;
-document.getElementById("playerImage").alt = player.name;
-document.getElementById("playerPosition").textContent =
-    player.position === "–" ? "ATSV Forchheim" : player.position;
 
-document.getElementById("playerNumber").textContent = player.number;
-document.getElementById("playerPositionInfo").textContent = player.position;
-document.getElementById("playerGames").textContent = player.games;
-document.getElementById("playerGoals").textContent = player.goals;
-document.getElementById("playerAssists").textContent = player.assists;
-document.getElementById("playerDescription").textContent = player.description;
+document.getElementById("playerImage").src = player.image;
+
+document.getElementById("playerImage").alt = player.name;
+
+document.getElementById("playerDescription").textContent =
+    "Spieler des ATSV Forchheim.";
 
 </script>
 
