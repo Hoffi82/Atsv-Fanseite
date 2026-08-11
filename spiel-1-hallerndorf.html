@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ATSV Forchheim 2:4 DJK Hallerndorf</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .game-title {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .game-subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .game-card {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #111;
+            border: 2px solid #d00020;
+            border-radius: 14px;
+            padding: 30px 20px;
+            box-shadow: 0 0 20px rgba(208, 0, 32, 0.2);
+        }
+
+        .game-info {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        .teams {
+            display: grid;
+            grid-template-columns: 1fr 140px 1fr;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .team {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .atsv {
+            color: #d00020;
+        }
+
+        .score {
+            font-size: 38px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .scorers {
+            margin-top: 35px;
+        }
+
+        .scorers h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .goal {
+            display: flex;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .goal:last-child {
+            border-bottom: none;
+        }
+
+        .minute {
+            width: 60px;
+            color: #d00020;
+            font-weight: bold;
+        }
+
+        .player {
+            flex: 1;
+            color: #ddd;
+        }
+
+        .team-name {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .goal-atsv {
+            background: rgba(208, 0, 32, 0.08);
+            border-radius: 6px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 10px 18px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #d00020;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: #d00020;
+        }
+
+        @media (max-width: 650px) {
+
+            .teams {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .score {
+                font-size: 32px;
+            }
+
+            .team {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <a class="back-button" href="liga-26-27.html">
+        ← Zurück zur Liga 26/27
+    </a>
+
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+
+    <h1 class="game-title">1. SPIELTAG</h1>
+
+    <p class="game-subtitle">
+        Sonntag, 09.08.2026 · 15:00 Uhr
+    </p>
+
+
+    <section class="game-card">
+
+        <div class="game-info">
+            Kreisklasse 1 · Saison 2026/27
+        </div>
+
+
+        <div class="teams">
+
+            <div class="team atsv">
+                ATSV Forchheim
+            </div>
+
+            <div class="score">
+                2 : 4
+            </div>
+
+            <div class="team">
+                DJK Hallerndorf
+            </div>
+
+        </div>
+
+
+        <section class="scorers">
+
+            <h2>⚽ Torschützen</h2>
+
+
+            <div class="goal">
+
+                <div class="minute">37'</div>
+
+                <div class="player">
+                    Maximilian Ruschig
+                    <div class="team-name">
+                        DJK Hallerndorf
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="goal goal-atsv">
+
+                <div class="minute">38'</div>
+
+                <div class="player">
+                    <strong>Adham Abu-Zalam</strong>
+                    <div class="team-name">
+                        ATSV Forchheim
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="goal goal-atsv">
+
+                <div class="minute">46'</div>
+
+                <div class="player">
+                    <strong>Adham Abu-Zalam</strong>
+                    <div class="team-name">
+                        ATSV Forchheim
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="goal">
+
+                <div class="minute">46'</div>
+
+                <div class="player">
+                    Maximilian Ruschig
+                    <div class="team-name">
+                        DJK Hallerndorf
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="goal">
+
+                <div class="minute">56'</div>
+
+                <div class="player">
+                    Maximilian Pfister
+                    <div class="team-name">
+                        DJK Hallerndorf
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="goal">
+
+                <div class="minute">65'</div>
+
+                <div class="player">
+                    Yannick-Noah Weber
+                    <div class="team-name">
+                        DJK Hallerndorf
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+</body>
+</html>
