@@ -193,9 +193,15 @@
 const players = {
 
     abu: {
-        name: "Abu",
-        image: "bilder/Abu.jpg"
-    },
+    name: "Abu",
+    image: "bilder/Abu.jpg",
+    number: "10",
+    position: "OM, ST",
+    games: 0,
+    goals: 2,
+    assists: 0,
+    description: "Abu-Zalam, Adham spielt beim ATSV Forchheim auf der Position OM und ST."
+},
 
     anouar: {
         name: "Anouar",
@@ -318,11 +324,23 @@ const player = players[playerKey] || players.abu;
 document.getElementById("playerName").textContent = player.name;
 
 document.getElementById("playerImage").src = player.image;
-
 document.getElementById("playerImage").alt = player.name;
 
+document.getElementById("playerNumber").textContent = player.number || "–";
+
+document.getElementById("playerPositionInfo").textContent = player.position || "–";
+
+document.getElementById("playerGames").textContent = player.games || 0;
+
+document.getElementById("playerGoals").textContent = player.goals || 0;
+
+document.getElementById("playerAssists").textContent = player.assists || 0;
+
+document.getElementById("playerPosition").textContent = player.position || "ATSV Forchheim";
+
 document.getElementById("playerDescription").textContent =
-    "Spieler des ATSV Forchheim.";
+    player.description || "Spieler des ATSV Forchheim.";
+
 
 </script>
 
