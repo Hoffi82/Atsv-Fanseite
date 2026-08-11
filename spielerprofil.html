@@ -471,19 +471,7 @@ document.getElementById("playerPositionInfo").textContent = player.position || "
 document.getElementById("playerGames").textContent = player.games || 0;
 
 document.getElementById("playerGoals").textContent = player.goals || 0;
-const badge = document.getElementById("playerBadge");
 
-let badgeText = "";
-
-if (player.captain) {
-    badgeText += "🧢 Kapitän ";
-}
-
-if (player.newPlayer) {
-    badgeText += "🆕 Neuzugang";
-
-
-badge.textContent = badgeText;
 document.getElementById("playerAssists").textContent = player.assists || 0;
 
 document.getElementById("playerPosition").textContent = player.position || "ATSV Forchheim";
