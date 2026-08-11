@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Spielerprofil – ATSV Forchheim</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .profile-page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .profile-card {
+            background: #111;
+            border: 2px solid #d00020;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(208, 0, 32, 0.3);
+            margin-top: 30px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #050505, #1b0005);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 2px solid #d00020;
+        }
+
+        .profile-header img {
+            width: 280px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #d00020;
+            box-shadow: 0 0 25px rgba(208, 0, 32, 0.4);
+        }
+
+        .profile-header h1 {
+            color: white;
+            font-size: 38px;
+            margin: 20px 0 5px;
+        }
+
+        .profile-header p {
+            color: #d00020;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 25px;
+        }
+
+        .info-box {
+            background: #191919;
+            border-left: 4px solid #d00020;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .info-box span {
+            display: block;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-box strong {
+            color: white;
+            font-size: 20px;
+        }
+
+        .profile-description {
+            padding: 0 25px 30px;
+        }
+
+        .profile-description h2 {
+            color: white;
+            border-bottom: 1px solid #d00020;
+            padding-bottom: 10px;
+        }
+
+        .profile-description p {
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #d00020;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .back-button:hover {
+            background: #d00020;
+        }
+
+        @media (max-width: 600px) {
+            .profile-header img {
+                width: 220px;
+                height: 280px;
+            }
+
+            .profile-header h1 {
+                font-size: 30px;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page profile-page">
+
+    <a class="back-button" href="spieler.html">← Zurück zum Kader</a>
+
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+
+    <section class="profile-card">
+
+        <div class="profile-header">
+            <img id="playerImage" src="bilder/Abu.jpg" alt="Spieler">
+            <h1 id="playerName">Abu</h1>
+            <p id="playerPosition">ATSV Forchheim</p>
+        </div>
+
+        <div class="profile-info">
+
+            <div class="info-box">
+                <span>Rückennummer</span>
+                <strong id="playerNumber">–</strong>
+            </div>
+
+            <div class="info-box">
+                <span>Position</span>
+                <strong id="playerPositionInfo">–</strong>
+            </div>
+
+            <div class="info-box">
+                <span>Einsätze</span>
+                <strong id="playerGames">0</strong>
+            </div>
+
+            <div class="info-box">
+                <span>Tore</span>
+                <strong id="playerGoals">0</strong>
+            </div>
+
+            <div class="info-box">
+                <span>Vorlagen</span>
+                <strong id="playerAssists">0</strong>
+            </div>
+
+            <div class="info-box">
+                <span>ATSV Forchheim</span>
+                <strong>1903</strong>
+            </div>
+
+        </div>
+
+        <div class="profile-description">
+            <h2>Über den Spieler</h2>
+
+            <p id="playerDescription">
+                Hier entsteht später das persönliche Spielerprofil.
+                Informationen zu Spielweise, Stärken und weiteren Details
+                können hier ergänzt werden.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+
+const players = {
+
+    abu: {
+        name: "Abu",
+        image: "bilder/Abu.jpg",
+        position: "–",
+        number: "–",
+        games: "0",
+        goals: "0",
+        assists: "0",
+        description: "Spieler des ATSV Forchheim."
+    },
+
+    anouar: {
+        name: "Anouar",
+        image: "bilder/Anouar.jpg",
+        position: "–",
+        number: "–",
+        games: "0",
+        goals: "0",
+        assists: "0",
+        description: "Spieler des ATSV Forchheim."
+    },
+
+    aymen: {
+        name: "Aymen",
+        image: "bilder/Aymen.jpg",
+        position: "–",
+        number: "–",
+        games: "0",
+        goals: "0",
+        assists: "0",
+        description: "Spieler des ATSV Forchheim."
+    },
+
+    rahyem: {
+        name: "Rahyem",
+        image: "bilder/Kaabi,.jpg",
+        position: "–",
+        number: "–",
+        games: "0",
+        goals: "0",
+        assists: "0",
+        description: "Spieler des ATSV Forchheim."
+    }
+
+};
+
+const params = new URLSearchParams(window.location.search);
+const playerKey = params.get("spieler") || "abu";
+
+const player = players[playerKey] || players.abu;
+
+document.getElementById("playerName").textContent = player.name;
+document.getElementById("playerImage").src = player.image;
+document.getElementById("playerImage").alt = player.name;
+document.getElementById("playerPosition").textContent =
+    player.position === "–" ? "ATSV Forchheim" : player.position;
+
+document.getElementById("playerNumber").textContent = player.number;
+document.getElementById("playerPositionInfo").textContent = player.position;
+document.getElementById("playerGames").textContent = player.games;
+document.getElementById("playerGoals").textContent = player.goals;
+document.getElementById("playerAssists").textContent = player.assists;
+document.getElementById("playerDescription").textContent = player.description;
+
+</script>
+
+</body>
+</html>
