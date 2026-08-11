@@ -335,9 +335,231 @@
 
     }
 
-    updateCountdown();
+    const matches = [
 
-    setInterval(updateCountdown, 1000);
+    {
+        date: "2026-08-15T15:00:00",
+        home: "ASV Niederndorf",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-08-23T15:00:00",
+        home: "ATSV Forchheim",
+        away: "DJK Erlangen II"
+    },
+
+    {
+        date: "2026-08-30T15:00:00",
+        home: "SpVgg Uehlfeld",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-09-06T15:00:00",
+        home: "ATSV Forchheim",
+        away: "SpVgg Hausen"
+    },
+
+    {
+        date: "2026-09-13T15:00:00",
+        home: "SV Buckenhofen II",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-09-20T15:00:00",
+        home: "ATSV Forchheim",
+        away: "TSV Neuhaus"
+    },
+
+    {
+        date: "2026-09-27T15:00:00",
+        home: "Hammerbacher SV",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-10-04T15:00:00",
+        home: "ATSV Forchheim",
+        away: "(SG) Hessdorf II / Großenseebach"
+    },
+
+    {
+        date: "2026-10-11T15:00:00",
+        home: "TKV Forchheim",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-10-18T15:00:00",
+        home: "ATSV Forchheim",
+        away: "SV DJK Eggolsheim"
+    },
+
+    {
+        date: "2026-10-25T15:00:00",
+        home: "TSV Hemhofen",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-11-01T14:30:00",
+        home: "ATSV Forchheim",
+        away: "SpVgg / DJK Heroldsbach / Thurn"
+    },
+
+    {
+        date: "2026-11-08T14:30:00",
+        home: "DJK Hallerndorf",
+        away: "ATSV Forchheim"
+    },
+
+    {
+        date: "2026-11-15T14:30:00",
+        home: "ATSV Forchheim",
+        away: "ASV Niederndorf"
+    }
+
+];
+
+
+function getNextMatch() {
+
+    const now = new Date();
+
+    return matches.find(match => {
+        return new Date(match.date) > now;
+    });
+
+}
+
+
+function formatDate(dateString) {
+
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("de-DE", {
+        weekday: "long",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
+
+}
+
+
+function updateNextMatch() {
+
+    const match = getNextMatch();
+
+    if (!match) {
+
+        document.querySelector(".next-match").innerHTML = `
+            <div class="next-match-title">
+                SAISONPAUSE
+            </div>
+
+            <div class="game-live">
+                ❄️ WINTERPAUSE
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const matchDate = new Date(match.date);
+
+
+    document.querySelector(".next-match-date").textContent =
+        formatDate(match.date) +
+        " · " +
+        matchDate.toLocaleTimeString("de-DE", {
+            hour: "2-digit",
+            minute: "2-digit"
+        }) +
+        " Uhr";
+
+
+    document.querySelector(".next-match-teams").innerHTML = `
+        ${match.home}
+        <span>VS.</span>
+        ${match.away}
+    `;
+
+
+    updateCountdown(matchDate);
+
+}
+
+
+function updateCountdown(matchDate) {
+
+    const now = new Date();
+
+    const difference = matchDate - now;
+
+
+    if (difference <= 0) {
+
+        document.querySelector(".countdown").style.display = "none";
+
+        document.getElementById("live-message").innerHTML =
+            '<div class="game-live">🔴 DAS SPIEL LÄUFT!</div>';
+
+        return;
+    }
+
+
+    const days = Math.floor(
+        difference / (1000 * 60 * 60 * 24)
+    );
+
+
+    const hours = Math.floor(
+        (difference / (1000 * 60 * 60)) % 24
+    );
+
+
+    const minutes = Math.floor(
+        (difference / (1000 * 60)) % 60
+    );
+
+
+    const seconds = Math.floor(
+        (difference / 1000) % 60
+    );
+
+
+    document.getElementById("days").textContent =
+        String(days).padStart(2, "0");
+
+
+    document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
+
+
+    document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
+
+
+    document.getElementById("seconds").textContent =
+        String(seconds).padStart(2, "0");
+
+}
+
+
+function runCountdown() {
+
+    updateNextMatch();
+
+}
+
+
+runCountdown();
+
+setInterval(runCountdown, 1000);
 
   </script>
 
