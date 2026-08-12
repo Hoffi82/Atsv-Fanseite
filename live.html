@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ATSV Live-Ticker</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #090909;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .live-page {
+      min-height: 100vh;
+      padding: 30px 20px 100px;
+      background:
+        linear-gradient(135deg, #090909 0%, #151515 65%, #250b0b 100%);
+    }
+
+    .live-container {
+      width: min(700px, 100%);
+      margin: 0 auto;
+    }
+
+    .live-title {
+      text-align: center;
+      color: #d00020;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .live-subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+
+    .score-card {
+      background: #111;
+      border: 2px solid #d00020;
+      border-radius: 16px;
+      padding: 25px 18px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(208, 0, 32, 0.25);
+    }
+
+    .live-badge {
+      display: inline-block;
+      background: #d00020;
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+    }
+
+    .teams {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .team {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .score {
+      font-size: 48px;
+      font-weight: 900;
+      color: #d00020;
+      white-space: nowrap;
+    }
+
+    .minute {
+      margin-top: 10px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .admin-card {
+      margin-top: 25px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 22px;
+    }
+
+    .admin-title {
+      color: #d00020;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .event-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .event-button {
+      border: 1px solid #444;
+      background: #181818;
+      color: #fff;
+      padding: 16px 10px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .event-button:hover {
+      background: #d00020;
+      border-color: #d00020;
+    }
+
+    .event-form {
+      display: none;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+    }
+
+    .event-form.active {
+      display: block;
+    }
+
+    .event-form label {
+      display: block;
+      color: #aaa;
+      font-size: 13px;
+      margin: 12px 0 6px;
+    }
+
+    .event-form input,
+    .event-form select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      background: #080808;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .publish-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 15px;
+      background: #d00020;
+      color: #fff;
+      border: 0;
+      border-radius: 9px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .ticker {
+      margin-top: 25px;
+    }
+
+    .ticker-title {
+      color: #d00020;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .ticker-event {
+      background: #111;
+      border-left: 4px solid #d00020;
+      padding: 14px;
+      margin-bottom: 8px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .ticker-minute {
+      color: #d00020;
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .back-button {
+      display: block;
+      width: fit-content;
+      margin: 25px auto 0;
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid #444;
+      padding: 11px 18px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 600px) {
+
+      .live-page {
+        padding: 20px 12px 100px;
+      }
+
+      .teams {
+        grid-template-columns: 1fr;
+      }
+
+      .score {
+        font-size: 42px;
+      }
+
+      .event-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="live-page">
+
+  <div class="live-container">
+
+    <div class="live-title">
+      ATSV Forchheim
+    </div>
+
+    <div class="live-subtitle">
+      🔴 Live-Ticker
+    </div>
+
+    <!-- SPIELSTAND -->
+
+    <div class="score-card">
+
+      <div class="live-badge">
+        LIVE
+      </div>
+
+      <div class="teams">
+
+        <div class="team">
+          ATSV Forchheim
+        </div>
+
+        <div class="score">
+          <span id="homeScore">0</span>
+          :
+          <span id="awayScore">0</span>
+        </div>
+
+        <div class="team">
+          Gegner
+        </div>
+
+      </div>
+
+      <div class="minute">
+        Spielminute: <strong id="currentMinute">1</strong>'
+      </div>
+
+    </div>
+
+
+    <!-- ADMIN -->
+
+    <div class="admin-card">
+
+      <div class="admin-title">
+        🔐 ATSV Live-Eingabe
+      </div>
+
+      <div class="event-buttons">
+
+        <button class="event-button" onclick="openEvent('homeGoal')">
+          ⚽ TOR ATSV
+        </button>
+
+        <button class="event-button" onclick="openEvent('awayGoal')">
+          ⚽ TOR GEGNER
+        </button>
+
+        <button class="event-button" onclick="openEvent('yellow')">
+          🟨 GELBE KARTE
+        </button>
+
+        <button class="event-button" onclick="openEvent('red')">
+          🟥 ROTE KARTE
+        </button>
+
+        <button class="event-button" onclick="openEvent('substitution')">
+          🔄 WECHSEL
+        </button>
+
+        <button class="event-button" onclick="openEvent('halftime')">
+          ⏱️ HALBZEIT
+        </button>
+
+        <button class="event-button" onclick="openEvent('final')">
+          🏁 ABPFIFF
+        </button>
+
+      </div>
+
+
+      <!-- EREIGNIS FORMULAR -->
+
+      <div id="eventForm" class="event-form">
+
+        <label>
+          Spielminute
+        </label>
+
+        <input
+          type="number"
+          id="eventMinute"
+          min="1"
+          max="120"
+          value="1"
+        >
+
+        <label>
+          Spieler
+        </label>
+
+        <select id="player">
+
+          <option value="">
+            Bitte auswählen
+          </option>
+
+          <option>Abu</option>
+          <option>Spieler 2</option>
+          <option>Spieler 3</option>
+          <option>Spieler 4</option>
+
+        </select>
+
+        <label>
+          Zusatzinfo
+        </label>
+
+        <input
+          type="text"
+          id="eventText"
+          placeholder="z.B. Kopfball, Freistoß..."
+        >
+
+        <button
+          class="publish-button"
+          onclick="publishEvent()"
+        >
+          🔴 EREIGNIS VERÖFFENTLICHEN
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- LIVE-TICKER -->
+
+    <div class="ticker">
+
+      <div class="ticker-title">
+        Live-Ereignisse
+      </div>
+
+      <div id="tickerEvents">
+
+        <div class="ticker-event">
+          <span class="ticker-minute">1'</span>
+          Anpfiff – das Spiel läuft!
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <a href="index.html" class="back-button">
+      ← Zur Fanseite
+    </a>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let selectedEvent = "";
+let homeScore = 0;
+let awayScore = 0;
+
+
+function openEvent(type) {
+
+  selectedEvent = type;
+
+  document
+    .getElementById("eventForm")
+    .classList.add("active");
+
+}
+
+
+function publishEvent() {
+
+  const minute =
+    document.getElementById("eventMinute").value;
+
+  const player =
+    document.getElementById("player").value;
+
+  const text =
+    document.getElementById("eventText").value;
+
+  let message = "";
+
+
+  if (selectedEvent === "homeGoal") {
+
+    homeScore++;
+
+    document.getElementById("homeScore").textContent =
+      homeScore;
+
+    message =
+      "⚽ TOR FÜR DEN ATSV! " +
+      (player || "") +
+      (text ? " – " + text : "");
+
+  }
+
+
+  else if (selectedEvent === "awayGoal") {
+
+    awayScore++;
+
+    document.getElementById("awayScore").textContent =
+      awayScore;
+
+    message =
+      "⚽ Tor für den Gegner!";
+
+  }
+
+
+  else if (selectedEvent === "yellow") {
+
+    message =
+      "🟨 Gelbe Karte " +
+      (player || "");
+
+  }
+
+
+  else if (selectedEvent === "red") {
+
+    message =
+      "🟥 Rote Karte " +
+      (player || "");
+
+  }
+
+
+  else if (selectedEvent === "substitution") {
+
+    message =
+      "🔄 Wechsel " +
+      (player || "");
+
+  }
+
+
+  else if (selectedEvent === "halftime") {
+
+    message =
+      "⏱️ Halbzeit";
+
+  }
+
+
+  else if (selectedEvent === "final") {
+
+    message =
+      "🏁 Abpfiff";
+
+  }
+
+
+  const ticker =
+    document.getElementById("tickerEvents");
+
+
+  const event =
+    document.createElement("div");
+
+  event.className =
+    "ticker-event";
+
+
+  event.innerHTML =
+    '<span class="ticker-minute">' +
+    minute +
+    "'</span>" +
+    message;
+
+
+  ticker.prepend(event);
+
+
+  document
+    .getElementById("eventForm")
+    .classList.remove("active");
+
+
+  document.getElementById("eventText").value = "";
+
+}
+
+
+</script>
+
+</body>
+</html>
