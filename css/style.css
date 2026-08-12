@@ -12,3 +12,26 @@
     object-fit: contain;
     display: block;
 }
+.music-player {
+    width: min(500px, 90%);
+    margin: 25px auto;
+    padding: 18px;
+    background: #111;
+    border: 2px solid #d00020;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(208, 0, 32, 0.25);
+}
+
+.music-player p {
+    margin: 0 0 12px;
+    color: #d00020;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.music-player audio {
+    width: 100%;
+    height: 40px;
+}
