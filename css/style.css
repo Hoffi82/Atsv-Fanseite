@@ -35,3 +35,98 @@
     width: 100%;
     height: 40px;
 }
+/* ATSV FAN-APP – mobile Ansicht */
+
+@media (max-width: 700px) {
+
+  body {
+    font-size: 16px;
+    padding-bottom: 20px;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 24px 18px 28px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 13vw, 4.2rem);
+    line-height: .92;
+  }
+
+  .intro {
+    font-size: .95rem;
+    line-height: 1.5;
+  }
+
+  .hero nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 25px;
+  }
+
+  .hero nav a {
+    padding: 12px 8px;
+    text-align: center;
+    font-size: .68rem;
+  }
+
+  .next-match {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 24px 0 0 !important;
+    padding: 18px !important;
+  }
+
+  .countdown {
+    gap: 5px !important;
+  }
+
+  .countdown-box {
+    padding: 8px 3px !important;
+  }
+
+  .countdown-box strong {
+    font-size: 20px !important;
+  }
+
+  .countdown-box span {
+    font-size: 9px !important;
+  }
+
+  .music-player {
+    width: 100%;
+    margin: 22px auto 0;
+    padding: 14px;
+  }
+
+  .cards {
+    padding: 28px 18px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    min-height: 150px;
+    padding: 22px;
+  }
+
+  .card h2 {
+    font-size: 1.45rem;
+    margin: 22px 0 8px;
+  }
+
+  .card p {
+    font-size: .92rem;
+  }
+
+  footer {
+    padding: 22px 18px;
+    font-size: .72rem;
+  }
+}
