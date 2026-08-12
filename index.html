@@ -595,6 +595,15 @@ runCountdown();
 setInterval(runCountdown, 1000);
 
   </script>
+<script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("ATSV Service Worker aktiv"))
+        .catch(error => console.error("Service Worker Fehler:", error));
+    });
+  }
+</script>
 
 </body>
 </html>
