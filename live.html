@@ -405,6 +405,7 @@
 let selectedEvent = "";
 let homeScore = 0;
 let awayScore = 0;
+
 const SUPABASE_URL = "https://xmtrtpibldbiikkkmnd.supabase.co";
 const SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
 
@@ -414,8 +415,6 @@ const supabaseClient = window.supabase.createClient(
 );
 
 let currentMatch = null;
-
-
 
 async function loadActiveMatch() {
   const { data, error } = await supabaseClient
@@ -433,32 +432,23 @@ async function loadActiveMatch() {
 
   currentMatch = data;
 
-  document.getElementById("homeScore").textContent =
-    data.home_score;
+  document.getElementById("homeScore").textContent = data.home_score;
+  document.getElementById("awayScore").textContent = data.away_score;
+  document.getElementById("currentMinute").textContent = data.current_minute;
 
-  document.getElementById("awayScore").textContent =
-    data.away_score;
-
-  document.getElementById("currentMinute").textContent =
-    data.current_minute;
-
-  document.querySelector(".team").textContent =
-    data.home_team;
-
-  document.querySelectorAll(".team")[1].textContent =
-    data.away_team;
+  document.querySelector(".team").textContent = data.home_team;
+  document.querySelectorAll(".team")[1].textContent = data.away_team;
 }
 
-  loadActiveMatch();
+loadActiveMatch();
 
-  function openEvent(type) {
-    selectedEvent = type;
+function openEvent(type) {
+  selectedEvent = type;
 
-   document
-      .getElementById("eventForm")
-     .classList.add("active");
-
-  }
+  document
+    .getElementById("eventForm")
+    .classList.add("active");
+}
 
 
 
