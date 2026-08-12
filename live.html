@@ -482,12 +482,43 @@ function publishEvent() {
   }
 
 
+async function publishEvent() {
+
+  if (!currentMatch) {
+    alert("Kein aktives Spiel gefunden.");
+    return;
+  }
+
+  const minute =
+    Number(document.getElementById("eventMinute").value);
+
+  const player =
+    document.getElementById("player").value;
+
+  const text =
+    document.getElementById("eventText").value;
+
+  let message = "";
+  let newHomeScore = currentMatch.home_score;
+  let newAwayScore = currentMatch.away_score;
+  let eventType = selectedEvent;
+
+
+  if (selectedEvent === "homeGoal") {
+
+    newHomeScore++;
+
+    message =
+      "⚽ TOR FÜR DEN ATSV! " +
+      (player || "") +
+      (text ? " – " + text : "");
+
+  }
+
+
   else if (selectedEvent === "awayGoal") {
 
-    awayScore++;
-
-    document.getElementById("awayScore").textContent =
-      awayScore;
+    newAwayScore++;
 
     message =
       "⚽ Tor für den Gegner!";
@@ -538,9 +569,84 @@ function publishEvent() {
   }
 
 
+  // Ereignis in Supabase speichern
+
+  const { error: eventError } = await supabaseClient
+    .from("live_events")
+    .insert({
+      match_id: currentMatch.id,
+      minute: minute,
+      event_type: eventType,
+      player: player || null,
+      description: text || null
+    });
+
+
+  if (eventError) {
+
+    console.error(
+      "Fehler beim Speichern des Ereignisses:",
+      eventError
+    );
+
+    alert("Das Ereignis konnte nicht gespeichert werden.");
+    return;
+
+  }
+
+
+  // Spielstand aktualisieren
+
+  if (
+    selectedEvent === "homeGoal" ||
+    selectedEvent === "awayGoal"
+  ) {
+
+    const { error: scoreError } = await supabaseClient
+      .from("live_matches")
+      .update({
+        home_score: newHomeScore,
+        away_score: newAwayScore,
+        current_minute: minute
+      })
+      .eq("id", currentMatch.id);
+
+
+    if (scoreError) {
+
+      console.error(
+        "Fehler beim Aktualisieren des Spielstands:",
+        scoreError
+      );
+
+      alert("Der Spielstand konnte nicht gespeichert werden.");
+      return;
+
+    }
+
+  }
+
+
+  // Lokale Anzeige aktualisieren
+
+  currentMatch.home_score = newHomeScore;
+  currentMatch.away_score = newAwayScore;
+  currentMatch.current_minute = minute;
+
+  document.getElementById("homeScore").textContent =
+    newHomeScore;
+
+  document.getElementById("awayScore").textContent =
+    newAwayScore;
+
+  document.getElementById("currentMinute").textContent =
+    minute;
+
+
+  // Ereignis im Live-Ticker anzeigen
+
   const ticker =
     document.getElementById("tickerEvents");
-
 
   const event =
     document.createElement("div");
@@ -548,26 +654,24 @@ function publishEvent() {
   event.className =
     "ticker-event";
 
-
   event.innerHTML =
     '<span class="ticker-minute">' +
     minute +
     "'</span>" +
     message;
 
-
   ticker.prepend(event);
 
+
+  // Formular schließen
 
   document
     .getElementById("eventForm")
     .classList.remove("active");
 
-
   document.getElementById("eventText").value = "";
 
 }
-
 
 </script>
 
