@@ -467,14 +467,119 @@ async function loadActiveMatch() {
   document.querySelectorAll(".team")[1].textContent = data.away_team;
 }
 
-loadActiveMatch();
+async function loadLiveEvents(matchId) {
+
+  const { data, error } = await supabaseClient
+    .from("live_events")
+    .select("*")
+    .eq("match_id", matchId)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error(
+      "Fehler beim Laden der Live-Ereignisse:",
+      error
+    );
+    return;
+  }
+
+  const ticker =
+    document.getElementById("tickerEvents");
+
+  for (const item of data) {
+
+    let message = "";
+
+    if (item.event_type === "homeGoal") {
+
+      message =
+        "⚽ TOR FÜR DEN ATSV! " +
+        (item.player || "") +
+        (item.description
+          ? " – " + item.description
+          : "");
+
+    }
+
+    else if (item.event_type === "awayGoal") {
+
+      message =
+        "⚽ Tor für den Gegner!";
+
+    }
+
+    else if (item.event_type === "yellow") {
+
+      message =
+        "🟨 Gelbe Karte " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "red") {
+
+      message =
+        "🟥 Rote Karte " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "substitution") {
+
+      message =
+        "🔄 Wechsel " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "halftime") {
+
+      message =
+        "⏱️ Halbzeit";
+
+    }
+
+    else if (item.event_type === "final") {
+
+      message =
+        "🏁 Abpfiff";
+
+    }
+
+    const event =
+      document.createElement("div");
+
+    event.className =
+      "ticker-event";
+
+    event.innerHTML =
+      '<span class="ticker-minute">' +
+      item.minute +
+      "'</span>" +
+      message;
+
+    ticker.prepend(event);
+  }
+}
+
+
+loadActiveMatch().then(() => {
+
+  if (currentMatch) {
+    loadLiveEvents(currentMatch.id);
+  }
+
+});
+
 
 function openEvent(type) {
+
   selectedEvent = type;
 
   document
     .getElementById("eventForm")
     .classList.add("active");
+
 }
 
 
