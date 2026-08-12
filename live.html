@@ -226,8 +226,8 @@
       }
     }
   </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
 <div class="live-page">
@@ -405,7 +405,13 @@
 let selectedEvent = "";
 let homeScore = 0;
 let awayScore = 0;
+const SUPABASE_URL = "https://xmtrtpibldbiikkkmnd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
 
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 function openEvent(type) {
 
