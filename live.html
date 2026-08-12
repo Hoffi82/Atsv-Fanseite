@@ -413,13 +413,52 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-function openEvent(type) {
+let currentMatch = null;
 
-  selectedEvent = type;
 
-  document
-    .getElementById("eventForm")
-    .classList.add("active");
+
+async function loadActiveMatch() {
+  const { data, error } = await supabaseClient
+    .from("live_matches")
+    .select("*")
+    .eq("status", "live")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error("Fehler beim Laden des Spiels:", error);
+    return;
+  }
+
+  currentMatch = data;
+
+  document.getElementById("homeScore").textContent =
+    data.home_score;
+
+  document.getElementById("awayScore").textContent =
+    data.away_score;
+
+  document.getElementById("currentMinute").textContent =
+    data.current_minute;
+
+  document.querySelector(".team").textContent =
+    data.home_team;
+
+  document.querySelectorAll(".team")[1].textContent =
+    data.away_team;
+}
+
+452  loadActiveMatch();
+
+453  function openEvent(type) {
+454    selectedEvent = type;
+
+455    document
+456      .getElementById("eventForm")
+457      .classList.add("active");
+
+458  }
 
 }
 
