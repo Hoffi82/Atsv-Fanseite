@@ -274,10 +274,37 @@
 
     </div>
 
+<div class="admin-card" id="loginPanel">
 
+  <div class="admin-title">
+    🔐 Admin-Anmeldung
+  </div>
+
+  <input
+    type="email"
+    id="adminEmail"
+    placeholder="E-Mail"
+  >
+
+  <input
+    type="password"
+    id="adminPassword"
+    placeholder="Passwort"
+  >
+
+  <button
+    class="publish-button"
+    onclick="loginAdmin()"
+  >
+    🔐 ANMELDEN
+  </button>
+
+  <div id="loginMessage"></div>
+
+</div>
     <!-- ADMIN -->
 
-    <div class="admin-card">
+    <div class="admin-card" id="adminPanel" style="display:none;">
 
       <div class="admin-title">
         🔐 ATSV Live-Eingabe
@@ -318,7 +345,7 @@
 
       <!-- EREIGNIS FORMULAR -->
 
-      <div id="eventForm" class="event-form">
+      <div id="eventForm" class="event-form"> 
 
         <label>
           Spielminute
@@ -453,35 +480,67 @@ function openEvent(type) {
 
 
 
-function publishEvent() {
+async function loginAdmin() {
 
-  const minute =
-    document.getElementById("eventMinute").value;
+  const email =
+    document.getElementById("adminEmail").value.trim();
 
-  const player =
-    document.getElementById("player").value;
+  const password =
+    document.getElementById("adminPassword").value;
 
-  const text =
-    document.getElementById("eventText").value;
+  const message =
+    document.getElementById("loginMessage");
 
-  let message = "";
-
-
-  if (selectedEvent === "homeGoal") {
-
-    homeScore++;
-
-    document.getElementById("homeScore").textContent =
-      homeScore;
-
-    message =
-      "⚽ TOR FÜR DEN ATSV! " +
-      (player || "") +
-      (text ? " – " + text : "");
-
+  if (!email || !password) {
+    message.textContent =
+      "Bitte E-Mail und Passwort eingeben.";
+    return;
   }
 
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
 
+  if (error) {
+    console.error("Login-Fehler:", error);
+
+    message.textContent =
+      "Anmeldung fehlgeschlagen.";
+
+    return;
+  }
+
+  document.getElementById("loginPanel").style.display =
+    "none";
+
+  document.getElementById("adminPanel").style.display =
+    "block";
+
+  message.textContent = "";
+
+  console.log("Admin erfolgreich angemeldet.");
+}
+
+
+async function checkAdminSession() {
+
+  const { data } =
+    await supabaseClient.auth.getSession();
+
+  if (data.session) {
+
+    document.getElementById("loginPanel").style.display =
+      "none";
+
+    document.getElementById("adminPanel").style.display =
+      "block";
+  }
+}
+
+
+checkAdminSession();
 async function publishEvent() {
 
   if (!currentMatch) {
