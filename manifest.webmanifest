@@ -1,0 +1,26 @@
+{
+  "name": "ATSV Forchheim Fan-App",
+  "short_name": "ATSV Forchheim",
+  "description": "Die Fanseite für alle, die den ATSV Forchheim im Herzen tragen.",
+  "lang": "de-DE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#111111",
+  "theme_color": "#d00020",
+  "icons": [
+    {
+      "src": "bilder/ATSV_Wappen_4K_transparent.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "bilder/ATSV_Wappen_4K_transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
