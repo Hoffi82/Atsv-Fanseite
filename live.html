@@ -309,7 +309,53 @@
       <div class="admin-title">
         🔐 ATSV Live-Eingabe
       </div>
+<!-- NEWS VERWALTUNG -->
 
+<div class="admin-card" id="newsAdminPanel">
+
+  <div class="admin-title">
+    📰 NEWS VERWALTEN
+  </div>
+
+  <label>
+    Überschrift
+  </label>
+
+  <input
+    type="text"
+    id="newsTitle"
+    placeholder="Überschrift der News"
+  >
+
+  <label>
+    Nachricht
+  </label>
+
+  <input
+    type="text"
+    id="newsText"
+    placeholder="Text der News"
+  >
+
+  <label>
+    Datum
+  </label>
+
+  <input
+    type="date"
+    id="newsDate"
+  >
+
+  <button
+    class="publish-button"
+    onclick="publishNews()"
+  >
+    📰 NEWS VERÖFFENTLICHEN
+  </button>
+
+  <div id="newsMessage"></div>
+
+</div>
       <div class="event-buttons">
 
         <button class="event-button" onclick="openEvent('homeGoal')">
@@ -971,7 +1017,55 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
   document.getElementById("currentMinute").textContent = "1";
 
   alert("Das Spiel ist jetzt LIVE!");
-}
+  async function publishNews() {
+
+  const title =
+    document.getElementById("newsTitle").value.trim();
+
+  const text =
+    document.getElementById("newsText").value.trim();
+
+  const date =
+    document.getElementById("newsDate").value;
+
+  const message =
+    document.getElementById("newsMessage");
+
+  if (!title || !text || !date) {
+    message.textContent =
+      "Bitte Überschrift, Nachricht und Datum ausfüllen.";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("news")
+    .insert({
+      title: title,
+      text: text,
+      date: date
+    });
+
+  if (error) {
+
+    console.error(
+      "Fehler beim Speichern der News:",
+      error
+    );
+
+    message.textContent =
+      "Die News konnte nicht gespeichert werden.";
+
+    return;
+  }
+
+  message.textContent =
+    "✅ News wurde veröffentlicht.";
+
+  document.getElementById("newsTitle").value = "";
+  document.getElementById("newsText").value = "";
+  document.getElementById("newsDate").value = "";
+}  
+
 </script>
 
 
