@@ -836,7 +836,13 @@ async function publishEvent() {
   document.getElementById("eventText").value = "";
 
 }
+if (new URLSearchParams(window.location.search).get("admin") === "1") {
+  const loginPanel = document.getElementById("loginPanel");
 
+  if (loginPanel) {
+    loginPanel.style.display = "block";
+  }
+}
 </script>
 
 </body>
