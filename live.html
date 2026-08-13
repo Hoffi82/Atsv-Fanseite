@@ -848,28 +848,24 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
     loginPanel.style.display = "block";
   }
 }
-</script>
-async function resetLiveMatch() {
+  async function resetLiveMatch() {
 
   if (!currentMatch) {
     alert("Kein aktives Spiel gefunden.");
     return;
   }
 
-  const confirmReset = confirm(
+  if (!confirm(
     "Soll der Liveticker wirklich auf 0:0 zurückgesetzt werden?\n\n" +
     "Alle bisherigen Ereignisse werden gelöscht."
-  );
-
-  if (!confirmReset) {
+  )) {
     return;
   }
 
-  const { error: eventsError } =
-    await supabaseClient
-      .from("live_events")
-      .delete()
-      .eq("match_id", currentMatch.id);
+  const { error: eventsError } = await supabaseClient
+    .from("live_events")
+    .delete()
+    .eq("match_id", currentMatch.id);
 
   if (eventsError) {
     console.error("Fehler beim Löschen:", eventsError);
@@ -877,16 +873,15 @@ async function resetLiveMatch() {
     return;
   }
 
-  const { error: matchError } =
-    await supabaseClient
-      .from("live_matches")
-      .update({
-        home_score: 0,
-        away_score: 0,
-        current_minute: 1,
-        status: "live"
-      })
-      .eq("id", currentMatch.id);
+  const { error: matchError } = await supabaseClient
+    .from("live_matches")
+    .update({
+      home_score: 0,
+      away_score: 0,
+      current_minute: 1,
+      status: "live"
+    })
+    .eq("id", currentMatch.id);
 
   if (matchError) {
     console.error("Fehler beim Zurücksetzen:", matchError);
@@ -917,6 +912,9 @@ async function resetLiveMatch() {
 
   alert("Der Liveticker wurde auf 0:0 zurückgesetzt.");
 }
- </script> 
+</script>
+
+
+  
 </body>
 </html>
