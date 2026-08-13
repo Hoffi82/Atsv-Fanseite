@@ -9,7 +9,7 @@
   <title>ATSV Forchheim – Fanseite</title>
 
   <link rel="stylesheet" href="css/style.css">
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
 
     /* COUNTDOWN */
@@ -132,7 +132,135 @@
       }
 
     }
+/* LIVE-TICKER AUF DER STARTSEITE */
 
+.home-live-ticker {
+  width: min(900px, 92%);
+  margin: 0 auto 45px;
+}
+
+.home-live-title {
+  text-align: center;
+  color: #d00020;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+.home-live-card {
+  background: #111;
+  border: 2px solid #d00020;
+  border-radius: 16px;
+  padding: 25px 20px;
+  box-shadow: 0 0 25px rgba(208, 0, 32, 0.22);
+  text-align: center;
+}
+
+.home-live-status {
+  display: inline-block;
+  background: #d00020;
+  color: white;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.home-live-teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 15px;
+}
+
+.home-live-team {
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.home-live-score {
+  color: #d00020;
+  font-size: 46px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.home-live-minute {
+  margin-top: 10px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.home-live-minute strong {
+  color: white;
+}
+
+.home-live-events {
+  margin-top: 22px;
+  text-align: left;
+}
+
+.home-live-event {
+  background: #181818;
+  border-left: 4px solid #d00020;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 0 8px 8px 0;
+}
+
+.home-live-event-minute {
+  color: #d00020;
+  font-weight: 900;
+  margin-right: 8px;
+}
+
+.home-live-no-events {
+  color: #777;
+  text-align: center;
+  padding: 10px;
+}
+
+.home-live-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #d00020;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.home-live-button:hover {
+  background: #a80019;
+}
+
+@media (max-width: 600px) {
+
+  .home-live-ticker {
+    width: 94%;
+  }
+
+  .home-live-teams {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .home-live-score {
+    font-size: 40px;
+  }
+
+  .home-live-team {
+    font-size: 18px;
+  }
+
+}
   </style>
 
 </head>
@@ -277,8 +405,57 @@
 
 
   <main>
+<section class="home-live-ticker" id="homeLiveTicker">
 
-    <section class="cards">
+  <div class="home-live-title">
+  🔴 LIVE-TICKER
+</div>
+
+<div class="home-live-card">
+
+  <div class="home-live-status" id="homeLiveStatus">
+    KEIN SPIEL LIVE
+  </div>
+
+  <div class="home-live-teams">
+
+    <div class="home-live-team" id="liveHomeTeam">
+      ATSV Forchheim
+    </div>
+
+    <div class="home-live-score">
+      <span id="liveHomeScore">0</span>
+      :
+      <span id="liveAwayScore">0</span>
+    </div>
+
+    <div class="home-live-team" id="liveAwayTeam">
+      Gegner
+    </div>
+
+  </div>
+
+  <div class="home-live-minute">
+    Spielminute:
+    <strong id="liveCurrentMinute">-</strong>'
+  </div>
+
+  <div class="home-live-events" id="homeLiveEvents">
+    <div class="home-live-no-events">
+      Noch keine Ereignisse.
+    </div>
+  </div>
+
+  <a href="live.html" class="home-live-button">
+    🔴 LIVETICKER ÖFFNEN
+  </a>
+
+</div>
+
+</section>
+
+<section class="cards">
+    
 
       <a class="card" href="spieler.html">
         <span>01</span>
@@ -633,6 +810,247 @@ setInterval(runCountdown, 1000);
     });
   }
 </script>
+<script>
 
+const HOME_SUPABASE_URL =
+  "https://xmtrtpibldbiiikkkmnd.supabase.co";
+
+const HOME_SUPABASE_KEY =
+  "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+
+const homeSupabase =
+  window.supabase.createClient(
+    HOME_SUPABASE_URL,
+    HOME_SUPABASE_KEY
+  );
+
+
+async function loadHomeLiveTicker() {
+
+  const { data: match, error: matchError } =
+    await homeSupabase
+      .from("live_matches")
+      .select("*")
+      .eq("status", "live")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+
+  if (matchError) {
+
+    console.error(
+      "Fehler beim Laden des Live-Spiels:",
+      matchError
+    );
+
+    return;
+  }
+
+
+  const status =
+    document.getElementById("homeLiveStatus");
+
+
+  if (!match) {
+
+    status.textContent =
+      "KEIN SPIEL LIVE";
+
+    status.style.background =
+      "#333";
+
+    document.getElementById("liveHomeTeam")
+      .textContent = "ATSV Forchheim";
+
+    document.getElementById("liveAwayTeam")
+      .textContent = "Gegner";
+
+    document.getElementById("liveHomeScore")
+      .textContent = "0";
+
+    document.getElementById("liveAwayScore")
+      .textContent = "0";
+
+    document.getElementById("liveCurrentMinute")
+      .textContent = "-";
+
+    document.getElementById("homeLiveEvents").innerHTML =
+      '<div class="home-live-no-events">' +
+      'Aktuell findet kein Live-Spiel statt.' +
+      '</div>';
+
+    return;
+  }
+
+
+  status.textContent =
+    "🔴 LIVE";
+
+  status.style.background =
+    "#d00020";
+
+
+  document.getElementById("liveHomeTeam")
+    .textContent = match.home_team;
+
+  document.getElementById("liveAwayTeam")
+    .textContent = match.away_team;
+
+  document.getElementById("liveHomeScore")
+    .textContent = match.home_score;
+
+  document.getElementById("liveAwayScore")
+    .textContent = match.away_score;
+
+  document.getElementById("liveCurrentMinute")
+    .textContent = match.current_minute;
+
+
+  await loadHomeLiveEvents(match.id);
+
+}
+
+
+async function loadHomeLiveEvents(matchId) {
+
+  const { data: events, error } =
+    await homeSupabase
+      .from("live_events")
+      .select("*")
+      .eq("match_id", matchId)
+      .order("created_at", {
+        ascending: false
+      });
+
+
+  if (error) {
+
+    console.error(
+      "Fehler beim Laden der Ereignisse:",
+      error
+    );
+
+    return;
+  }
+
+
+  const container =
+    document.getElementById("homeLiveEvents");
+
+
+  if (!events || events.length === 0) {
+
+    container.innerHTML =
+      '<div class="home-live-no-events">' +
+      'Noch keine Ereignisse.' +
+      '</div>';
+
+    return;
+  }
+
+
+  container.innerHTML = "";
+
+
+  events.forEach(item => {
+
+    let message = "";
+
+
+    if (item.event_type === "homeGoal") {
+
+      message =
+        "⚽ TOR FÜR DEN ATSV! " +
+        (item.player || "") +
+        (item.description
+          ? " – " + item.description
+          : "");
+
+    }
+
+    else if (item.event_type === "awayGoal") {
+
+      message =
+        "⚽ Tor für den Gegner!";
+
+    }
+
+    else if (item.event_type === "yellow") {
+
+      message =
+        "🟨 Gelbe Karte " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "red") {
+
+      message =
+        "🟥 Rote Karte " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "substitution") {
+
+      message =
+        "🔄 Wechsel " +
+        (item.player || "");
+
+    }
+
+    else if (item.event_type === "halftime") {
+
+      message =
+        "⏱️ Halbzeit";
+
+    }
+
+    else if (item.event_type === "final") {
+
+      message =
+        "🏁 Abpfiff";
+
+    }
+
+    else {
+
+      message =
+        item.description || "Ereignis";
+
+    }
+
+
+    const event =
+      document.createElement("div");
+
+    event.className =
+      "home-live-event";
+
+
+    event.innerHTML =
+      '<span class="home-live-event-minute">' +
+      item.minute +
+      "'</span>" +
+      message;
+
+
+    container.appendChild(event);
+
+  });
+
+}
+
+
+loadHomeLiveTicker();
+
+
+setInterval(
+  loadHomeLiveTicker,
+  5000
+);
+
+</script>
 </body>
 </html>
