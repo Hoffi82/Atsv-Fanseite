@@ -339,7 +339,12 @@
         <button class="event-button" onclick="openEvent('final')">
           🏁 ABPFIFF
         </button>
-
+        <button
+        class="event-button"
+        onclick="resetLiveMatch()"
+>
+       🔄 SPIEL ZURÜCKSETZEN
+       </button>
       </div>
 
 
@@ -844,6 +849,74 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
   }
 }
 </script>
+async function resetLiveMatch() {
 
+  if (!currentMatch) {
+    alert("Kein aktives Spiel gefunden.");
+    return;
+  }
+
+  const confirmReset = confirm(
+    "Soll der Liveticker wirklich auf 0:0 zurückgesetzt werden?\n\n" +
+    "Alle bisherigen Ereignisse werden gelöscht."
+  );
+
+  if (!confirmReset) {
+    return;
+  }
+
+  const { error: eventsError } =
+    await supabaseClient
+      .from("live_events")
+      .delete()
+      .eq("match_id", currentMatch.id);
+
+  if (eventsError) {
+    console.error("Fehler beim Löschen:", eventsError);
+    alert("Die Ereignisse konnten nicht gelöscht werden.");
+    return;
+  }
+
+  const { error: matchError } =
+    await supabaseClient
+      .from("live_matches")
+      .update({
+        home_score: 0,
+        away_score: 0,
+        current_minute: 1,
+        status: "live"
+      })
+      .eq("id", currentMatch.id);
+
+  if (matchError) {
+    console.error("Fehler beim Zurücksetzen:", matchError);
+    alert("Der Spielstand konnte nicht zurückgesetzt werden.");
+    return;
+  }
+
+  currentMatch.home_score = 0;
+  currentMatch.away_score = 0;
+  currentMatch.current_minute = 1;
+
+  document.getElementById("homeScore").textContent = "0";
+  document.getElementById("awayScore").textContent = "0";
+  document.getElementById("currentMinute").textContent = "1";
+
+  document.getElementById("tickerEvents").innerHTML = `
+    <div class="ticker-event">
+      <span class="ticker-minute">1'</span>
+      Anpfiff – das Spiel läuft!
+    </div>
+  `;
+
+  document.getElementById("eventForm").classList.remove("active");
+  document.getElementById("eventText").value = "";
+  document.getElementById("eventMinute").value = 1;
+
+  selectedEvent = "";
+
+  alert("Der Liveticker wurde auf 0:0 zurückgesetzt.");
+}
+ </script> 
 </body>
 </html>
