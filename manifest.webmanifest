@@ -11,13 +11,13 @@
   "theme_color": "#d00020",
   "icons": [
     {
-      "src": "bilder/ATSV_Wappen_4K_transparent.png",
+      "src": "bilder/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "bilder/ATSV_Wappen_4K_transparent.png",
+      "src": "bilder/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
