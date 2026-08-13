@@ -921,9 +921,22 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
   async function startLiveMatch() {
 
   if (!currentMatch) {
-    alert("Kein aktives Spiel gefunden.");
-    return;
-  }
+    const { data, error } = await supabaseClient
+        .from("live_matches")
+        .select("*")
+        .eq("status", "scheduled")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+    if (error || !data) {
+        console.error("Kein geplantes Spiel gefunden:", error);
+        alert("Kein geplantes Spiel gefunden.");
+        return;
+    }
+
+    currentMatch = data;
+}
 
   if (!confirm(
     "Soll das Spiel jetzt gestartet werden?\n\n" +
