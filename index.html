@@ -302,6 +302,70 @@
   }
 
 }
+    /* ATSV NEWS */
+
+.news-section {
+  width: min(900px, 92%);
+  margin: 45px auto;
+}
+
+.news-title {
+  text-align: center;
+  color: #d00020;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.news-item {
+  background: #111;
+  border: 2px solid #d00020;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 0 20px rgba(208, 0, 32, 0.18);
+}
+
+.news-item-date {
+  color: #aaa;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.news-item-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.news-item-text {
+  color: #ddd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+
+  .news-section {
+    width: 94%;
+  }
+
+  .news-item {
+    padding: 15px;
+  }
+
+  .news-item-title {
+    font-size: 16px;
+  }
+
+}
   </style>
 
 </head>
@@ -496,6 +560,35 @@
 </div>
 
 </section>
+<section class="news-section">
+      
+
+  <div class="news-title">
+    📰 ATSV NEWS
+  </div>
+
+  <div class="news-list" id="newsList">
+    <article class="news-item">
+
+  <div class="news-item-date">
+    13.08.2026
+  </div>
+
+  <div class="news-item-title">
+    ATSV Forchheim startet in die neue Saison
+  </div>
+
+  <div class="news-item-text">
+    Die Vorbereitung auf die neue Saison läuft. Alle wichtigen Informationen rund um den ATSV Forchheim gibt es ab sofort hier auf der Fanseite.
+  </div>
+
+</article>
+
+  </div>
+
+
+    </section>
+
 
 <section class="cards">
     
