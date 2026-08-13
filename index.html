@@ -132,6 +132,47 @@
       }
 
     }
+     /* APP INSTALL BUTTON */
+
+.install-app-button {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+
+  background: #d00020;
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+
+  padding: 12px 18px;
+
+  font-size: 14px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  box-shadow: 0 0 15px rgba(208, 0, 32, 0.35);
+}
+
+.install-app-button:hover {
+  background: #a80019;
+}
+
+@media (max-width: 600px) {
+
+  .install-app-button {
+    top: 15px;
+    right: 15px;
+
+    padding: 10px 13px;
+
+    font-size: 12px;
+  }
+
+}
 /* LIVE-TICKER AUF DER STARTSEITE */
 
 .home-live-ticker {
@@ -268,7 +309,9 @@
 <body>
 
   <header class="hero">
-
+<button id="installAppButton" class="install-app-button">
+  📱 App installieren
+</button>
     <div class="badge">
   <img src="bilder/ATSV_Wappen_4K_transparent.png"
      alt="ATSV Forchheim Wappen"
@@ -1052,5 +1095,55 @@ setInterval(
 );
 
 </script>
+ <!-- PWA INSTALLATION -->
+
+<script>
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+
+  event.preventDefault();
+
+  deferredPrompt = event;
+
+  const installButton =
+    document.getElementById("installAppButton");
+
+  if (installButton) {
+    installButton.style.display = "block";
+  }
+
+});
+
+
+document
+  .getElementById("installAppButton")
+  .addEventListener("click", async () => {
+
+    if (!deferredPrompt) {
+
+      alert(
+        "Die App kann momentan nicht installiert werden. " +
+        "Bitte öffne die Seite in Chrome oder Edge."
+      );
+
+      return;
+    }
+
+    deferredPrompt.prompt();
+
+    const { outcome } =
+      await deferredPrompt.userChoice;
+
+    console.log(
+      "PWA Installation:",
+      outcome
+    );
+
+    deferredPrompt = null;
+
+  });
+
+</script> 
 </body>
 </html>
