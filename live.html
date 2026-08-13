@@ -340,6 +340,12 @@
           🏁 ABPFIFF
         </button>
         <button
+  class="event-button"
+  onclick="startLiveMatch()"
+>
+  🔴 SPIEL STARTEN
+</button>
+        <button
         class="event-button"
         onclick="resetLiveMatch()"
 >
@@ -911,6 +917,47 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
   selectedEvent = "";
 
   alert("Der Liveticker wurde auf 0:0 zurückgesetzt.");
+}
+  async function startLiveMatch() {
+
+  if (!currentMatch) {
+    alert("Kein aktives Spiel gefunden.");
+    return;
+  }
+
+  if (!confirm(
+    "Soll das Spiel jetzt gestartet werden?\n\n" +
+    "Der Liveticker wird auf LIVE und 0:0 gesetzt."
+  )) {
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("live_matches")
+    .update({
+      status: "live",
+      home_score: 0,
+      away_score: 0,
+      current_minute: 1
+    })
+    .eq("id", currentMatch.id);
+
+  if (error) {
+    console.error("Fehler beim Starten:", error);
+    alert("Das Spiel konnte nicht gestartet werden.");
+    return;
+  }
+
+  currentMatch.status = "live";
+  currentMatch.home_score = 0;
+  currentMatch.away_score = 0;
+  currentMatch.current_minute = 1;
+
+  document.getElementById("homeScore").textContent = "0";
+  document.getElementById("awayScore").textContent = "0";
+  document.getElementById("currentMinute").textContent = "1";
+
+  alert("Das Spiel ist jetzt LIVE!");
 }
 </script>
 
