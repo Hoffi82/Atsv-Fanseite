@@ -1060,12 +1060,12 @@ async function loadHomeLiveTicker() {
     .textContent = match.current_minute;
 
 
-  await loadHomeLiveEvents(match.id);
+  await loadHomeLiveEvents(match.id, match);
 
 }
 
 
-async function loadHomeLiveEvents(matchId) {
+ async function loadHomeLiveEvents(matchId, match) {
 
   const { data: events, error } =
     await homeSupabase
