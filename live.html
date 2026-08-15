@@ -1049,7 +1049,7 @@ if (new URLSearchParams(window.location.search).get("admin") === "1") {
     const { data, error } = await supabaseClient
         .from("live_matches")
         .select("*")
-        .eq("status", "scheduled")
+        .eq("status", "upcoming")
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
