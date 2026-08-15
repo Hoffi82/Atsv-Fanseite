@@ -980,7 +980,7 @@ const homeSupabase =
 
 async function loadHomeLiveTicker() {
 
-  const { data: match, error: matchError } =
+  let { data: match, error: matchError } =
     await homeSupabase
       .from("live_matches")
       .select("*")
@@ -1006,6 +1006,83 @@ async function loadHomeLiveTicker() {
 
 
   if (!match) {
+
+  const { data: upcomingMatch, error: upcomingError } =
+    await homeSupabase
+      .from("live_matches")
+      .select("*")
+      .eq("status", "upcoming")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+  if (upcomingError) {
+    console.error(
+      "Fehler beim Laden des kommenden Spiels:",
+      upcomingError
+    );
+    return;
+  }
+
+  if (upcomingMatch) {
+
+    status.textContent =
+      "📅 NÄCHSTES SPIEL";
+
+    status.style.background =
+      "#333";
+
+    document.getElementById("liveHomeTeam")
+      .textContent = upcomingMatch.home_team;
+
+    document.getElementById("liveAwayTeam")
+      .textContent = upcomingMatch.away_team;
+
+    document.getElementById("liveHomeScore")
+      .textContent = "0";
+
+    document.getElementById("liveAwayScore")
+      .textContent = "0";
+
+    document.getElementById("liveCurrentMinute")
+      .textContent = "-";
+
+    document.getElementById("homeLiveEvents").innerHTML =
+      '<div class="home-live-no-events">' +
+      'Sonntag, 23.08.2026 · 15:00 Uhr' +
+      '</div>';
+
+    return;
+  }
+
+  status.textContent =
+    "KEIN SPIEL LIVE";
+
+  status.style.background =
+    "#333";
+
+  document.getElementById("liveHomeTeam")
+    .textContent = "ATSV Forchheim";
+
+  document.getElementById("liveAwayTeam")
+    .textContent = "Gegner";
+
+  document.getElementById("liveHomeScore")
+    .textContent = "0";
+
+  document.getElementById("liveAwayScore")
+    .textContent = "0";
+
+  document.getElementById("liveCurrentMinute")
+    .textContent = "-";
+
+  document.getElementById("homeLiveEvents").innerHTML =
+    '<div class="home-live-no-events">' +
+    'Aktuell findet kein Live-Spiel statt.' +
+    '</div>';
+
+  return;
+}
 
     status.textContent =
       "KEIN SPIEL LIVE";
