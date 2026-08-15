@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v3";
+const CACHE_NAME = "atsv-fan-app-v4";
 
 const FILES_TO_CACHE = [
   "./",
