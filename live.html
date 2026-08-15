@@ -775,24 +775,39 @@ async function publishEvent() {
 
   if (selectedEvent === "homeGoal") {
 
-    newHomeScore++;
+  newHomeScore++;
 
-    message =
-      "⚽ TOR FÜR DEN ATSV! " +
-      (player || "") +
-      (text ? " – " + text : "");
+  const atsvIsHome =
+    (currentMatch.home_team || "")
+      .toLowerCase()
+      .includes("atsv");
 
-  }
+  message =
+    atsvIsHome
+      ? "⚽ TOR FÜR DEN ATSV! "
+      : "⚽ TOR FÜR DEN GEGNER! ";
 
+  message +=
+    (player || "") +
+    (text ? " – " + text : "");
 
-  else if (selectedEvent === "awayGoal") {
+}
 
-    newAwayScore++;
+else if (selectedEvent === "awayGoal") {
 
-    message =
-      "⚽ Tor für den Gegner!";
+  newAwayScore++;
 
-  }
+  const atsvIsHome =
+    (currentMatch.home_team || "")
+      .toLowerCase()
+      .includes("atsv");
+
+  message =
+    atsvIsHome
+      ? "⚽ TOR FÜR DEN GEGNER!"
+      : "⚽ TOR FÜR DEN ATSV!";
+
+}
 
 
   else if (selectedEvent === "yellow") {
