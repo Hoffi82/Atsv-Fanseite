@@ -595,23 +595,39 @@ async function loadLiveEvents(matchId) {
 
     let message = "";
 
-    if (item.event_type === "homeGoal") {
+   if (item.event_type === "homeGoal") {
 
-      message =
-        "⚽ TOR FÜR DEN ATSV! " +
-        (item.player || "") +
-        (item.description
-          ? " – " + item.description
-          : "");
+  const atsvIsHome =
+    (currentMatch.home_team || "")
+      .toLowerCase()
+      .includes("atsv");
 
-    }
+  message =
+    atsvIsHome
+      ? "⚽ TOR FÜR DEN ATSV! "
+      : "⚽ TOR FÜR DEN GEGNER! ";
 
-    else if (item.event_type === "awayGoal") {
+  message +=
+    (item.player || "") +
+    (item.description
+      ? " – " + item.description
+      : "");
 
-      message =
-        "⚽ Tor für den Gegner!";
+}
 
-    }
+else if (item.event_type === "awayGoal") {
+
+  const atsvIsHome =
+    (currentMatch.home_team || "")
+      .toLowerCase()
+      .includes("atsv");
+
+  message =
+    atsvIsHome
+      ? "⚽ TOR FÜR DEN GEGNER!"
+      : "⚽ TOR FÜR DEN ATSV!";
+
+}
 
     else if (item.event_type === "yellow") {
 
