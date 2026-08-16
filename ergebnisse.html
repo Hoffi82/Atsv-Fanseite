@@ -1,4 +1,1253 @@
 <!DOCTYPE html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ergebnisse – ATSV Forchheim</title><link rel="stylesheet" href="css/style.css"></head>
-<body><main class="page"><a class="back" href="index.html">← Zurück</a><p class="eyebrow">ATSV FORCHHEIM</p><h1>Ergebnisse</h1><p>Hier kommen Ergebnisse, Tabellen und Spieltage hin.</p></main></body></html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ergebnisse & Tabelle – ATSV Forchheim</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body {
+    margin: 0;
+    background: #090909;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.results-page {
+    min-height: 100vh;
+    padding: 25px 14px 100px;
+    background:
+        linear-gradient(135deg, #090909 0%, #151515 65%, #250b0b 100%);
+}
+
+.results-container {
+    width: min(950px, 100%);
+    margin: 0 auto;
+}
+
+.results-title {
+    text-align: center;
+    color: #d00020;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+.results-subtitle {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    color: #d00020;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 30px 0 15px;
+}
+
+/* =========================
+   ERGEBNISSE
+========================= */
+
+.result-card {
+    background: #111;
+    border: 1px solid #333;
+    border-left: 4px solid #d00020;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 12px;
+}
+
+.result-date {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.result-teams {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 15px;
+}
+
+.result-team {
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.result-team.away {
+    text-align: right;
+}
+
+.result-score {
+    font-size: 30px;
+    font-weight: 900;
+    color: #d00020;
+    white-space: nowrap;
+}
+
+.result-status {
+    display: inline-block;
+    margin-top: 13px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.sieg {
+    background: #17351f;
+    color: #6ee58a;
+}
+
+.unentschieden {
+    background: #3a3217;
+    color: #f1d66a;
+}
+
+.niederlage {
+    background: #3b1717;
+    color: #ff7777;
+}
+
+/* =========================
+   TABELLE
+========================= */
+
+.table-wrapper {
+    overflow-x: auto;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+thead {
+    background: #d00020;
+}
+
+th {
+    padding: 13px 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+td {
+    padding: 13px 8px;
+    border-bottom: 1px solid #292929;
+    text-align: center;
+    font-size: 14px;
+}
+
+td.team-name {
+    text-align: left;
+    font-weight: 800;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr.atsv-row {
+    background: rgba(208, 0, 32, 0.18);
+    box-shadow: inset 4px 0 0 #d00020;
+}
+
+.position {
+    font-weight: 900;
+}
+
+.points {
+    font-weight: 900;
+    color: #d00020;
+}
+
+.empty-state {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    color: #aaa;
+}
+
+.back-button {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0;
+    color: white;
+    text-decoration: none;
+    border: 1px solid #d00020;
+    padding: 11px 18px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.back-button:hover {
+    background: #d00020;
+}
+
+.loading {
+    text-align: center;
+    color: #aaa;
+    padding: 20px;
+}
+
+@media (max-width: 600px) {
+
+    .results-page {
+        padding: 20px 10px 80px;
+    }
+
+    .result-teams {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        text-align: center;
+    }
+
+    .result-team,
+    .result-team.away {
+        text-align: center;
+    }
+
+    .result-score {
+        font-size: 34px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<main class="results-page">
+
+<div class="results-container">
+
+    <div class="results-title">
+        ATSV Forchheim
+    </div>
+
+    <div class="results-subtitle">
+        Ergebnisse & Tabelle · Saison 2026/27
+    </div>
+
+
+    <!-- =========================
+         ERGEBNISSE
+    ========================== -->
+
+    <div class="section-title">
+        ⚽ Ergebnisse
+    </div>
+
+    <div id="resultsList">
+        <div class="loading">
+            Ergebnisse werden geladen ...
+        </div>
+    </div>
+
+
+    <!-- =========================
+         TABELLE
+    ========================== -->
+
+    <div class="section-title">
+        🏆 Tabelle
+    </div>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Pl.</th>
+                    <th>Verein</th>
+                    <th>Sp.</th>
+                    <th>S</th>
+                    <th>U</th>
+                    <th>N</th>
+                    <th>Tore</th>
+                    <th>Diff.</th>
+                    <th>Pkt.</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tableBody">
+
+                <tr>
+                    <td colspan="9">
+                        Tabelle wird geladen ...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <a href="index.html" class="back-button">
+        ← Zur Fanseite
+    </a>
+
+</div>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://xmtrtpibldbiiikkkmnd.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+let leagueTeams = [];
+let finishedMatches = [];
+
+
+/* =====================================
+   HILFSFUNKTIONEN
+===================================== */
+
+function cleanTeamName(name) {
+
+    return (name || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+}
+
+
+function isATSV(name) {
+
+    return cleanTeamName(name)
+        .toLowerCase()
+        .includes("atsv");
+
+}
+
+
+function formatDate(date) {
+
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString(
+        "de-DE",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =====================================
+   VEREINE AUS LIGA-SEITE LADEN
+===================================== */
+
+async function loadLeagueTeams() {
+
+    try {
+
+        const response =
+            await fetch("liga-26-27.html");
+
+        const html =
+            await response.text();
+
+        const parser =
+            new DOMParser();
+
+        const document =
+            parser.parseFromString(
+                html,
+                "text/html"
+            );
+
+
+        const cards =
+            document.querySelectorAll(
+                ".match-card"
+            );
+
+
+        const teams =
+            new Set();
+
+
+        cards.forEach(card => {
+
+            const home =
+                card.querySelector(
+                    ".teams .home"
+                );
+
+            const away =
+                card.querySelector(
+                    ".teams .away"
+                );
+
+
+            if (home) {
+
+                teams.add(
+                    cleanTeamName(
+                        home.textContent
+                    )
+                );
+
+            }
+
+
+            if (away) {
+
+                teams.add(
+                    cleanTeamName(
+                        away.textContent
+                    )
+                );
+
+            }
+
+        });
+
+
+        leagueTeams =
+            Array.from(teams);
+
+
+    } catch (error) {
+
+        console.error(
+            "Liga konnte nicht geladen werden:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   ERGEBNISSE AUS LIVETICKER
+===================================== */
+
+async function loadLiveResults() {
+
+    const {
+        data: matches,
+        error: matchError
+    } =
+        await supabaseClient
+            .from("live_matches")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
+
+
+    if (matchError) {
+
+        console.error(matchError);
+
+        return [];
+
+    }
+
+
+    const {
+        data: finalEvents,
+        error: eventError
+    } =
+        await supabaseClient
+            .from("live_events")
+            .select("match_id")
+            .eq(
+                "event_type",
+                "final"
+            );
+
+
+    if (eventError) {
+
+        console.error(eventError);
+
+        return [];
+
+    }
+
+
+    const finishedIds =
+        new Set(
+            (finalEvents || [])
+                .map(
+                    event =>
+                        event.match_id
+                )
+        );
+
+
+    return (matches || [])
+        .filter(
+            match =>
+                finishedIds.has(
+                    match.id
+                )
+        );
+
+}
+
+
+/* =====================================
+   ERGEBNISSE AUS DEM SPIELPLAN
+   (bereits eingetragene Ergebnisse)
+===================================== */
+
+async function loadScheduleResults() {
+
+    try {
+
+        const response =
+            await fetch("liga-26-27.html");
+
+        const html =
+            await response.text();
+
+        const parser =
+            new DOMParser();
+
+        const document =
+            parser.parseFromString(
+                html,
+                "text/html"
+            );
+
+
+        const cards =
+            document.querySelectorAll(
+                ".match-card"
+            );
+
+
+        const results = [];
+
+
+        cards.forEach(card => {
+
+            const home =
+                card.querySelector(
+                    ".teams .home"
+                );
+
+            const away =
+                card.querySelector(
+                    ".teams .away"
+                );
+
+            const score =
+                card.querySelector(
+                    ".result .played"
+                );
+
+            const date =
+                card.querySelector(
+                    ".match-date strong"
+                );
+
+
+            if (
+                home &&
+                away &&
+                score
+            ) {
+
+                const scoreText =
+                    score.textContent
+                        .trim();
+
+
+                const parts =
+                    scoreText.split(":");
+
+
+                if (
+                    parts.length === 2
+                ) {
+
+                    const homeScore =
+                        parseInt(
+                            parts[0]
+                        );
+
+                    const awayScore =
+                        parseInt(
+                            parts[1]
+                        );
+
+
+                    if (
+                        !isNaN(homeScore) &&
+                        !isNaN(awayScore)
+                    ) {
+
+                        results.push({
+
+                            home_team:
+                                cleanTeamName(
+                                    home.textContent
+                                ),
+
+                            away_team:
+                                cleanTeamName(
+                                    away.textContent
+                                ),
+
+                            home_score:
+                                homeScore,
+
+                            away_score:
+                                awayScore,
+
+                            created_at:
+                                date
+                                    ? date.textContent.trim()
+                                    : ""
+
+                        });
+
+                    }
+
+                }
+
+            }
+
+        });
+
+
+        return results;
+
+
+    } catch (error) {
+
+        console.error(
+            "Spielplan konnte nicht geladen werden:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/* =====================================
+   ERGEBNISSE ANZEIGEN
+===================================== */
+
+function renderResults() {
+
+    const container =
+        document.getElementById(
+            "resultsList"
+        );
+
+
+    if (!finishedMatches.length) {
+
+        container.innerHTML =
+            '<div class="empty-state">' +
+            'Noch keine Ergebnisse vorhanden.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        finishedMatches.map(
+            match => {
+
+                const home =
+                    Number(
+                        match.home_score || 0
+                    );
+
+                const away =
+                    Number(
+                        match.away_score || 0
+                    );
+
+
+                let status =
+                    "Unentschieden";
+
+                let statusClass =
+                    "unentschieden";
+
+
+                const atsvHome =
+                    isATSV(
+                        match.home_team
+                    );
+
+
+                const atsvAway =
+                    isATSV(
+                        match.away_team
+                    );
+
+
+                if (atsvHome) {
+
+                    if (home > away) {
+
+                        status =
+                            "Sieg";
+
+                        statusClass =
+                            "sieg";
+
+                    }
+
+                    if (home < away) {
+
+                        status =
+                            "Niederlage";
+
+                        statusClass =
+                            "niederlage";
+
+                    }
+
+                }
+
+
+                if (atsvAway) {
+
+                    if (away > home) {
+
+                        status =
+                            "Sieg";
+
+                        statusClass =
+                            "sieg";
+
+                    }
+
+                    if (away < home) {
+
+                        status =
+                            "Niederlage";
+
+                        statusClass =
+                            "niederlage";
+
+                    }
+
+                }
+
+
+                return `
+
+                <article class="result-card">
+
+                    <div class="result-date">
+                        ${formatDate(match.created_at)}
+                    </div>
+
+                    <div class="result-teams">
+
+                        <div class="result-team">
+                            ${cleanTeamName(match.home_team)}
+                        </div>
+
+                        <div class="result-score">
+                            ${home}:${away}
+                        </div>
+
+                        <div class="result-team away">
+                            ${cleanTeamName(match.away_team)}
+                        </div>
+
+                    </div>
+
+                    ${
+                        (atsvHome || atsvAway)
+                        ?
+                        `<span class="result-status ${statusClass}">
+                            ${status}
+                        </span>`
+                        :
+                        ""
+                    }
+
+                </article>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================
+   TABELLE BERECHNEN
+===================================== */
+
+function calculateTable() {
+
+    const table = {};
+
+
+    leagueTeams.forEach(
+        team => {
+
+            table[team] = {
+
+                team: team,
+
+                games: 0,
+
+                wins: 0,
+
+                draws: 0,
+
+                losses: 0,
+
+                goalsFor: 0,
+
+                goalsAgainst: 0,
+
+                points: 0
+
+            };
+
+        }
+    );
+
+
+    finishedMatches.forEach(
+        match => {
+
+            const home =
+                cleanTeamName(
+                    match.home_team
+                );
+
+            const away =
+                cleanTeamName(
+                    match.away_team
+                );
+
+
+            if (!table[home]) {
+
+                table[home] = {
+
+                    team: home,
+                    games: 0,
+                    wins: 0,
+                    draws: 0,
+                    losses: 0,
+                    goalsFor: 0,
+                    goalsAgainst: 0,
+                    points: 0
+
+                };
+
+            }
+
+
+            if (!table[away]) {
+
+                table[away] = {
+
+                    team: away,
+                    games: 0,
+                    wins: 0,
+                    draws: 0,
+                    losses: 0,
+                    goalsFor: 0,
+                    goalsAgainst: 0,
+                    points: 0
+
+                };
+
+            }
+
+
+            const homeScore =
+                Number(
+                    match.home_score || 0
+                );
+
+            const awayScore =
+                Number(
+                    match.away_score || 0
+                );
+
+
+            table[home].games++;
+
+            table[away].games++;
+
+
+            table[home].goalsFor +=
+                homeScore;
+
+            table[home].goalsAgainst +=
+                awayScore;
+
+
+            table[away].goalsFor +=
+                awayScore;
+
+            table[away].goalsAgainst +=
+                homeScore;
+
+
+            if (
+                homeScore >
+                awayScore
+            ) {
+
+                table[home].wins++;
+
+                table[home].points += 3;
+
+                table[away].losses++;
+
+            }
+
+
+            else if (
+                homeScore <
+                awayScore
+            ) {
+
+                table[away].wins++;
+
+                table[away].points += 3;
+
+                table[home].losses++;
+
+            }
+
+
+            else {
+
+                table[home].draws++;
+
+                table[away].draws++;
+
+                table[home].points++;
+
+                table[away].points++;
+
+            }
+
+        }
+    );
+
+
+    return Object.values(table)
+        .sort(
+            (a, b) => {
+
+                if (
+                    b.points !==
+                    a.points
+                ) {
+
+                    return (
+                        b.points -
+                        a.points
+                    );
+
+                }
+
+
+                const diffA =
+                    a.goalsFor -
+                    a.goalsAgainst;
+
+                const diffB =
+                    b.goalsFor -
+                    b.goalsAgainst;
+
+
+                if (
+                    diffB !== diffA
+                ) {
+
+                    return (
+                        diffB -
+                        diffA
+                    );
+
+                }
+
+
+                return (
+                    b.goalsFor -
+                    a.goalsFor
+                );
+
+            }
+        );
+
+}
+
+
+/* =====================================
+   TABELLE ANZEIGEN
+===================================== */
+
+function renderTable() {
+
+    const body =
+        document.getElementById(
+            "tableBody"
+        );
+
+
+    const table =
+        calculateTable();
+
+
+    if (!table.length) {
+
+        body.innerHTML =
+            `
+            <tr>
+                <td colspan="9">
+                    Noch keine Tabellendaten vorhanden.
+                </td>
+            </tr>
+            `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        table.map(
+            (club, index) => {
+
+                const diff =
+                    club.goalsFor -
+                    club.goalsAgainst;
+
+
+                const isATSVClub =
+                    isATSV(
+                        club.team
+                    );
+
+
+                return `
+
+                <tr class="${
+                    isATSVClub
+                    ? "atsv-row"
+                    : ""
+                }">
+
+                    <td class="position">
+                        ${index + 1}
+                    </td>
+
+                    <td class="team-name">
+                        ${
+                            isATSVClub
+                            ? "🔴 "
+                            : ""
+                        }
+                        ${club.team}
+                    </td>
+
+                    <td>
+                        ${club.games}
+                    </td>
+
+                    <td>
+                        ${club.wins}
+                    </td>
+
+                    <td>
+                        ${club.draws}
+                    </td>
+
+                    <td>
+                        ${club.losses}
+                    </td>
+
+                    <td>
+                        ${club.goalsFor}:${club.goalsAgainst}
+                    </td>
+
+                    <td>
+                        ${
+                            diff > 0
+                            ? "+" + diff
+                            : diff
+                        }
+                    </td>
+
+                    <td class="points">
+                        ${club.points}
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================
+   START
+===================================== */
+
+async function initResultsPage() {
+
+    await loadLeagueTeams();
+
+
+    const [
+        liveResults,
+        scheduleResults
+    ] = await Promise.all([
+        loadLiveResults(),
+        loadScheduleResults()
+    ]);
+
+
+    /*
+       Ergebnisse aus dem Spielplan
+       und dem Liveticker zusammenführen.
+    */
+
+    const combined = [];
+
+
+    scheduleResults.forEach(
+        result => {
+
+            combined.push(result);
+
+        }
+    );
+
+
+    liveResults.forEach(
+        result => {
+
+            const duplicate =
+                combined.some(
+                    existing =>
+
+                        cleanTeamName(
+                            existing.home_team
+                        ) ===
+                        cleanTeamName(
+                            result.home_team
+                        )
+
+                        &&
+
+                        cleanTeamName(
+                            existing.away_team
+                        ) ===
+                        cleanTeamName(
+                            result.away_team
+                        )
+                );
+
+
+            if (!duplicate) {
+
+                combined.push(result);
+
+            }
+
+        }
+    );
+
+
+    finishedMatches =
+        combined.sort(
+            (a, b) => {
+
+                return (
+                    new Date(
+                        b.created_at
+                    ) -
+
+                    new Date(
+                        a.created_at
+                    )
+                );
+
+            }
+        );
+
+
+    renderResults();
+
+    renderTable();
+
+}
+
+
+initResultsPage();
+
+</script>
+
+</body>
+</html>
