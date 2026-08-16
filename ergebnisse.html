@@ -1,331 +1,668 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Ergebnisse & Tabelle – ATSV Forchheim</title>
 
-<link rel="stylesheet" href="css/style.css">
+<link
+    rel="stylesheet"
+    href="css/style.css"
+>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
+
 
 <style>
 
+/* =========================================
+   GRUNDLAYOUT
+========================================= */
+
 body {
+
     margin: 0;
+
     background: #090909;
-    color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
 }
+
 
 .results-page {
+
     min-height: 100vh;
-    padding: 25px 14px 100px;
+
+    padding:
+        25px
+        14px
+        100px;
+
     background:
-        linear-gradient(135deg, #090909 0%, #151515 65%, #250b0b 100%);
+        linear-gradient(
+            135deg,
+            #090909 0%,
+            #151515 65%,
+            #250b0b 100%
+        );
+
 }
+
 
 .results-container {
-    width: min(950px, 100%);
-    margin: 0 auto;
+
+    width:
+        min(950px, 100%);
+
+    margin:
+        0 auto;
+
 }
+
+
+/* =========================================
+   ÜBERSCHRIFT
+========================================= */
 
 .results-title {
+
     text-align: center;
+
     color: #d00020;
+
     font-weight: 900;
+
     letter-spacing: 4px;
+
     text-transform: uppercase;
-    margin-top: 20px;
+
+    margin:
+        20px
+        0
+        8px;
+
 }
+
 
 .results-subtitle {
+
     text-align: center;
+
     color: #aaa;
+
     margin-bottom: 30px;
+
 }
+
 
 .section-title {
+
     color: #d00020;
+
     font-size: 20px;
+
     font-weight: 900;
+
     letter-spacing: 2px;
+
     text-transform: uppercase;
-    margin: 30px 0 15px;
+
+    margin:
+        30px
+        0
+        15px;
+
 }
 
-/* =========================
+
+/* =========================================
    ERGEBNISSE
-========================= */
+========================================= */
 
 .result-card {
+
     background: #111;
-    border: 1px solid #333;
-    border-left: 4px solid #d00020;
+
+    border:
+        1px solid #333;
+
+    border-left:
+        4px solid #d00020;
+
     border-radius: 12px;
+
     padding: 18px;
+
     margin-bottom: 12px;
+
 }
+
 
 .result-date {
+
     color: #999;
+
     font-size: 13px;
+
     margin-bottom: 12px;
+
 }
+
 
 .result-teams {
+
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+
+    grid-template-columns:
+        1fr
+        auto
+        1fr;
+
     align-items: center;
+
     gap: 15px;
+
 }
+
 
 .result-team {
+
     font-size: 17px;
+
     font-weight: 900;
+
 }
+
 
 .result-team.away {
+
     text-align: right;
+
 }
+
 
 .result-score {
+
     font-size: 30px;
+
     font-weight: 900;
+
     color: #d00020;
+
     white-space: nowrap;
+
 }
+
 
 .result-status {
+
     display: inline-block;
+
     margin-top: 13px;
-    padding: 5px 10px;
+
+    padding:
+        5px
+        10px;
+
     border-radius: 20px;
+
     font-size: 11px;
+
     font-weight: 900;
+
     text-transform: uppercase;
+
 }
+
 
 .sieg {
+
     background: #17351f;
+
     color: #6ee58a;
+
 }
+
 
 .unentschieden {
+
     background: #3a3217;
+
     color: #f1d66a;
+
 }
+
 
 .niederlage {
+
     background: #3b1717;
+
     color: #ff7777;
+
 }
 
-/* =========================
+
+/* =========================================
    TABELLE
-========================= */
+========================================= */
 
 .table-wrapper {
+
     overflow-x: auto;
+
     background: #111;
-    border: 1px solid #333;
+
+    border:
+        1px solid #333;
+
     border-radius: 12px;
+
 }
+
 
 table {
+
     width: 100%;
+
     border-collapse: collapse;
+
     min-width: 650px;
+
 }
+
 
 thead {
+
     background: #d00020;
+
 }
+
 
 th {
-    padding: 13px 8px;
+
+    padding:
+        13px
+        8px;
+
     font-size: 12px;
+
     text-transform: uppercase;
+
     white-space: nowrap;
+
 }
+
 
 td {
-    padding: 13px 8px;
-    border-bottom: 1px solid #292929;
+
+    padding:
+        13px
+        8px;
+
+    border-bottom:
+        1px solid #292929;
+
     text-align: center;
+
     font-size: 14px;
+
 }
+
 
 td.team-name {
+
     text-align: left;
+
     font-weight: 800;
+
 }
+
 
 tr:last-child td {
+
     border-bottom: none;
+
 }
+
 
 tr.atsv-row {
-    background: rgba(208, 0, 32, 0.18);
-    box-shadow: inset 4px 0 0 #d00020;
+
+    background:
+        rgba(
+            208,
+            0,
+            32,
+            0.18
+        );
+
+    box-shadow:
+        inset 4px 0 0 #d00020;
+
 }
+
 
 .position {
+
     font-weight: 900;
+
 }
+
 
 .points {
+
     font-weight: 900;
+
     color: #d00020;
+
 }
+
+
+/* =========================================
+   STATUS
+========================================= */
 
 .empty-state {
+
     background: #111;
-    border: 1px solid #333;
+
+    border:
+        1px solid #333;
+
     border-radius: 12px;
+
     padding: 25px;
+
     text-align: center;
+
     color: #aaa;
+
 }
 
-.back-button {
-    display: block;
-    width: fit-content;
-    margin: 30px auto 0;
-    color: white;
-    text-decoration: none;
-    border: 1px solid #d00020;
-    padding: 11px 18px;
-    text-transform: uppercase;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.back-button:hover {
-    background: #d00020;
-}
 
 .loading {
+
     text-align: center;
+
     color: #aaa;
+
     padding: 20px;
+
 }
+
+
+.error-state {
+
+    background: #111;
+
+    border:
+        1px solid #5a2020;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    color: #ff7777;
+
+}
+
+
+/* =========================================
+   ZURÜCK BUTTON
+========================================= */
+
+.back-button {
+
+    display: block;
+
+    width: fit-content;
+
+    margin:
+        30px
+        auto
+        0;
+
+    color: white;
+
+    text-decoration: none;
+
+    border:
+        1px solid #d00020;
+
+    padding:
+        11px
+        18px;
+
+    text-transform: uppercase;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+.back-button:hover {
+
+    background: #d00020;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 600px) {
 
     .results-page {
-        padding: 20px 10px 80px;
+
+        padding:
+            20px
+            10px
+            80px;
+
     }
 
+
     .result-teams {
+
         grid-template-columns: 1fr;
+
         gap: 6px;
+
         text-align: center;
+
     }
+
 
     .result-team,
     .result-team.away {
+
         text-align: center;
+
     }
 
+
     .result-score {
+
         font-size: 34px;
+
     }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <main class="results-page">
+
 
 <div class="results-container">
 
-    <div class="results-title">
-        ATSV Forchheim
-    </div>
 
-    <div class="results-subtitle">
-        Ergebnisse & Tabelle · Saison 2026/27
-    </div>
+<!-- =====================================
+     TITEL
+===================================== -->
 
+<div class="results-title">
 
-    <!-- =========================
-         ERGEBNISSE
-    ========================== -->
+    ATSV FORCHHEIM
 
-    <div class="section-title">
-        ⚽ Ergebnisse
-    </div>
-
-    <div id="resultsList">
-        <div class="loading">
-            Ergebnisse werden geladen ...
-        </div>
-    </div>
+</div>
 
 
-    <!-- =========================
-         TABELLE
-    ========================== -->
+<div class="results-subtitle">
 
-    <div class="section-title">
-        🏆 Tabelle
-    </div>
+    Ergebnisse & Tabelle · Saison 2026/27
 
-    <div class="table-wrapper">
+</div>
 
-        <table>
 
-            <thead>
 
-                <tr>
-                    <th>Pl.</th>
-                    <th>Verein</th>
-                    <th>Sp.</th>
-                    <th>S</th>
-                    <th>U</th>
-                    <th>N</th>
-                    <th>Tore</th>
-                    <th>Diff.</th>
-                    <th>Pkt.</th>
-                </tr>
+<!-- =====================================
+     ERGEBNISSE
+===================================== -->
 
-            </thead>
+<div class="section-title">
 
-            <tbody id="tableBody">
+    ⚽ Ergebnisse
 
-                <tr>
-                    <td colspan="9">
-                        Tabelle wird geladen ...
-                    </td>
-                </tr>
+</div>
 
-            </tbody>
 
-        </table>
+<div id="resultsList">
+
+    <div class="loading">
+
+        Ergebnisse werden geladen ...
 
     </div>
 
+</div>
 
-    <a href="index.html" class="back-button">
-        ← Zur Fanseite
-    </a>
+
+
+<!-- =====================================
+     TABELLE
+===================================== -->
+
+<div class="section-title">
+
+    🏆 Tabelle
+
+</div>
+
+
+<div class="table-wrapper">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+    <th>Pl.</th>
+
+    <th>Verein</th>
+
+    <th>Sp.</th>
+
+    <th>S</th>
+
+    <th>U</th>
+
+    <th>N</th>
+
+    <th>Tore</th>
+
+    <th>Diff.</th>
+
+    <th>Pkt.</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="tableBody">
+
+<tr>
+
+    <td colspan="9">
+
+        Tabelle wird geladen ...
+
+    </td>
+
+</tr>
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+<!-- =====================================
+     ZURÜCK
+===================================== -->
+
+<a
+    href="index.html"
+    class="back-button"
+>
+
+    ← Zur Fanseite
+
+</a>
+
 
 </div>
 
 </main>
 
 
+
 <script>
+
+/* =========================================
+   SUPABASE
+========================================= */
 
 const SUPABASE_URL =
     "https://xmtrtpibldbiiikkkmnd.supabase.co";
 
+
 const SUPABASE_KEY =
     "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+
 
 const supabaseClient =
     window.supabase.createClient(
@@ -334,21 +671,29 @@ const supabaseClient =
     );
 
 
+
+/* =========================================
+   VARIABLEN
+========================================= */
+
 let leagueTeams = [];
+
 let finishedMatches = [];
 
 
-/* =====================================
-   HILFSFUNKTIONEN
-===================================== */
+
+/* =========================================
+   HILFSFUNKTION
+========================================= */
 
 function cleanTeamName(name) {
 
-    return (name || "")
+    return String(name || "")
         .replace(/\s+/g, " ")
         .trim();
 
 }
+
 
 
 function isATSV(name) {
@@ -360,11 +705,45 @@ function isATSV(name) {
 }
 
 
-function formatDate(date) {
 
-    if (!date) return "";
+function formatDate(value) {
 
-    return new Date(date).toLocaleDateString(
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    /*
+       Datum aus dem Spielplan:
+       09.08.2026
+    */
+
+    if (
+        /^\d{2}\.\d{2}\.\d{4}$/
+            .test(value)
+    ) {
+
+        return value;
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        isNaN(date.getTime())
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
         "de-DE",
         {
             day: "2-digit",
@@ -376,24 +755,39 @@ function formatDate(date) {
 }
 
 
-/* =====================================
-   VEREINE AUS LIGA-SEITE LADEN
-===================================== */
+
+/* =========================================
+   LIGA VEREINE LADEN
+========================================= */
 
 async function loadLeagueTeams() {
 
     try {
 
         const response =
-            await fetch("liga-26-27.html");
+            await fetch(
+                "liga-26-27.html"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Liga-Datei konnte nicht geladen werden."
+            );
+
+        }
+
 
         const html =
             await response.text();
 
+
         const parser =
             new DOMParser();
 
-        const document =
+
+        const doc =
             parser.parseFromString(
                 html,
                 "text/html"
@@ -401,7 +795,7 @@ async function loadLeagueTeams() {
 
 
         const cards =
-            document.querySelectorAll(
+            doc.querySelectorAll(
                 ".match-card"
             );
 
@@ -412,10 +806,12 @@ async function loadLeagueTeams() {
 
         cards.forEach(card => {
 
+
             const home =
                 card.querySelector(
                     ".teams .home"
                 );
+
 
             const away =
                 card.querySelector(
@@ -451,114 +847,60 @@ async function loadLeagueTeams() {
             Array.from(teams);
 
 
+        console.log(
+            "Liga-Vereine:",
+            leagueTeams
+        );
+
+
     } catch (error) {
 
         console.error(
-            "Liga konnte nicht geladen werden:",
+            "Fehler beim Laden der Liga:",
             error
         );
 
+
+        leagueTeams = [];
+
     }
 
 }
 
 
-/* =====================================
-   ERGEBNISSE AUS LIVETICKER
-===================================== */
 
-async function loadLiveResults() {
-
-    const {
-        data: matches,
-        error: matchError
-    } =
-        await supabaseClient
-            .from("live_matches")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
-
-
-    if (matchError) {
-
-        console.error(matchError);
-
-        return [];
-
-    }
-
-
-    const {
-        data: finalEvents,
-        error: eventError
-    } =
-        await supabaseClient
-            .from("live_events")
-            .select("match_id")
-            .eq(
-                "event_type",
-                "final"
-            );
-
-
-    if (eventError) {
-
-        console.error(eventError);
-
-        return [];
-
-    }
-
-
-    const finishedIds =
-        new Set(
-            (finalEvents || [])
-                .map(
-                    event =>
-                        event.match_id
-                )
-        );
-
-
-    return (matches || [])
-    .filter(
-        match =>
-            finishedIds.has(match.id)
-            &&
-            leagueTeams.includes(
-                cleanTeamName(match.home_team)
-            )
-            &&
-            leagueTeams.includes(
-                cleanTeamName(match.away_team)
-            )
-    );
-}
-
-/* =====================================
-   ERGEBNISSE AUS DEM SPIELPLAN
-   (bereits eingetragene Ergebnisse)
-===================================== */
+/* =========================================
+   ERGEBNISSE AUS DEM OFFIZIELLEN SPIELPLAN
+========================================= */
 
 async function loadScheduleResults() {
 
     try {
 
         const response =
-            await fetch("liga-26-27.html");
+            await fetch(
+                "liga-26-27.html"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Spielplan konnte nicht geladen werden."
+            );
+
+        }
+
 
         const html =
             await response.text();
 
+
         const parser =
             new DOMParser();
 
-        const document =
+
+        const doc =
             parser.parseFromString(
                 html,
                 "text/html"
@@ -566,7 +908,7 @@ async function loadScheduleResults() {
 
 
         const cards =
-            document.querySelectorAll(
+            doc.querySelectorAll(
                 ".match-card"
             );
 
@@ -576,20 +918,24 @@ async function loadScheduleResults() {
 
         cards.forEach(card => {
 
+
             const home =
                 card.querySelector(
                     ".teams .home"
                 );
+
 
             const away =
                 card.querySelector(
                     ".teams .away"
                 );
 
+
             const score =
                 card.querySelector(
                     ".result .played"
                 );
+
 
             const date =
                 card.querySelector(
@@ -598,70 +944,120 @@ async function loadScheduleResults() {
 
 
             if (
-                home &&
-                away &&
-                score
+                !home ||
+                !away ||
+                !score
             ) {
 
-                const scoreText =
-                    score.textContent
-                        .trim();
-
-
-                const parts =
-                    scoreText.split(":");
-
-
-                if (
-                    parts.length === 2
-                ) {
-
-                    const homeScore =
-                        parseInt(
-                            parts[0]
-                        );
-
-                    const awayScore =
-                        parseInt(
-                            parts[1]
-                        );
-
-
-                    if (
-                        !isNaN(homeScore) &&
-                        !isNaN(awayScore)
-                    ) {
-
-                        results.push({
-
-                            home_team:
-                                cleanTeamName(
-                                    home.textContent
-                                ),
-
-                            away_team:
-                                cleanTeamName(
-                                    away.textContent
-                                ),
-
-                            home_score:
-                                homeScore,
-
-                            away_score:
-                                awayScore,
-
-                            created_at:
-                                date
-                                    ? date.textContent.trim()
-                                    : ""
-
-                        });
-
-                    }
-
-                }
+                return;
 
             }
+
+
+            const homeTeam =
+                cleanTeamName(
+                    home.textContent
+                );
+
+
+            const awayTeam =
+                cleanTeamName(
+                    away.textContent
+                );
+
+
+            /*
+               SICHERHEIT:
+               Beide Mannschaften müssen
+               zur Liga gehören.
+            */
+
+            if (
+                !leagueTeams.includes(
+                    homeTeam
+                )
+                ||
+                !leagueTeams.includes(
+                    awayTeam
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const scoreText =
+                score.textContent.trim();
+
+
+            if (
+                !scoreText.includes(":")
+            ) {
+
+                return;
+
+            }
+
+
+            const parts =
+                scoreText.split(":");
+
+
+            if (
+                parts.length !== 2
+            ) {
+
+                return;
+
+            }
+
+
+            const homeScore =
+                parseInt(
+                    parts[0].trim(),
+                    10
+                );
+
+
+            const awayScore =
+                parseInt(
+                    parts[1].trim(),
+                    10
+                );
+
+
+            if (
+                isNaN(homeScore)
+                ||
+                isNaN(awayScore)
+            ) {
+
+                return;
+
+            }
+
+
+            results.push({
+
+                home_team:
+                    homeTeam,
+
+                away_team:
+                    awayTeam,
+
+                home_score:
+                    homeScore,
+
+                away_score:
+                    awayScore,
+
+                created_at:
+                    date
+                    ? date.textContent.trim()
+                    : ""
+
+            });
 
         });
 
@@ -672,9 +1068,10 @@ async function loadScheduleResults() {
     } catch (error) {
 
         console.error(
-            "Spielplan konnte nicht geladen werden:",
+            "Fehler beim Spielplan:",
             error
         );
+
 
         return [];
 
@@ -683,9 +1080,229 @@ async function loadScheduleResults() {
 }
 
 
-/* =====================================
+
+/* =========================================
+   ERGEBNISSE AUS LIVETICKER
+========================================= */
+
+async function loadLiveResults() {
+
+    try {
+
+        const {
+            data: matches,
+            error: matchError
+        } =
+            await supabaseClient
+                .from("live_matches")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+        if (matchError) {
+
+            throw matchError;
+
+        }
+
+
+        const {
+            data: finalEvents,
+            error: eventError
+        } =
+            await supabaseClient
+                .from("live_events")
+                .select("match_id")
+                .eq(
+                    "event_type",
+                    "final"
+                );
+
+
+        if (eventError) {
+
+            throw eventError;
+
+        }
+
+
+        const finishedIds =
+            new Set(
+                (finalEvents || [])
+                    .map(
+                        event =>
+                            event.match_id
+                    )
+            );
+
+
+        /*
+           NUR echte Ligaspiele übernehmen.
+        */
+
+        return (matches || [])
+            .filter(match => {
+
+
+                if (
+                    !finishedIds.has(
+                        match.id
+                    )
+                ) {
+
+                    return false;
+
+                }
+
+
+                const home =
+                    cleanTeamName(
+                        match.home_team
+                    );
+
+
+                const away =
+                    cleanTeamName(
+                        match.away_team
+                    );
+
+
+                /*
+                   TEST GEGNER und
+                   andere Testspielgegner
+                   werden hier ausgeschlossen.
+                */
+
+                if (
+                    !leagueTeams.includes(
+                        home
+                    )
+                    ||
+                    !leagueTeams.includes(
+                        away
+                    )
+                ) {
+
+                    return false;
+
+                }
+
+
+                return true;
+
+            });
+
+
+    } catch (error) {
+
+        console.error(
+            "Fehler beim Liveticker:",
+            error
+        );
+
+
+        return [];
+
+    }
+
+}
+
+
+
+/* =========================================
+   ERGEBNISSE ZUSAMMENFÜHREN
+========================================= */
+
+function mergeResults(
+    scheduleResults,
+    liveResults
+) {
+
+    const combined = [];
+
+
+    /*
+       Zuerst die Ergebnisse aus
+       dem offiziellen Spielplan.
+    */
+
+    scheduleResults.forEach(
+        result => {
+
+            combined.push(
+                result
+            );
+
+        }
+    );
+
+
+    /*
+       Danach Liveticker-Ergebnisse.
+       Doppelte Spiele werden verhindert.
+    */
+
+    liveResults.forEach(
+        result => {
+
+
+            const duplicate =
+                combined.some(
+                    existing => {
+
+
+                        return (
+
+                            cleanTeamName(
+                                existing.home_team
+                            )
+                            ===
+                            cleanTeamName(
+                                result.home_team
+                            )
+
+                            &&
+
+                            cleanTeamName(
+                                existing.away_team
+                            )
+                            ===
+                            cleanTeamName(
+                                result.away_team
+                            )
+
+                        );
+
+                    }
+                );
+
+
+            if (!duplicate) {
+
+                combined.push(
+                    result
+                );
+
+            }
+
+        }
+    );
+
+
+    return combined;
+
+}
+
+
+
+/* =========================================
    ERGEBNISSE ANZEIGEN
-===================================== */
+========================================= */
 
 function renderResults() {
 
@@ -695,12 +1312,20 @@ function renderResults() {
         );
 
 
-    if (!finishedMatches.length) {
+    if (
+        !finishedMatches.length
+    ) {
 
         container.innerHTML =
-            '<div class="empty-state">' +
-            'Noch keine Ergebnisse vorhanden.' +
-            '</div>';
+
+            `
+            <div class="empty-state">
+
+                Noch keine Ergebnisse
+                vorhanden.
+
+            </div>
+            `;
 
         return;
 
@@ -708,25 +1333,21 @@ function renderResults() {
 
 
     container.innerHTML =
-        finishedMatches.map(
-            match => {
+
+        finishedMatches
+            .map(match => {
+
 
                 const home =
                     Number(
-                        match.home_score || 0
+                        match.home_score
                     );
+
 
                 const away =
                     Number(
-                        match.away_score || 0
+                        match.away_score
                     );
-
-
-                let status =
-                    "Unentschieden";
-
-                let statusClass =
-                    "unentschieden";
 
 
                 const atsvHome =
@@ -741,9 +1362,51 @@ function renderResults() {
                     );
 
 
-                if (atsvHome) {
+                let status =
+                    "";
 
-                    if (home > away) {
+
+                let statusClass =
+                    "";
+
+
+                if (
+                    atsvHome
+                    ||
+                    atsvAway
+                ) {
+
+
+                    let atsvScore;
+
+
+                    let opponentScore;
+
+
+                    if (atsvHome) {
+
+                        atsvScore =
+                            home;
+
+                        opponentScore =
+                            away;
+
+                    } else {
+
+                        atsvScore =
+                            away;
+
+                        opponentScore =
+                            home;
+
+                    }
+
+
+                    if (
+                        atsvScore
+                        >
+                        opponentScore
+                    ) {
 
                         status =
                             "Sieg";
@@ -753,7 +1416,11 @@ function renderResults() {
 
                     }
 
-                    if (home < away) {
+                    else if (
+                        atsvScore
+                        <
+                        opponentScore
+                    ) {
 
                         status =
                             "Niederlage";
@@ -763,28 +1430,13 @@ function renderResults() {
 
                     }
 
-                }
-
-
-                if (atsvAway) {
-
-                    if (away > home) {
+                    else {
 
                         status =
-                            "Sieg";
+                            "Unentschieden";
 
                         statusClass =
-                            "sieg";
-
-                    }
-
-                    if (away < home) {
-
-                        status =
-                            "Niederlage";
-
-                        statusClass =
-                            "niederlage";
+                            "unentschieden";
 
                     }
 
@@ -793,34 +1445,71 @@ function renderResults() {
 
                 return `
 
-                <article class="result-card">
+                <article
+                    class="result-card"
+                >
 
-                    <div class="result-date">
-                        ${formatDate(match.created_at)}
+                    <div
+                        class="result-date"
+                    >
+
+                        ${formatDate(
+                            match.created_at
+                        )}
+
                     </div>
 
-                    <div class="result-teams">
 
-                        <div class="result-team">
-                            ${cleanTeamName(match.home_team)}
+                    <div
+                        class="result-teams"
+                    >
+
+                        <div
+                            class="result-team"
+                        >
+
+                            ${cleanTeamName(
+                                match.home_team
+                            )}
+
                         </div>
 
-                        <div class="result-score">
+
+                        <div
+                            class="result-score"
+                        >
+
                             ${home}:${away}
+
                         </div>
 
-                        <div class="result-team away">
-                            ${cleanTeamName(match.away_team)}
+
+                        <div
+                            class="result-team away"
+                        >
+
+                            ${cleanTeamName(
+                                match.away_team
+                            )}
+
                         </div>
 
                     </div>
+
 
                     ${
-                        (atsvHome || atsvAway)
+                        status
                         ?
-                        `<span class="result-status ${statusClass}">
+                        `
+                        <span
+                            class="result-status
+                            ${statusClass}"
+                        >
+
                             ${status}
-                        </span>`
+
+                        </span>
+                        `
                         :
                         ""
                     }
@@ -829,41 +1518,57 @@ function renderResults() {
 
                 `;
 
-            }
-        ).join("");
+            })
+            .join("");
 
 }
 
 
-/* =====================================
+
+/* =========================================
    TABELLE BERECHNEN
-===================================== */
+========================================= */
 
 function calculateTable() {
 
     const table = {};
 
 
+    /*
+       ALLE Vereine der Liga anlegen.
+       Dadurch erscheinen auch Vereine
+       mit 0 Spielen.
+    */
+
     leagueTeams.forEach(
         team => {
 
+
             table[team] = {
 
-                team: team,
+                team:
+                    team,
 
-                games: 0,
+                games:
+                    0,
 
-                wins: 0,
+                wins:
+                    0,
 
-                draws: 0,
+                draws:
+                    0,
 
-                losses: 0,
+                losses:
+                    0,
 
-                goalsFor: 0,
+                goalsFor:
+                    0,
 
-                goalsAgainst: 0,
+                goalsAgainst:
+                    0,
 
-                points: 0
+                points:
+                    0
 
             };
 
@@ -871,13 +1576,20 @@ function calculateTable() {
     );
 
 
+    /*
+       Nur echte Ligaspiele
+       auswerten.
+    */
+
     finishedMatches.forEach(
         match => {
+
 
             const home =
                 cleanTeamName(
                     match.home_team
                 );
+
 
             const away =
                 cleanTeamName(
@@ -885,50 +1597,36 @@ function calculateTable() {
                 );
 
 
-            if (!table[home]) {
+            /*
+               Zusätzliche Sicherheit:
+               Fremde Mannschaften werden
+               nicht in die Tabelle aufgenommen.
+            */
 
-                table[home] = {
+            if (
+                !leagueTeams.includes(
+                    home
+                )
+                ||
+                !leagueTeams.includes(
+                    away
+                )
+            ) {
 
-                    team: home,
-                    games: 0,
-                    wins: 0,
-                    draws: 0,
-                    losses: 0,
-                    goalsFor: 0,
-                    goalsAgainst: 0,
-                    points: 0
-
-                };
-
-            }
-
-
-            if (!table[away]) {
-
-                table[away] = {
-
-                    team: away,
-                    games: 0,
-                    wins: 0,
-                    draws: 0,
-                    losses: 0,
-                    goalsFor: 0,
-                    goalsAgainst: 0,
-                    points: 0
-
-                };
+                return;
 
             }
 
 
             const homeScore =
                 Number(
-                    match.home_score || 0
+                    match.home_score
                 );
+
 
             const awayScore =
                 Number(
-                    match.away_score || 0
+                    match.away_score
                 );
 
 
@@ -952,9 +1650,11 @@ function calculateTable() {
 
 
             if (
-                homeScore >
+                homeScore
+                >
                 awayScore
             ) {
+
 
                 table[home].wins++;
 
@@ -962,13 +1662,15 @@ function calculateTable() {
 
                 table[away].losses++;
 
+
             }
 
-
             else if (
-                homeScore <
+                homeScore
+                <
                 awayScore
             ) {
+
 
                 table[away].wins++;
 
@@ -976,14 +1678,16 @@ function calculateTable() {
 
                 table[home].losses++;
 
+
             }
 
-
             else {
+
 
                 table[home].draws++;
 
                 table[away].draws++;
+
 
                 table[home].points++;
 
@@ -995,17 +1699,27 @@ function calculateTable() {
     );
 
 
+    /*
+       Tabelle sortieren:
+       1. Punkte
+       2. Tordifferenz
+       3. erzielte Tore
+    */
+
     return Object.values(table)
         .sort(
             (a, b) => {
 
+
                 if (
-                    b.points !==
+                    b.points
+                    !==
                     a.points
                 ) {
 
                     return (
-                        b.points -
+                        b.points
+                        -
                         a.points
                     );
 
@@ -1013,20 +1727,26 @@ function calculateTable() {
 
 
                 const diffA =
-                    a.goalsFor -
+                    a.goalsFor
+                    -
                     a.goalsAgainst;
 
+
                 const diffB =
-                    b.goalsFor -
+                    b.goalsFor
+                    -
                     b.goalsAgainst;
 
 
                 if (
-                    diffB !== diffA
+                    diffB
+                    !==
+                    diffA
                 ) {
 
                     return (
-                        diffB -
+                        diffB
+                        -
                         diffA
                     );
 
@@ -1034,7 +1754,8 @@ function calculateTable() {
 
 
                 return (
-                    b.goalsFor -
+                    b.goalsFor
+                    -
                     a.goalsFor
                 );
 
@@ -1044,9 +1765,10 @@ function calculateTable() {
 }
 
 
-/* =====================================
+
+/* =========================================
    TABELLE ANZEIGEN
-===================================== */
+========================================= */
 
 function renderTable() {
 
@@ -1060,14 +1782,21 @@ function renderTable() {
         calculateTable();
 
 
-    if (!table.length) {
+    if (
+        !table.length
+    ) {
 
         body.innerHTML =
+
             `
             <tr>
+
                 <td colspan="9">
-                    Noch keine Tabellendaten vorhanden.
+
+                    Keine Vereine gefunden.
+
                 </td>
+
             </tr>
             `;
 
@@ -1077,181 +1806,335 @@ function renderTable() {
 
 
     body.innerHTML =
-        table.map(
-            (club, index) => {
 
-                const diff =
-                    club.goalsFor -
-                    club.goalsAgainst;
+        table
+            .map(
+                (club, index) => {
 
 
-                const isATSVClub =
-                    isATSV(
-                        club.team
-                    );
+                    const diff =
+                        club.goalsFor
+                        -
+                        club.goalsAgainst;
 
 
-                return `
+                    const atsV =
+                        isATSV(
+                            club.team
+                        );
 
-                <tr class="${
-                    isATSVClub
-                    ? "atsv-row"
-                    : ""
-                }">
 
-                    <td class="position">
-                        ${index + 1}
-                    </td>
+                    return `
 
-                    <td class="team-name">
-                        ${
-                            isATSVClub
-                            ? "🔴 "
+                    <tr
+                        class="${
+                            atsV
+                            ? "atsv-row"
                             : ""
-                        }
-                        ${club.team}
-                    </td>
+                        }"
+                    >
 
-                    <td>
-                        ${club.games}
-                    </td>
 
-                    <td>
-                        ${club.wins}
-                    </td>
+                        <td
+                            class="position"
+                        >
 
-                    <td>
-                        ${club.draws}
-                    </td>
+                            ${index + 1}
 
-                    <td>
-                        ${club.losses}
-                    </td>
+                        </td>
 
-                    <td>
-                        ${club.goalsFor}:${club.goalsAgainst}
-                    </td>
 
-                    <td>
-                        ${
-                            diff > 0
-                            ? "+" + diff
-                            : diff
-                        }
-                    </td>
+                        <td
+                            class="team-name"
+                        >
 
-                    <td class="points">
-                        ${club.points}
-                    </td>
+                            ${
+                                atsV
+                                ? "🔴 "
+                                : ""
+                            }
 
-                </tr>
+                            ${club.team}
 
-                `;
+                        </td>
 
-            }
-        ).join("");
+
+                        <td>
+
+                            ${club.games}
+
+                        </td>
+
+
+                        <td>
+
+                            ${club.wins}
+
+                        </td>
+
+
+                        <td>
+
+                            ${club.draws}
+
+                        </td>
+
+
+                        <td>
+
+                            ${club.losses}
+
+                        </td>
+
+
+                        <td>
+
+                            ${club.goalsFor}
+                            :
+                            ${club.goalsAgainst}
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                diff > 0
+                                ? "+" + diff
+                                : diff
+                            }
+
+                        </td>
+
+
+                        <td
+                            class="points"
+                        >
+
+                            ${club.points}
+
+                        </td>
+
+
+                    </tr>
+
+                    `;
+
+                }
+            )
+            .join("");
 
 }
 
 
-/* =====================================
-   START
-===================================== */
+
+/* =========================================
+   SEITE STARTEN
+========================================= */
 
 async function initResultsPage() {
 
-    await loadLeagueTeams();
+    try {
 
 
-    const [
-        liveResults,
-        scheduleResults
-    ] = await Promise.all([
-        loadLiveResults(),
-        loadScheduleResults()
-    ]);
+        /*
+           1. Vereine aus der Liga laden
+        */
+
+        await loadLeagueTeams();
 
 
-    /*
-       Ergebnisse aus dem Spielplan
-       und dem Liveticker zusammenführen.
-    */
+        /*
+           Wenn keine Vereine gefunden
+           wurden, abbrechen.
+        */
 
-    const combined = [];
+        if (
+            leagueTeams.length === 0
+        ) {
 
+            document.getElementById(
+                "resultsList"
+            ).innerHTML =
 
-    scheduleResults.forEach(
-        result => {
+                `
+                <div class="error-state">
 
-            combined.push(result);
+                    Die Liga konnte nicht
+                    geladen werden.
 
-        }
-    );
-
-
-    liveResults.forEach(
-        result => {
-
-            const duplicate =
-                combined.some(
-                    existing =>
-
-                        cleanTeamName(
-                            existing.home_team
-                        ) ===
-                        cleanTeamName(
-                            result.home_team
-                        )
-
-                        &&
-
-                        cleanTeamName(
-                            existing.away_team
-                        ) ===
-                        cleanTeamName(
-                            result.away_team
-                        )
-                );
+                </div>
+                `;
 
 
-            if (!duplicate) {
+            document.getElementById(
+                "tableBody"
+            ).innerHTML =
 
-                combined.push(result);
+                `
+                <tr>
 
-            }
+                    <td colspan="9">
+
+                        Liga konnte nicht
+                        geladen werden.
+
+                    </td>
+
+                </tr>
+                `;
+
+
+            return;
 
         }
-    );
 
 
-    finishedMatches =
-        combined.sort(
+        /*
+           2. Offizielle Ergebnisse laden
+        */
+
+        const scheduleResults =
+            await loadScheduleResults();
+
+
+        /*
+           3. Liveticker-Ergebnisse laden
+        */
+
+        const liveResults =
+            await loadLiveResults();
+
+
+        /*
+           4. Zusammenführen
+        */
+
+        finishedMatches =
+            mergeResults(
+                scheduleResults,
+                liveResults
+            );
+
+
+        /*
+           5. Neueste Spiele zuerst
+        */
+
+        finishedMatches.sort(
             (a, b) => {
 
-                return (
-                    new Date(
-                        b.created_at
-                    ) -
 
+                const dateA =
                     new Date(
                         a.created_at
+                    );
+
+
+                const dateB =
+                    new Date(
+                        b.created_at
+                    );
+
+
+                if (
+                    isNaN(
+                        dateA.getTime()
                     )
+                ) {
+
+                    return 1;
+
+                }
+
+
+                if (
+                    isNaN(
+                        dateB.getTime()
+                    )
+                ) {
+
+                    return -1;
+
+                }
+
+
+                return (
+                    dateB
+                    -
+                    dateA
                 );
 
             }
         );
 
 
-    renderResults();
+        /*
+           6. Anzeigen
+        */
 
-    renderTable();
+        renderResults();
+
+        renderTable();
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(
+            "Fehler auf Ergebnisse-Seite:",
+            error
+        );
+
+
+        document.getElementById(
+            "resultsList"
+        ).innerHTML =
+
+            `
+            <div class="error-state">
+
+                Die Ergebnisse konnten
+                nicht geladen werden.
+
+            </div>
+            `;
+
+
+        document.getElementById(
+            "tableBody"
+        ).innerHTML =
+
+            `
+            <tr>
+
+                <td colspan="9">
+
+                    Fehler beim Laden
+                    der Tabelle.
+
+                </td>
+
+            </tr>
+            `;
+
+    }
 
 }
 
+
+
+/* =========================================
+   START
+========================================= */
 
 initResultsPage();
 
 </script>
 
+
 </body>
+
 </html>
