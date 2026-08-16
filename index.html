@@ -1011,32 +1011,31 @@ async function loadHomeLiveTicker() {
 
   if (!match) {
 
-  status.textContent = "📅 NÄCHSTES SPIEL";
+    status.textContent =
+      "📅 NÄCHSTES SPIEL";
 
-  status.style.background = "#333";
+    status.style.background =
+      "#333";
 
-  document.getElementById("liveHomeTeam")
-    .textContent = "ATSV Forchheim";
+    document.getElementById("liveHomeTeam")
+      .textContent =
+        "ATSV Forchheim";
 
-  document.getElementById("liveAwayTeam")
-    .textContent = "DJK Erlangen II";
+    document.getElementById("liveAwayTeam")
+      .textContent =
+        "DJK Erlangen II";
 
-  document.getElementById("liveHomeScore")
-    .textContent = "0";
+    document.getElementById("liveHomeScore")
+      .textContent =
+        "0";
 
-  document.getElementById("liveAwayScore")
-    .textContent = "0";
+    document.getElementById("liveAwayScore")
+      .textContent =
+        "0";
 
-  document.getElementById("liveCurrentMinute")
-    .textContent = "-";
-
-  document.getElementById("homeLiveEvents").innerHTML =
-    '<div class="home-live-no-events">' +
-    'Sonntag, 23.08.2026 · 15:00 Uhr' +
-    '</div>';
-
-  return;
-}
+    document.getElementById("liveCurrentMinute")
+      .textContent =
+        "-";
 
     document.getElementById("homeLiveEvents").innerHTML =
       '<div class="home-live-no-events">' +
@@ -1045,37 +1044,6 @@ async function loadHomeLiveTicker() {
 
     return;
   }
-
-  status.textContent =
-    "KEIN SPIEL LIVE";
-
-  status.style.background =
-    "#333";
-
-  document.getElementById("liveHomeTeam")
-    .textContent = "ATSV Forchheim";
-
-  document.getElementById("liveAwayTeam")
-    .textContent = "Gegner";
-
-  document.getElementById("liveHomeScore")
-    .textContent = "0";
-
-  document.getElementById("liveAwayScore")
-    .textContent = "0";
-
-  document.getElementById("liveCurrentMinute")
-    .textContent = "-";
-
-  document.getElementById("homeLiveEvents").innerHTML =
-    '<div class="home-live-no-events">' +
-    'Aktuell findet kein Live-Spiel statt.' +
-    '</div>';
-
-  return;
-}
-
-    
 
 
   status.textContent =
@@ -1086,25 +1054,32 @@ async function loadHomeLiveTicker() {
 
 
   document.getElementById("liveHomeTeam")
-    .textContent = match.home_team;
+    .textContent =
+      match.home_team;
 
   document.getElementById("liveAwayTeam")
-    .textContent = match.away_team;
+    .textContent =
+      match.away_team;
 
   document.getElementById("liveHomeScore")
-    .textContent = match.home_score;
+    .textContent =
+      match.home_score;
 
   document.getElementById("liveAwayScore")
-    .textContent = match.away_score;
+    .textContent =
+      match.away_score;
 
   document.getElementById("liveCurrentMinute")
-    .textContent = match.current_minute;
+    .textContent =
+      match.current_minute;
 
 
-   loadHomeLiveEvents(match.id, match);
+  loadHomeLiveEvents(
+    match.id,
+    match
+  );
 
 }
-
 
  async function loadHomeLiveEvents(matchId, match) {
 
