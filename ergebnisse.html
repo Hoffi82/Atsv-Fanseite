@@ -526,14 +526,18 @@ async function loadLiveResults() {
 
 
     return (matches || [])
-        .filter(
-            match =>
-                finishedIds.has(
-                    match.id
-                )
-        );
-
-}
+    .filter(
+        match =>
+            finishedIds.has(match.id)
+            &&
+            leagueTeams.includes(
+                cleanTeamName(match.home_team)
+            )
+            &&
+            leagueTeams.includes(
+                cleanTeamName(match.away_team)
+            )
+    );
 
 
 /* =====================================
