@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v7";
+const CACHE_NAME = "atsv-fan-app-v8";
 
 const FILES_TO_CACHE = [
   "./",
@@ -32,6 +32,28 @@ self.addEventListener("activate", event => {
   self.clients.claim();
 });
 
+async function injectPushFix(response) {
+  try {
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("text/html")) return response;
+
+    const html = await response.text();
+    const fixedHtml = html.replace(
+      "</body>",
+      '<script id="atsv-push-fix-script" src="./js/script.js?v=8"></script></body>'
+    );
+
+    return new Response(fixedHtml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+  } catch (error) {
+    console.error("ATSV HTML-Push-Fix konnte nicht injiziert werden:", error);
+    return response;
+  }
+}
+
 self.addEventListener("fetch", event => {
   const request = event.request;
 
@@ -41,35 +63,18 @@ self.addEventListener("fetch", event => {
         .then(async response => {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
-
-          try {
-            const contentType = response.headers.get("content-type") || "";
-            if (contentType.includes("text/html")) {
-              const html = await response.text();
-              if (!html.includes("atsv-push-fix-script")) {
-                const fixedHtml = html.replace(
-                  "</body>",
-                  '<script id="atsv-push-fix-script" src="./js/script.js"></script></body>'
-                );
-                return new Response(fixedHtml, {
-                  status: response.status,
-                  statusText: response.statusText,
-                  headers: response.headers
-                });
-              }
-              return new Response(html, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: response.headers
-              });
-            }
-          } catch (error) {
-            console.error("ATSV HTML-Push-Fix konnte nicht injiziert werden:", error);
-          }
-          return response;
+          return injectPushFix(response);
         })
-        .catch(() => caches.match(request))
+        .catch(async () => {
+          const cached = await caches.match(request);
+          return cached ? injectPushFix(cached) : cached;
+        })
     );
+    return;
+  }
+
+  if (new URL(request.url).pathname.endsWith("/js/script.js")) {
+    event.respondWith(fetch(request, { cache: "no-store" }));
     return;
   }
 
