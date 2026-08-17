@@ -3,7 +3,7 @@
 
 const ATSV_SUPABASE_URL = "https://xmtrtpibldbiiikkkmnd.supabase.co";
 const ATSV_SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
-const ATSV_VAPID_PUBLIC_KEY = "BNutasq785psdK-HJOL0V3PH5zEA972WgtSINhjrSV9Pjcb2yNdItgDMqG8YQYvK1roxvUz2VQy0Fr76A3PIGDg";
+const ATSV_VAPID_PUBLIC_KEY = "BMAhQ9LSniSmZDTjza6FHf9-RGG-0qCd6diob0khvQFs4EqzoJMAwka2eniWHtubyMbGcYin6z2DVtx-mUmV-go";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
