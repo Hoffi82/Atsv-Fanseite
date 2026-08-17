@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATSV News Verwaltung</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-serif}.page{min-height:100vh;padding:30px 16px 80px;background:linear-gradient(135deg,#090909 0%,#151515 65%,#250b0b 100%)}.container{width:min(800px,100%);margin:auto}.title{text-align:center;color:#d00020;font-weight:900;letter-spacing:4px;text-transform:uppercase}.subtitle{text-align:center;color:#aaa;margin:8px 0 25px}.card{background:#111;border:1px solid #333;border-radius:16px;padding:22px;margin-top:18px}.card h2{margin-top:0;color:#d00020;font-size:18px}.news-item{border:1px solid #444;border-radius:12px;padding:16px;margin:12px 0;background:#0d0d0d}.news-date{color:#aaa;font-size:13px}.news-title{font-size:18px;font-weight:900;margin:7px 0}.news-text{color:#ddd;line-height:1.5}.delete{margin-top:12px;background:#d00020;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:900;cursor:pointer}.delete:hover{opacity:.85}.message{text-align:center;color:#aaa;margin-top:12px}.back{display:block;width:max-content;margin:22px auto;color:#fff;text-decoration:none;border:1px solid #444;padding:10px 16px}.login input{display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0;background:#080808;color:#fff;border:1px solid #444;border-radius:8px}.login button{width:100%;padding:13px;background:#d00020;color:#fff;border:0;border-radius:8px;font-weight:900;cursor:pointer}.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="page"><div class="container">
+<div class="title">ATSV Forchheim</div><div class="subtitle">📰 News-Verwaltung</div>
+<div class="card login" id="loginPanel"><h2>🔐 Admin-Anmeldung</h2><input id="email" type="email" placeholder="E-Mail"><input id="password" type="password" placeholder="Passwort"><button onclick="login()">🔐 ANMELDEN</button><div id="loginMessage" class="message"></div></div>
+<div class="card hidden" id="adminPanel"><h2>📰 Ältere News löschen</h2><div id="newsList"></div><div id="adminMessage" class="message"></div></div>
+<a class="back" href="index.html">← Zur Fanseite</a>
+</div></div>
+<script>
+const SUPABASE_URL="https://xmtrtpibldbiiikkkmnd.supabase.co";
+const SUPABASE_KEY="sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+async function showAdmin(){document.getElementById('loginPanel').classList.add('hidden');document.getElementById('adminPanel').classList.remove('hidden');await loadNews();}
+async function login(){const email=document.getElementById('email').value.trim(),password=document.getElementById('password').value;const m=document.getElementById('loginMessage');const {error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){m.textContent='Anmeldung fehlgeschlagen.';console.error(error);return}m.textContent='';await showAdmin();}
+async function checkSession(){const {data}=await supabaseClient.auth.getSession();if(data.session) await showAdmin();}
+async function loadNews(){const list=document.getElementById('newsList');list.innerHTML='<div class="message">News werden geladen...</div>';const {data,error}=await supabaseClient.from('news').select('*').order('date',{ascending:false}).order('created_at',{ascending:false});if(error){list.innerHTML='<div class="message">News konnten nicht geladen werden.</div>';console.error(error);return}if(!data||data.length===0){list.innerHTML='<div class="message">Keine News vorhanden.</div>';return}list.innerHTML='';data.forEach(n=>{const item=document.createElement('div');item.className='news-item';item.innerHTML='<div class="news-date">'+escapeHtml(n.date||'')+'</div><div class="news-title">'+escapeHtml(n.title||'')+'</div><div class="news-text">'+escapeHtml(n.text||'')+'</div><button class="delete" onclick="deleteNews(\''+n.id+'\')">🗑️ NEWS LÖSCHEN</button>';list.appendChild(item)})}
+async function deleteNews(id){if(!confirm('Möchtest du diese News wirklich löschen?'))return;const {error}=await supabaseClient.from('news').delete().eq('id',id);if(error){document.getElementById('adminMessage').textContent='Die News konnte nicht gelöscht werden.';console.error(error);return}document.getElementById('adminMessage').textContent='✅ News wurde gelöscht.';await loadNews();}
+function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+checkSession();
+</script>
+</body>
+</html>
