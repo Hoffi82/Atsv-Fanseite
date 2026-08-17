@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v8";
+const CACHE_NAME = "atsv-fan-app-v9";
 
 const FILES_TO_CACHE = [
   "./",
@@ -38,9 +38,18 @@ async function injectPushFix(response) {
     if (!contentType.includes("text/html")) return response;
 
     const html = await response.text();
-    const fixedHtml = html.replace(
+
+    // Wichtig: Die alte Inline-Push-Funktion im index.html darf den Button
+    // nicht mehr auslösen. Wir entfernen nur den onclick-Aufruf und hängen
+    // anschließend unsere zentrale Push-Funktion an den Button.
+    const cleanedHtml = html.replace(
+      'onclick="enablePushNotifications()"',
+      ''
+    );
+
+    const fixedHtml = cleanedHtml.replace(
       "</body>",
-      '<script id="atsv-push-fix-script" src="./js/script.js?v=8"></script></body>'
+      '<script id="atsv-push-fix-script" src="./js/script.js?v=9"></script></body>'
     );
 
     return new Response(fixedHtml, {
@@ -59,7 +68,7 @@ self.addEventListener("fetch", event => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then(async response => {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
