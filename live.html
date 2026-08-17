@@ -604,15 +604,8 @@ async function loadActiveMatch() {
     data.away_team;
 }
 
-  currentMatch = data;
-updateGoalButtons();
-  document.getElementById("homeScore").textContent = data.home_score;
-  document.getElementById("awayScore").textContent = data.away_score;
-  document.getElementById("currentMinute").textContent = data.current_minute;
+  
 
-  document.querySelector(".team").textContent = data.home_team;
-  document.querySelectorAll(".team")[1].textContent = data.away_team;
-}
 
 async function loadLiveEvents(matchId) {
 
