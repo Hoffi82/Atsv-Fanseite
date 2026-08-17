@@ -1,4 +1,336 @@
 <!DOCTYPE html>
-<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Galerie – ATSV Forchheim</title><link rel="stylesheet" href="css/style.css"></head>
-<body><main class="page"><a class="back" href="index.html">← Zurück</a><p class="eyebrow">ATSV FORCHHEIM</p><h1>Galerie</h1><p>Hier entsteht unsere Bildergalerie.</p></main></body></html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bildergalerie der ATSV Forchheim Fanseite">
+
+    <title>Galerie – ATSV Forchheim</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .gallery-page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .gallery-intro {
+            color: #aaa;
+            text-align: center;
+            margin: 10px 0 25px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            background: #111;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
+        }
+
+        .gallery-item:hover {
+            border-color: #d00020;
+        }
+
+        .gallery-item img {
+            display: block;
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        .gallery-watermark {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-18deg);
+            color: rgba(255, 255, 255, 0.32);
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            white-space: nowrap;
+        }
+
+        .gallery-label {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 10px 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,.9));
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            padding-top: 28px;
+        }
+
+        .gallery-protection {
+            margin: 18px 0 22px;
+            padding: 10px 14px;
+            border-left: 3px solid #d00020;
+            background: #111;
+            color: #999;
+            font-size: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.94);
+        }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 95vw;
+            max-height: 92vh;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .lightbox-content img {
+            display: block;
+            max-width: 95vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border: 2px solid #d00020;
+            border-radius: 8px;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        .lightbox-watermark {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transform: rotate(-18deg);
+            color: rgba(255, 255, 255, 0.28);
+            font-size: clamp(20px, 4vw, 42px);
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 5px rgba(0,0,0,.8);
+            white-space: nowrap;
+        }
+
+        .lightbox-close {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            width: 44px;
+            height: 44px;
+            border: 1px solid #d00020;
+            border-radius: 50%;
+            background: #111;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .lightbox-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border: 1px solid #d00020;
+            border-radius: 50%;
+            background: #111;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .lightbox-prev { left: 18px; }
+        .lightbox-next { right: 18px; }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 700px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .gallery-item img {
+                height: 250px;
+            }
+
+            .gallery-watermark {
+                font-size: 20px;
+            }
+
+            .lightbox {
+                padding: 12px;
+            }
+
+            .lightbox-prev { left: 8px; }
+            .lightbox-next { right: 8px; }
+        }
+    </style>
+</head>
+
+<body>
+<main class="page gallery-page">
+
+    <a class="back" href="index.html">← Zurück</a>
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+    <h1>Galerie</h1>
+
+    <p class="gallery-intro">Bilder und besondere Momente rund um den ATSV Forchheim.</p>
+
+    <div class="gallery-protection">
+        🔒 Die Bilder sind mit einem sichtbaren Fanseiten-Wasserzeichen versehen und gegen normales Kopieren und Speichern geschützt.
+    </div>
+
+    <section class="gallery-grid" id="gallery" aria-label="Bildergalerie">
+
+        <div class="gallery-item" data-index="0" data-title="Abu – Spieler des Turniers">
+            <img src="bilder/galerie/Abu%20Spieler%20des%20Tuniers.jpg" alt="Abu – Spieler des Turniers" draggable="false">
+            <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
+            <div class="gallery-label">Abu – Spieler des Turniers</div>
+        </div>
+
+        <div class="gallery-item" data-index="1" data-title="Denis – Bester Spieler">
+            <img src="bilder/galerie/Denis%20Bester%20Spieler.jpg" alt="Denis – Bester Spieler" draggable="false">
+            <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
+            <div class="gallery-label">Denis – Bester Spieler</div>
+        </div>
+
+        <div class="gallery-item" data-index="2" data-title="Die Mannschaft">
+            <img src="bilder/galerie/Die%20Mannschaft.jpg" alt="Die Mannschaft" draggable="false">
+            <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
+            <div class="gallery-label">Die Mannschaft</div>
+        </div>
+
+        <div class="gallery-item" data-index="3" data-title="Luis – Bester Keeper">
+            <img src="bilder/galerie/Luis%20Bester%20Keeper.jpg" alt="Luis – Bester Keeper" draggable="false">
+            <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
+            <div class="gallery-label">Luis – Bester Keeper</div>
+        </div>
+
+    </section>
+</main>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Schließen">×</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Vorheriges Bild">‹</button>
+
+    <div class="lightbox-content">
+        <img id="lightboxImage" src="" alt="" draggable="false">
+        <div class="lightbox-watermark">ATSV FORCHHEIM FANSEITE</div>
+    </div>
+
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Nächstes Bild">›</button>
+</div>
+
+<script>
+(() => {
+    const items = [...document.querySelectorAll('.gallery-item')];
+    const lightbox = document.getElementById('lightbox');
+    const image = document.getElementById('lightboxImage');
+    const close = document.getElementById('lightboxClose');
+    const prev = document.getElementById('lightboxPrev');
+    const next = document.getElementById('lightboxNext');
+    let current = 0;
+
+    function show(index) {
+        current = (index + items.length) % items.length;
+        const item = items[current];
+        const source = item.querySelector('img');
+        image.src = source.src;
+        image.alt = source.alt;
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function hide() {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+        image.src = '';
+        document.body.style.overflow = '';
+    }
+
+    items.forEach((item, index) => {
+        item.addEventListener('click', () => show(index));
+    });
+
+    close.addEventListener('click', hide);
+    prev.addEventListener('click', (event) => { event.stopPropagation(); show(current - 1); });
+    next.addEventListener('click', (event) => { event.stopPropagation(); show(current + 1); });
+
+    lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) hide();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (!lightbox.classList.contains('open')) return;
+        if (event.key === 'Escape') hide();
+        if (event.key === 'ArrowLeft') show(current - 1);
+        if (event.key === 'ArrowRight') show(current + 1);
+    });
+
+    // Schutz gegen normales Kontextmenü, Ziehen und Kopieren auf der Galerie.
+    document.addEventListener('contextmenu', (event) => {
+        if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
+    });
+
+    document.addEventListener('dragstart', (event) => {
+        if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
+    });
+
+    document.addEventListener('selectstart', (event) => {
+        if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if ((event.ctrlKey || event.metaKey) && ['s', 'u', 'c'].includes(event.key.toLowerCase())) {
+            if (event.target.closest('.gallery-page, .lightbox') || lightbox.classList.contains('open')) {
+                event.preventDefault();
+            }
+        }
+    });
+})();
+</script>
+
+</body>
+</html>
