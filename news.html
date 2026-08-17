@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATSV News – Fanseite</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { margin:0; background:#090909; color:#fff; font-family:Arial,Helvetica,sans-serif; }
+    .news-page { min-height:100vh; padding:30px 16px 90px; background:linear-gradient(135deg,#090909 0%,#151515 65%,#250b0b 100%); }
+    .news-container { width:min(900px,100%); margin:0 auto; }
+    .news-header { text-align:center; margin:10px 0 30px; }
+    .news-eyebrow { color:#d00020; font-weight:900; letter-spacing:4px; text-transform:uppercase; }
+    .news-header h1 { margin:10px 0 8px; font-size:36px; letter-spacing:2px; }
+    .news-header p { color:#aaa; margin:0; }
+    .news-list { display:flex; flex-direction:column; gap:16px; }
+    .news-card { background:#111; border:2px solid #d00020; border-radius:14px; padding:22px; box-shadow:0 0 22px rgba(208,0,32,.18); }
+    .news-date { color:#999; font-size:13px; margin-bottom:8px; }
+    .news-card h2 { margin:0 0 10px; color:#fff; font-size:22px; }
+    .news-text { color:#ddd; line-height:1.65; white-space:pre-wrap; }
+    .empty, .error { background:#111; border:1px solid #333; border-radius:12px; padding:22px; text-align:center; color:#aaa; }
+    .back-button { display:block; width:max-content; margin:25px auto 0; color:#fff; text-decoration:none; border:1px solid #444; padding:11px 18px; font-weight:800; }
+    .back-button:hover { background:#d00020; border-color:#d00020; }
+    @media(max-width:600px){ .news-page{padding:20px 12px 80px;} .news-header h1{font-size:29px;} .news-card{padding:17px;} .news-card h2{font-size:19px;} }
+  </style>
+</head>
+<body>
+  <main class="news-page">
+    <div class="news-container">
+      <header class="news-header">
+        <div class="news-eyebrow">ATSV FORCHHEIM</div>
+        <h1>📰 ATSV NEWS</h1>
+        <p>Aktuelle Nachrichten rund um den ATSV Forchheim</p>
+      </header>
+
+      <section id="newsList" class="news-list">
+        <div class="empty">News werden geladen …</div>
+      </section>
+
+      <a href="index.html" class="back-button">← Zurück zur Fanseite</a>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://xmtrtpibldbiiikkkmnd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function formatDate(value) {
+      if (!value) return "";
+      const parts = value.split("-");
+      if (parts.length !== 3) return value;
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+
+    async function loadNews() {
+      const list = document.getElementById("newsList");
+      const { data, error } = await supabaseClient
+        .from("news")
+        .select("title, text, date")
+        .order("date", { ascending:false });
+
+      if (error) {
+        console.error("News-Fehler:", error);
+        list.innerHTML = '<div class="error">Die News konnten momentan nicht geladen werden.</div>';
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = '<div class="empty">Aktuell gibt es noch keine News.</div>';
+        return;
+      }
+
+      list.innerHTML = data.map(item => `
+        <article class="news-card">
+          <div class="news-date">${formatDate(item.date)}</div>
+          <h2>${escapeHtml(item.title || "")}</h2>
+          <div class="news-text">${escapeHtml(item.text || "")}</div>
+        </article>
+      `).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    loadNews();
+  </script>
+</body>
+</html>
