@@ -11,7 +11,7 @@
 
     <style>
         .gallery-page {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto;
         }
 
@@ -37,11 +37,11 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-touch-callout: none;
-            box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
         }
 
         .gallery-item:hover {
             border-color: #d00020;
+            box-shadow: 0 0 18px rgba(208,0,32,.25);
         }
 
         .gallery-item img {
@@ -56,19 +56,18 @@
 
         .gallery-watermark {
             position: absolute;
-            inset: 0;
+            left: 7%;
+            right: 7%;
+            top: 50%;
+            transform: translateY(-50%) rotate(-12deg);
             pointer-events: none;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: rotate(-18deg);
-            color: rgba(255, 255, 255, 0.32);
-            font-size: 25px;
+            color: rgba(255,255,255,.30);
+            font-size: clamp(13px, 2.1vw, 25px);
             font-weight: 900;
-            letter-spacing: 2px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            letter-spacing: 1px;
+            text-align: center;
             white-space: nowrap;
+            text-shadow: 0 2px 4px rgba(0,0,0,.8);
         }
 
         .gallery-label {
@@ -76,12 +75,11 @@
             left: 0;
             right: 0;
             bottom: 0;
-            padding: 10px 12px;
-            background: linear-gradient(transparent, rgba(0,0,0,.9));
+            padding: 28px 12px 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,.92));
             color: white;
             font-weight: 800;
             font-size: 13px;
-            padding-top: 28px;
         }
 
         .gallery-protection {
@@ -95,36 +93,91 @@
             text-align: center;
         }
 
+        /* Großansicht im Stil eines echten Galerie-Viewers */
         .lightbox {
             position: fixed;
             inset: 0;
             z-index: 9999;
             display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.94);
+            flex-direction: column;
+            background: rgba(0,0,0,.97);
+            padding: 12px 18px 18px;
         }
 
         .lightbox.open {
             display: flex;
         }
 
+        .lightbox-header {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 4px 12px 10px;
+            border-bottom: 1px solid #292929;
+        }
+
+        .lightbox-brand-title {
+            color: #fff;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .lightbox-brand-subtitle {
+            margin-top: 6px;
+            color: #999;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .lightbox-close {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 112px;
+            height: 44px;
+            justify-content: center;
+            border: 1px solid #d00020;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .lightbox-stage {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 55px;
+        }
+
         .lightbox-content {
             position: relative;
-            max-width: 95vw;
-            max-height: 92vh;
-            user-select: none;
-            -webkit-user-select: none;
+            max-width: min(92vw, 1200px);
+            max-height: 100%;
+            overflow: hidden;
+            border: 2px solid #d00020;
+            border-radius: 12px;
+            background: #080808;
+            box-shadow: 0 0 30px rgba(208,0,32,.16);
         }
 
         .lightbox-content img {
             display: block;
-            max-width: 95vw;
-            max-height: 82vh;
+            max-width: min(92vw, 1200px);
+            max-height: 68vh;
+            width: auto;
+            height: auto;
             object-fit: contain;
-            border: 2px solid #d00020;
-            border-radius: 8px;
             user-select: none;
             -webkit-user-drag: none;
             pointer-events: none;
@@ -132,52 +185,127 @@
 
         .lightbox-watermark {
             position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            left: 9%;
+            right: 9%;
+            top: 50%;
+            transform: translateY(-50%) rotate(-8deg);
             pointer-events: none;
-            transform: rotate(-18deg);
-            color: rgba(255, 255, 255, 0.28);
-            font-size: clamp(20px, 4vw, 42px);
+            color: rgba(255,255,255,.31);
+            font-size: clamp(16px, 3vw, 38px);
             font-weight: 900;
-            letter-spacing: 3px;
-            text-shadow: 0 2px 5px rgba(0,0,0,.8);
+            letter-spacing: 2px;
+            line-height: 1;
+            text-align: center;
             white-space: nowrap;
-        }
-
-        .lightbox-close {
-            position: fixed;
-            top: 18px;
-            right: 22px;
-            width: 44px;
-            height: 44px;
-            border: 1px solid #d00020;
-            border-radius: 50%;
-            background: #111;
-            color: white;
-            font-size: 25px;
-            cursor: pointer;
-            z-index: 10000;
+            text-shadow: 0 2px 5px rgba(0,0,0,.85);
+            border-top: 2px solid rgba(208,0,32,.65);
+            border-bottom: 2px solid rgba(208,0,32,.65);
+            padding: 8px 4px;
         }
 
         .lightbox-nav {
-            position: fixed;
+            position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border: 1px solid #d00020;
             border-radius: 50%;
             background: #111;
             color: white;
-            font-size: 24px;
+            font-size: 30px;
+            line-height: 1;
             cursor: pointer;
-            z-index: 10000;
+            z-index: 2;
         }
 
-        .lightbox-prev { left: 18px; }
-        .lightbox-next { right: 18px; }
+        .lightbox-prev { left: 5px; }
+        .lightbox-next { right: 5px; }
+
+        .lightbox-info {
+            position: absolute;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            width: min(90%, 1200px);
+            padding: 50px 22px 18px;
+            background: linear-gradient(transparent, rgba(0,0,0,.95));
+            pointer-events: none;
+        }
+
+        .lightbox-caption {
+            color: #fff;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .lightbox-subcaption {
+            margin-top: 5px;
+            color: #ccc;
+            font-size: 13px;
+        }
+
+        .lightbox-counter {
+            position: absolute;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            padding: 7px 14px;
+            border-radius: 18px;
+            background: rgba(0,0,0,.75);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            z-index: 3;
+        }
+
+        .lightbox-fullscreen {
+            position: absolute;
+            right: 18px;
+            bottom: 18px;
+            width: 42px;
+            height: 42px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: rgba(0,0,0,.8);
+            color: white;
+            cursor: pointer;
+            z-index: 3;
+            font-size: 20px;
+        }
+
+        .lightbox-thumbs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 8px 0 2px;
+        }
+
+        .lightbox-thumb {
+            width: 120px;
+            height: 76px;
+            flex: 0 0 auto;
+            padding: 0;
+            border: 2px solid #333;
+            border-radius: 9px;
+            overflow: hidden;
+            background: #111;
+            cursor: pointer;
+        }
+
+        .lightbox-thumb.active {
+            border-color: #d00020;
+            box-shadow: 0 0 12px rgba(208,0,32,.35);
+        }
+
+        .lightbox-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
 
         .back {
             display: inline-block;
@@ -194,16 +322,89 @@
                 height: 250px;
             }
 
-            .gallery-watermark {
-                font-size: 20px;
-            }
-
             .lightbox {
-                padding: 12px;
+                padding: 6px 7px 8px;
             }
 
-            .lightbox-prev { left: 8px; }
-            .lightbox-next { right: 8px; }
+            .lightbox-header {
+                min-height: 58px;
+                padding: 2px 5px 7px;
+            }
+
+            .lightbox-brand-title {
+                font-size: 22px;
+            }
+
+            .lightbox-brand-subtitle {
+                font-size: 10px;
+                letter-spacing: 1.5px;
+            }
+
+            .lightbox-close {
+                min-width: 42px;
+                width: 42px;
+                font-size: 0;
+            }
+
+            .lightbox-close::before {
+                content: '×';
+                font-size: 27px;
+            }
+
+            .lightbox-stage {
+                padding: 8px 35px;
+            }
+
+            .lightbox-content img {
+                max-width: 94vw;
+                max-height: 64vh;
+            }
+
+            .lightbox-watermark {
+                left: 5%;
+                right: 5%;
+                font-size: clamp(12px, 4vw, 22px);
+                letter-spacing: 1px;
+                padding: 6px 2px;
+            }
+
+            .lightbox-nav {
+                width: 38px;
+                height: 38px;
+                font-size: 25px;
+            }
+
+            .lightbox-prev { left: 2px; }
+            .lightbox-next { right: 2px; }
+
+            .lightbox-info {
+                bottom: 14px;
+                padding: 42px 10px 10px;
+            }
+
+            .lightbox-caption {
+                font-size: 16px;
+            }
+
+            .lightbox-subcaption {
+                font-size: 11px;
+            }
+
+            .lightbox-counter {
+                bottom: 12px;
+            }
+
+            .lightbox-fullscreen {
+                right: 8px;
+                bottom: 10px;
+                width: 38px;
+                height: 38px;
+            }
+
+            .lightbox-thumb {
+                width: 82px;
+                height: 55px;
+            }
         }
     </style>
 </head>
@@ -222,62 +423,103 @@
     </div>
 
     <section class="gallery-grid" id="gallery" aria-label="Bildergalerie">
-
-        <div class="gallery-item" data-index="0" data-title="Abu – Spieler des Turniers">
+        <div class="gallery-item" data-index="0" data-title="Abu – Spieler des Turniers" data-subtitle="Hallenturnier • ATSV Forchheim">
             <img src="bilder/galerie/Abu%20Spieler%20des%20Tuniers.jpg" alt="Abu – Spieler des Turniers" draggable="false">
             <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
             <div class="gallery-label">Abu – Spieler des Turniers</div>
         </div>
 
-        <div class="gallery-item" data-index="1" data-title="Denis – Bester Spieler">
+        <div class="gallery-item" data-index="1" data-title="Denis – Bester Spieler" data-subtitle="Hallenturnier • ATSV Forchheim">
             <img src="bilder/galerie/Denis%20Bester%20Spieler.jpg" alt="Denis – Bester Spieler" draggable="false">
             <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
             <div class="gallery-label">Denis – Bester Spieler</div>
         </div>
 
-        <div class="gallery-item" data-index="2" data-title="Die Mannschaft">
+        <div class="gallery-item" data-index="2" data-title="Die Mannschaft" data-subtitle="ATSV Forchheim">
             <img src="bilder/galerie/Die%20Mannschaft.jpg" alt="Die Mannschaft" draggable="false">
             <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
             <div class="gallery-label">Die Mannschaft</div>
         </div>
 
-        <div class="gallery-item" data-index="3" data-title="Luis – Bester Keeper">
+        <div class="gallery-item" data-index="3" data-title="Luis – Bester Keeper" data-subtitle="ATSV Forchheim">
             <img src="bilder/galerie/Luis%20Bester%20Keeper.jpg" alt="Luis – Bester Keeper" draggable="false">
             <div class="gallery-watermark">ATSV FORCHHEIM FANSEITE</div>
             <div class="gallery-label">Luis – Bester Keeper</div>
         </div>
-
     </section>
 </main>
 
 <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Schließen">×</button>
-    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Vorheriges Bild">‹</button>
-
-    <div class="lightbox-content">
-        <img id="lightboxImage" src="" alt="" draggable="false">
-        <div class="lightbox-watermark">ATSV FORCHHEIM FANSEITE</div>
+    <div class="lightbox-header">
+        <div>
+            <div class="lightbox-brand-title">GALERIE</div>
+            <div class="lightbox-brand-subtitle">ATSV FORCHHEIM FANSEITE</div>
+        </div>
+        <button class="lightbox-close" id="lightboxClose" aria-label="Schließen">× <span>Schließen</span></button>
     </div>
 
-    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Nächstes Bild">›</button>
+    <div class="lightbox-stage">
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Vorheriges Bild">‹</button>
+
+        <div class="lightbox-content" id="lightboxContent">
+            <img id="lightboxImage" src="" alt="" draggable="false">
+            <div class="lightbox-watermark">ATSV FORCHHEIM FANSEITE</div>
+            <div class="lightbox-info">
+                <div class="lightbox-caption" id="lightboxCaption"></div>
+                <div class="lightbox-subcaption" id="lightboxSubcaption"></div>
+            </div>
+            <div class="lightbox-counter" id="lightboxCounter">1 / 4</div>
+            <button class="lightbox-fullscreen" id="lightboxFullscreen" aria-label="Vollbild">⛶</button>
+        </div>
+
+        <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Nächstes Bild">›</button>
+    </div>
+
+    <div class="lightbox-thumbs" id="lightboxThumbs"></div>
 </div>
 
 <script>
 (() => {
     const items = [...document.querySelectorAll('.gallery-item')];
     const lightbox = document.getElementById('lightbox');
+    const content = document.getElementById('lightboxContent');
     const image = document.getElementById('lightboxImage');
+    const caption = document.getElementById('lightboxCaption');
+    const subcaption = document.getElementById('lightboxSubcaption');
+    const counter = document.getElementById('lightboxCounter');
+    const thumbs = document.getElementById('lightboxThumbs');
     const close = document.getElementById('lightboxClose');
     const prev = document.getElementById('lightboxPrev');
     const next = document.getElementById('lightboxNext');
+    const fullscreen = document.getElementById('lightboxFullscreen');
     let current = 0;
+
+    items.forEach((item, index) => {
+        const thumb = document.createElement('button');
+        thumb.className = 'lightbox-thumb';
+        thumb.type = 'button';
+        thumb.setAttribute('aria-label', item.dataset.title || `Bild ${index + 1}`);
+        thumb.innerHTML = `<img src="${item.querySelector('img').src}" alt="" draggable="false">`;
+        thumb.addEventListener('click', () => show(index));
+        thumbs.appendChild(thumb);
+    });
+
+    const thumbButtons = [...document.querySelectorAll('.lightbox-thumb')];
 
     function show(index) {
         current = (index + items.length) % items.length;
         const item = items[current];
         const source = item.querySelector('img');
+
         image.src = source.src;
         image.alt = source.alt;
+        caption.textContent = item.dataset.title || source.alt;
+        subcaption.textContent = item.dataset.subtitle || 'ATSV Forchheim';
+        counter.textContent = `${current + 1} / ${items.length}`;
+
+        thumbButtons.forEach((button, i) => button.classList.toggle('active', i === current));
+        thumbButtons[current]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
         lightbox.classList.add('open');
         lightbox.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
@@ -290,40 +532,48 @@
         document.body.style.overflow = '';
     }
 
-    items.forEach((item, index) => {
-        item.addEventListener('click', () => show(index));
-    });
-
+    items.forEach((item, index) => item.addEventListener('click', () => show(index)));
     close.addEventListener('click', hide);
-    prev.addEventListener('click', (event) => { event.stopPropagation(); show(current - 1); });
-    next.addEventListener('click', (event) => { event.stopPropagation(); show(current + 1); });
+    prev.addEventListener('click', event => { event.stopPropagation(); show(current - 1); });
+    next.addEventListener('click', event => { event.stopPropagation(); show(current + 1); });
 
-    lightbox.addEventListener('click', (event) => {
+    lightbox.addEventListener('click', event => {
         if (event.target === lightbox) hide();
     });
 
-    document.addEventListener('keydown', (event) => {
+    fullscreen.addEventListener('click', async event => {
+        event.stopPropagation();
+        try {
+            if (!document.fullscreenElement) {
+                await content.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (_) {}
+    });
+
+    document.addEventListener('keydown', event => {
         if (!lightbox.classList.contains('open')) return;
         if (event.key === 'Escape') hide();
         if (event.key === 'ArrowLeft') show(current - 1);
         if (event.key === 'ArrowRight') show(current + 1);
     });
 
-    // Schutz gegen normales Kontextmenü, Ziehen und Kopieren auf der Galerie.
-    document.addEventListener('contextmenu', (event) => {
+    // Schutz gegen normales Kontextmenü, Ziehen, Markieren und Kopieren.
+    document.addEventListener('contextmenu', event => {
         if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
     });
 
-    document.addEventListener('dragstart', (event) => {
+    document.addEventListener('dragstart', event => {
         if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
     });
 
-    document.addEventListener('selectstart', (event) => {
+    document.addEventListener('selectstart', event => {
         if (event.target.closest('.gallery-page, .lightbox')) event.preventDefault();
     });
 
-    document.addEventListener('keydown', (event) => {
-        if ((event.ctrlKey || event.metaKey) && ['s', 'u', 'c'].includes(event.key.toLowerCase())) {
+    document.addEventListener('keydown', event => {
+        if ((event.ctrlKey || event.metaKey) && ['s','u','c'].includes(event.key.toLowerCase())) {
             if (event.target.closest('.gallery-page, .lightbox') || lightbox.classList.contains('open')) {
                 event.preventDefault();
             }
