@@ -43,6 +43,15 @@ async function atsVEnablePush() {
     const registration = await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
 
+    // Wenn der VAPID-Key geändert wurde, darf ein vorhandenes Browser-Abo
+    // mit dem alten Key nicht weiterverwendet werden. In diesem Fall wird es
+    // einmalig sauber abgemeldet und mit dem aktuellen Key neu erstellt.
+    const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
+    if (subscription && savedVapidKey !== ATSV_VAPID_PUBLIC_KEY) {
+      await subscription.unsubscribe();
+      subscription = null;
+    }
+
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
@@ -64,21 +73,35 @@ async function atsVEnablePush() {
       ATSV_SUPABASE_KEY
     );
 
-    // Kein upsert/onConflict mehr: Die vorhandene Tabelle benötigt dafür
-    // keinen UNIQUE-Index auf endpoint. Wir verwenden einen normalen INSERT.
-    const { error } = await supabase
+    // Bereits vorhandenes Abo für denselben Endpoint nicht doppelt speichern.
+    const { data: existing, error: lookupError } = await supabase
       .from("push_subscriptions")
-      .insert({ endpoint, p256dh, auth });
+      .select("id")
+      .eq("endpoint", endpoint)
+      .limit(1);
 
-    if (error) {
+    if (lookupError) {
       throw new Error(
-        `Supabase ${error.code || "Fehler"}: ${error.message || "Unbekannter Fehler"}` +
-        (error.details ? ` | Details: ${error.details}` : "") +
-        (error.hint ? ` | Hinweis: ${error.hint}` : "")
+        `Supabase ${lookupError.code || "Fehler"}: ${lookupError.message || "Unbekannter Fehler"}`
       );
     }
 
+    if (!existing?.length) {
+      const { error } = await supabase
+        .from("push_subscriptions")
+        .insert({ endpoint, p256dh, auth });
+
+      if (error) {
+        throw new Error(
+          `Supabase ${error.code || "Fehler"}: ${error.message || "Unbekannter Fehler"}` +
+          (error.details ? ` | Details: ${error.details}` : "") +
+          (error.hint ? ` | Hinweis: ${error.hint}` : "")
+        );
+      }
+    }
+
     localStorage.setItem("atsv_push_enabled", "true");
+    localStorage.setItem("atsv_vapid_public_key", ATSV_VAPID_PUBLIC_KEY);
 
     if (button) {
       button.disabled = false;
@@ -116,7 +139,8 @@ function initAtsvPushButton() {
 
   if (
     Notification.permission === "granted" &&
-    localStorage.getItem("atsv_push_enabled") === "true"
+    localStorage.getItem("atsv_push_enabled") === "true" &&
+    localStorage.getItem("atsv_vapid_public_key") === ATSV_VAPID_PUBLIC_KEY
   ) {
     button.textContent = "🔔 Push-Benachrichtigungen aktiviert";
     button.style.background = "#228B22";
