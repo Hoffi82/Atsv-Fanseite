@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v9";
+const CACHE_NAME = "atsv-fan-app-v10";
 
 const FILES_TO_CACHE = [
   "./",
@@ -19,46 +19,64 @@ const FILES_TO_CACHE = [
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES_TO_CACHE))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    ))
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      )
+    )
   );
   self.clients.claim();
 });
 
-async function injectPushFix(response) {
+async function cleanIndexHtml(response) {
   try {
     const contentType = response.headers.get("content-type") || "";
     if (!contentType.includes("text/html")) return response;
 
-    const html = await response.text();
+    let html = await response.text();
 
-    // Wichtig: Die alte Inline-Push-Funktion im index.html darf den Button
-    // nicht mehr auslösen. Wir entfernen nur den onclick-Aufruf und hängen
-    // anschließend unsere zentrale Push-Funktion an den Button.
-    const cleanedHtml = html.replace(
-      'onclick="enablePushNotifications()"',
-      ''
+    // Alte Inline-Push-Funktion vollständig entfernen. Genau diese Funktion
+    // erzeugte bisher den fehlerhaften ?on_conflict=endpoint-Aufruf.
+    html = html.replace(
+      /<script>\s*async function enablePushNotifications\(\)[\s\S]*?<\/script>/,
+      ""
     );
 
-    const fixedHtml = cleanedHtml.replace(
-      "</body>",
-      '<script id="atsv-push-fix-script" src="./js/script.js?v=9"></script></body>'
+    // Alten Inline-onclick ebenfalls entfernen.
+    html = html.replace(
+      /\s*onclick=["']enablePushNotifications\(\)["']/i,
+      ""
     );
 
-    return new Response(fixedHtml, {
+    // Unsere zentrale Push-Funktion einmalig einbinden.
+    if (!html.includes('id="atsv-push-fix-script"')) {
+      html = html.replace(
+        "</body>",
+        '<script id="atsv-push-fix-script" src="./js/script.js?v=10"></script></body>'
+      );
+    }
+
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    headers.delete("content-encoding");
+
+    return new Response(html, {
       status: response.status,
       statusText: response.statusText,
-      headers: response.headers
+      headers
     });
   } catch (error) {
-    console.error("ATSV HTML-Push-Fix konnte nicht injiziert werden:", error);
+    console.error("ATSV HTML-Push-Bereinigung fehlgeschlagen:", error);
     return response;
   }
 }
@@ -69,14 +87,10 @@ self.addEventListener("fetch", event => {
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request, { cache: "no-store" })
-        .then(async response => {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
-          return injectPushFix(response);
-        })
+        .then(response => cleanIndexHtml(response))
         .catch(async () => {
           const cached = await caches.match(request);
-          return cached ? injectPushFix(cached) : cached;
+          return cached ? cleanIndexHtml(cached) : cached;
         })
     );
     return;
@@ -88,12 +102,15 @@ self.addEventListener("fetch", event => {
   }
 
   event.respondWith(
-    caches.match(request).then(cachedResponse => cachedResponse || fetch(request))
+    caches.match(request).then(cachedResponse =>
+      cachedResponse || fetch(request)
+    )
   );
 });
 
 self.addEventListener("push", event => {
   let data = {};
+
   try {
     data = event.data ? event.data.json() : {};
   } catch (error) {
@@ -112,21 +129,28 @@ self.addEventListener("push", event => {
     vibrate: [200, 100, 200]
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
 });
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   const targetUrl = event.notification.data?.url || "./index.html";
+
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
-      for (const client of windowClients) {
-        if ("focus" in client) {
-          client.navigate(targetUrl);
-          return client.focus();
+    clients.matchAll({ type: "window", includeUncontrolled: true })
+      .then(windowClients => {
+        for (const client of windowClients) {
+          if ("focus" in client) {
+            client.navigate(targetUrl);
+            return client.focus();
+          }
         }
-      }
-      if (clients.openWindow) return clients.openWindow(targetUrl);
-    })
+
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+      })
   );
 });
