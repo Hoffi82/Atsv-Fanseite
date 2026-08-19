@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#d00020">
+  <title>ATSV Push-Zentrale</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:#0b0b0b;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:min(620px,100%);background:#151515;border:2px solid #d00020;border-radius:18px;padding:28px;box-shadow:0 0 30px rgba(208,0,32,.22)}
+    .logo{display:block;width:75px;height:75px;object-fit:contain;margin:0 auto 12px}
+    h1{text-align:center;color:#d00020;margin:0 0 6px;font-size:25px}
+    .sub{text-align:center;color:#aaa;margin:0 0 25px}
+    label{display:block;font-weight:800;margin:16px 0 7px}
+    input,textarea{width:100%;background:#0d0d0d;color:#fff;border:1px solid #444;border-radius:9px;padding:12px;font-size:15px;outline:none}
+    input:focus,textarea:focus{border-color:#d00020}
+    textarea{min-height:130px;resize:vertical}
+    button{width:100%;margin-top:20px;background:#d00020;color:#fff;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:900;cursor:pointer}
+    button:hover{background:#a80019}
+    button:disabled{opacity:.65;cursor:wait}
+    .status{margin-top:16px;padding:12px;border-radius:9px;text-align:center;font-weight:800;display:none}
+    .status.ok{display:block;background:#123d1b;color:#8ff0a4;border:1px solid #2d8a42}
+    .status.error{display:block;background:#3d1218;color:#ff9aa7;border:1px solid #a52a3b}
+    .back{display:block;text-align:center;margin-top:18px;color:#aaa;text-decoration:none}
+    .back:hover{color:#fff}
+    .hint{font-size:12px;color:#777;margin-top:8px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="bilder/ATSV_Wappen_4K_transparent.png" alt="ATSV Forchheim">
+    <h1>🔔 ATSV Push-Zentrale</h1>
+    <p class="sub">Push-Nachricht an alle aktivierten Geräte senden</p>
+
+    <form id="pushForm">
+      <label for="password">Admin-Passwort</label>
+      <input id="password" type="password" autocomplete="current-password" required placeholder="Admin-Passwort eingeben">
+
+      <label for="title">Überschrift</label>
+      <input id="title" maxlength="80" required placeholder="z. B. ATSV gewinnt!">
+
+      <label for="body">Nachricht</label>
+      <textarea id="body" maxlength="300" required placeholder="Deine Push-Nachricht ..."></textarea>
+
+      <label for="url">Link (optional)</label>
+      <input id="url" type="url" placeholder="https://hoffi82.github.io/Atsv-Fanseite/index.html">
+
+      <button id="sendButton" type="submit">🔔 PUSH AN ALLE SENDEN</button>
+    </form>
+
+    <div id="status" class="status"></div>
+    <a class="back" href="index.html">← Zurück zur Fanseite</a>
+    <div class="hint">Der private VAPID-Schlüssel bleibt ausschließlich in Supabase.</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://xmtrtpibldbiiikkkmnd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const form = document.getElementById("pushForm");
+    const sendButton = document.getElementById("sendButton");
+    const status = document.getElementById("status");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      status.className = "status";
+      status.textContent = "";
+      sendButton.disabled = true;
+      sendButton.textContent = "⏳ Push wird gesendet...";
+
+      try {
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_KEY
+          },
+          body: JSON.stringify({
+            adminPassword: document.getElementById("password").value,
+            title: document.getElementById("title").value.trim(),
+            body: document.getElementById("body").value.trim(),
+            url: document.getElementById("url").value.trim() || "https://hoffi82.github.io/Atsv-Fanseite/index.html"
+          })
+        });
+
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || `HTTP ${response.status}`);
+        }
+
+        status.className = "status ok";
+        status.textContent = `✅ Push erfolgreich an ${result.sent} Gerät(e) gesendet.`;
+        form.reset();
+      } catch (error) {
+        status.className = "status error";
+        status.textContent = `❌ Versand fehlgeschlagen: ${error.message}`;
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "🔔 PUSH AN ALLE SENDEN";
+      }
+    });
+  </script>
+</body>
+</html>
