@@ -1,28 +1,7 @@
-const CACHE_NAME = "atsv-fan-app-v15";
-
-const FILES_TO_CACHE = [
-  "./",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./css/style.css",
-  "./js/script.js",
-  "./spieler.html",
-  "./spielerprofil.html",
-  "./ergebnisse.html",
-  "./spielberichte.html",
-  "./galerie.html",
-  "./liga-26-27.html",
-  "./vorbereitung-26-27.html",
-  "./impressum.html",
-  "./bilder/ATSV_Wappen_4K_transparent.png"
-];
+const CACHE_NAME = "atsv-fan-app-v16";
 
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(FILES_TO_CACHE))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", event => {
@@ -33,68 +12,77 @@ self.addEventListener("activate", event => {
   );
 });
 
-async function cleanIndexHtml(response) {
-  try {
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("text/html")) return response;
+async function prepareIndex(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
 
-    let html = await response.text();
-    html = html.replace(/<script[^>]*>\s*async\s+function\s+enablePushNotifications\s*\([\s\S]*?<\/script>/gi, "");
-    html = html.replace(/\s+onclick\s*=\s*["']enablePushNotifications\s*\(\)\s*["']/gi, "");
-    html = html.replace(/<script[^>]*id=["']atsv-push-fix-script["'][^>]*>[\s\S]*?<\/script>/gi, "");
-    html = html.replace(/<script[^>]*src=["'][^"']*\/js\/script\.js[^"']*["'][^>]*><\/script>/gi, "");
-    html = html.replace(/<\/body>/i, '<script id="atsv-push-fix-script" src="./js/script.js?v=15"></script></body>');
+  const html = await response.text();
 
-    const headers = new Headers(response.headers);
-    headers.delete("content-length");
-    headers.delete("content-encoding");
-    return new Response(html, { status: response.status, statusText: response.statusText, headers });
-  } catch (error) {
-    console.error("ATSV HTML-Push-Bereinigung fehlgeschlagen:", error);
-    return response;
-  }
+  // Nur den alten Button-Aufruf umleiten. Der restliche HTML-Code bleibt 1:1 erhalten.
+  const fixedHtml = html
+    .replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"')
+    .replace(/<\/body>/i, '<script src="./js/script.js?v=16"></script></body>');
+
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  headers.delete("content-encoding");
+
+  return new Response(fixedHtml, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
 }
 
 self.addEventListener("fetch", event => {
   const request = event.request;
+
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request, { cache: "no-store" })
-        .then(response => cleanIndexHtml(response))
-        .catch(async () => {
-          const cached = await caches.match(request);
-          return cached ? cleanIndexHtml(cached) : new Response("Offline", { status: 503 });
-        })
+      fetch(request, { cache: "no-store" }).then(prepareIndex)
     );
     return;
   }
+
   if (new URL(request.url).pathname.endsWith("/js/script.js")) {
     event.respondWith(fetch(request, { cache: "no-store" }));
     return;
   }
-  event.respondWith(caches.match(request).then(cachedResponse => cachedResponse || fetch(request)));
+
+  event.respondWith(fetch(request).catch(() => caches.match(request)));
 });
 
 self.addEventListener("push", event => {
   let data = {};
-  try { data = event.data ? event.data.json() : {}; }
-  catch (error) { data = { title: "ATSV Forchheim", body: event.data ? event.data.text() : "Neue Nachricht" }; }
-  event.waitUntil(self.registration.showNotification(data.title || "ATSV Forchheim", {
-    body: data.body || "Es gibt eine neue Nachricht.",
-    icon: "./bilder/ATSV_Wappen_4K_transparent.png",
-    badge: "./bilder/ATSV_Wappen_4K_transparent.png",
-    data: { url: data.url || "./index.html" },
-    vibrate: [200, 100, 200]
-  }));
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { title: "ATSV Forchheim", body: event.data ? event.data.text() : "Neue Nachricht" };
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || "ATSV Forchheim", {
+      body: data.body || "Es gibt eine neue Nachricht.",
+      icon: "./bilder/ATSV_Wappen_4K_transparent.png",
+      badge: "./bilder/ATSV_Wappen_4K_transparent.png",
+      data: { url: data.url || "./index.html" },
+      vibrate: [200, 100, 200]
+    })
+  );
 });
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
   const targetUrl = event.notification.data?.url || "./index.html";
-  event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
-    for (const client of windowClients) {
-      if ("focus" in client) { client.navigate(targetUrl); return client.focus(); }
-    }
-    if (clients.openWindow) return clients.openWindow(targetUrl);
-  }));
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients) {
+        if ("focus" in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      return clients.openWindow ? clients.openWindow(targetUrl) : undefined;
+    })
+  );
 });
