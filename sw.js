@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v11";
+const CACHE_NAME = "atsv-fan-app-v12";
 
 const FILES_TO_CACHE = [
   "./",
@@ -45,30 +45,35 @@ async function cleanIndexHtml(response) {
 
     let html = await response.text();
 
-    // Alte Inline-Push-Funktion entfernen. Sie verwendete einen alten VAPID-Key
-    // und führte dadurch zum InvalidStateError.
+    // Den alten Inline-Push-Code vollständig entfernen, unabhängig von
+    // Zeilenumbrüchen oder zusätzlichen Leerzeichen.
     html = html.replace(
-      /<script>\s*async function enablePushNotifications\(\)[\s\S]*?<\/script>/,
+      /<script[^>]*>[\s\S]*?async\s+function\s+enablePushNotifications\s*\([\s\S]*?<\/script>/gi,
+      ""
+    );
+
+    // Den alten Inline-Handler am Push-Button entfernen.
+    html = html.replace(
+      /\s+onclick\s*=\s*["']enablePushNotifications\s*\(\)\s*["']/gi,
+      ""
+    );
+
+    // Alte/mehrfach eingefügte zentrale Push-Skripte entfernen.
+    html = html.replace(
+      /<script[^>]*id=["']atsv-push-fix-script["'][^>]*>[\s\S]*?<\/script>/gi,
+      ""
+    );
+
+    // Nur unsere aktuelle Push-Datei laden.
+    html = html.replace(
+      /<script[^>]*src=["'][^"']*\/js\/script\.js[^"']*["'][^>]*><\/script>/gi,
       ""
     );
 
     html = html.replace(
-      /\s*onclick=["']enablePushNotifications\(\)["']/gi,
-      ""
+      /<\/body>/i,
+      '<script id="atsv-push-fix-script" src="./js/script.js?v=12"></script></body>'
     );
-
-    // Zentrale aktuelle Push-Funktion laden.
-    html = html.replace(
-      /<script id="atsv-push-fix-script"[\s\S]*?<\/script>/gi,
-      ""
-    );
-
-    if (!html.includes('id="atsv-push-fix-script"')) {
-      html = html.replace(
-        "</body>",
-        '<script id="atsv-push-fix-script" src="./js/script.js?v=11"></script></body>'
-      );
-    }
 
     const headers = new Headers(response.headers);
     headers.delete("content-length");
