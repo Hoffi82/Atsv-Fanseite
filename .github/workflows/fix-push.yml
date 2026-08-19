@@ -38,11 +38,26 @@ jobs:
               print(f'Legacy push blocks removed: {count}')
           PY
 
+      - name: Make long result team names wrap cleanly
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('ergebnisse.html')
+          html = path.read_text(encoding='utf-8')
+
+          old = '.result-team{font-size:14px;font-weight:700}'
+          new = '.result-team{font-size:14px;font-weight:700;overflow-wrap:anywhere;word-break:break-word;line-height:1.25;max-width:100%}'
+          html = html.replace(old, new)
+          path.write_text(html, encoding='utf-8')
+          print('Result team names will wrap cleanly on small screens.')
+          PY
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html ergebnisse.html
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
