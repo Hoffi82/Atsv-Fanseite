@@ -47,6 +47,8 @@ async function atsVEnablePush() {
     let subscription = await registration.pushManager.getSubscription();
     const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
 
+    // Ein Browser-Push-Abo ist fest an den VAPID-Key gebunden. Wenn das Gerät
+    // noch ein Abo mit einem alten Key besitzt, muss dieses zuerst weg.
     if (subscription && savedVapidKey !== ATSV_VAPID_PUBLIC_KEY) {
       await subscription.unsubscribe();
       subscription = null;
@@ -75,8 +77,17 @@ async function atsVEnablePush() {
     if (lookupError) throw new Error(`Supabase ${lookupError.code || "Fehler"}: ${lookupError.message || "Unbekannter Fehler"}`);
 
     if (!existing?.length) {
-      const { error } = await supabase.from("push_subscriptions").insert({ endpoint, p256dh, auth });
-      if (error) throw new Error(`Supabase ${error.code || "Fehler"}: ${error.message || "Unbekannter Fehler"}` + (error.details ? ` | Details: ${error.details}` : "") + (error.hint ? ` | Hinweis: ${error.hint}` : ""));
+      const { error } = await supabase
+        .from("push_subscriptions")
+        .insert({ endpoint, p256dh, auth });
+
+      if (error) {
+        throw new Error(
+          `Supabase ${error.code || "Fehler"}: ${error.message || "Unbekannter Fehler"}` +
+          (error.details ? ` | Details: ${error.details}` : "") +
+          (error.hint ? ` | Hinweis: ${error.hint}` : "")
+        );
+      }
     }
 
     localStorage.setItem("atsv_push_enabled", "true");
