@@ -18,20 +18,23 @@
     textarea{min-height:130px;resize:vertical}
     button{width:100%;margin-top:20px;background:#d00020;color:#fff;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:900;cursor:pointer}
     button:hover{background:#a80019}
+    button.secondary{background:#333;margin-top:10px}
+    button.secondary:hover{background:#444}
     button:disabled{opacity:.65;cursor:wait}
     .status{margin-top:16px;padding:12px;border-radius:9px;text-align:center;font-weight:800;display:none}
     .status.ok{display:block;background:#123d1b;color:#8ff0a4;border:1px solid #2d8a42}
     .status.error{display:block;background:#3d1218;color:#ff9aa7;border:1px solid #a52a3b}
     .back{display:block;text-align:center;margin-top:18px;color:#aaa;text-decoration:none}
     .back:hover{color:#fff}
-    .hint{font-size:12px;color:#777;margin-top:8px}
+    .hint{font-size:12px;color:#777;margin-top:8px;text-align:center}
+    .option{margin-top:14px;padding:12px;background:#0d0d0d;border:1px solid #333;border-radius:9px;color:#ccc;font-size:13px;line-height:1.45}
   </style>
 </head>
 <body>
   <main class="card">
     <img class="logo" src="bilder/ATSV_Wappen_4K_transparent.png" alt="ATSV Forchheim">
     <h1>🔔 ATSV Push-Zentrale</h1>
-    <p class="sub">Push-Nachricht an alle aktivierten Geräte senden</p>
+    <p class="sub">Nachricht schreiben, als News speichern und Push versenden</p>
 
     <form id="pushForm">
       <label for="password">Admin-Passwort</label>
@@ -41,12 +44,17 @@
       <input id="title" maxlength="80" required placeholder="z. B. ATSV gewinnt!">
 
       <label for="body">Nachricht</label>
-      <textarea id="body" maxlength="300" required placeholder="Deine Push-Nachricht ..."></textarea>
+      <textarea id="body" maxlength="300" required placeholder="Deine Nachricht ..."></textarea>
 
       <label for="url">Link (optional)</label>
-      <input id="url" type="url" placeholder="https://hoffi82.github.io/Atsv-Fanseite/index.html">
+      <input id="url" type="url" placeholder="Wird automatisch auf die passende News gesetzt">
 
-      <button id="sendButton" type="submit">🔔 PUSH AN ALLE SENDEN</button>
+      <div class="option">
+        📰 Die Nachricht wird zuerst unter <strong>News</strong> gespeichert. Anschließend wird der Push mit einem direkten Link zu dieser News verschickt.
+      </div>
+
+      <button id="sendButton" type="submit">📰 SPEICHERN &amp; 🔔 PUSH SENDEN</button>
+      <button id="newsOnlyButton" class="secondary" type="button">📰 NUR ALS NEWS SPEICHERN</button>
     </form>
 
     <div id="status" class="status"></div>
@@ -62,44 +70,113 @@
 
     const form = document.getElementById("pushForm");
     const sendButton = document.getElementById("sendButton");
+    const newsOnlyButton = document.getElementById("newsOnlyButton");
     const status = document.getElementById("status");
+
+    function getValues() {
+      return {
+        password: document.getElementById("password").value,
+        title: document.getElementById("title").value.trim(),
+        body: document.getElementById("body").value.trim(),
+        url: document.getElementById("url").value.trim()
+      };
+    }
+
+    function today() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    async function saveNews(values) {
+      const { data, error } = await supabaseClient
+        .from("news")
+        .insert({
+          title: values.title,
+          text: values.body,
+          date: today()
+        })
+        .select("title, text, date")
+        .single();
+
+      if (error) throw new Error(`News konnte nicht gespeichert werden: ${error.message}`);
+      return data;
+    }
+
+    async function sendPush(values, newsUrl) {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          adminPassword: values.password,
+          title: values.title,
+          body: values.body,
+          url: newsUrl || values.url || "https://hoffi82.github.io/Atsv-Fanseite/news.html"
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || `HTTP ${response.status}`);
+      }
+      return result;
+    }
+
+    function showStatus(type, text) {
+      status.className = `status ${type}`;
+      status.textContent = text;
+    }
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      status.className = "status";
-      status.textContent = "";
+      const values = getValues();
+      if (!values.password || !values.title || !values.body) return;
+
       sendButton.disabled = true;
-      sendButton.textContent = "⏳ Push wird gesendet...";
+      newsOnlyButton.disabled = true;
+      showStatus("", "");
+      sendButton.textContent = "⏳ NEWS WIRD GESPEICHERT...";
 
       try {
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_KEY
-          },
-          body: JSON.stringify({
-            adminPassword: document.getElementById("password").value,
-            title: document.getElementById("title").value.trim(),
-            body: document.getElementById("body").value.trim(),
-            url: document.getElementById("url").value.trim() || "https://hoffi82.github.io/Atsv-Fanseite/index.html"
-          })
-        });
-
-        const result = await response.json();
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || `HTTP ${response.status}`);
-        }
-
-        status.className = "status ok";
-        status.textContent = `✅ Push erfolgreich an ${result.sent} Gerät(e) gesendet.`;
+        // Erst News speichern, damit die Push-Nachricht immer auf eine vorhandene News zeigt.
+        await saveNews(values);
+        const newsUrl = values.url || `https://hoffi82.github.io/Atsv-Fanseite/news.html?title=${encodeURIComponent(values.title)}`;
+        const result = await sendPush(values, newsUrl);
+        showStatus("ok", `✅ News gespeichert und Push erfolgreich an ${result.sent} Gerät(e) gesendet.`);
         form.reset();
       } catch (error) {
-        status.className = "status error";
-        status.textContent = `❌ Versand fehlgeschlagen: ${error.message}`;
+        showStatus("error", `❌ ${error.message}`);
       } finally {
         sendButton.disabled = false;
-        sendButton.textContent = "🔔 PUSH AN ALLE SENDEN";
+        newsOnlyButton.disabled = false;
+        sendButton.textContent = "📰 SPEICHERN & 🔔 PUSH SENDEN";
+      }
+    });
+
+    newsOnlyButton.addEventListener("click", async () => {
+      const values = getValues();
+      if (!values.password || !values.title || !values.body) {
+        showStatus("error", "❌ Bitte Admin-Passwort, Überschrift und Nachricht ausfüllen.");
+        return;
+      }
+
+      newsOnlyButton.disabled = true;
+      sendButton.disabled = true;
+      newsOnlyButton.textContent = "⏳ NEWS WIRD GESPEICHERT...";
+
+      try {
+        // Das Passwort wird hier nur als einfacher Admin-Schutz für die Eingabemaske verwendet.
+        // Die eigentliche Push-Authentifizierung findet weiterhin in der Edge Function statt.
+        await saveNews(values);
+        showStatus("ok", "✅ News erfolgreich gespeichert – kein Push versendet.");
+        form.reset();
+      } catch (error) {
+        showStatus("error", `❌ ${error.message}`);
+      } finally {
+        newsOnlyButton.disabled = false;
+        sendButton.disabled = false;
+        newsOnlyButton.textContent = "📰 NUR ALS NEWS SPEICHERN";
       }
     });
   </script>
