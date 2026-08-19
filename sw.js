@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v12";
+const CACHE_NAME = "atsv-fan-app-v13";
 
 const FILES_TO_CACHE = [
   "./",
@@ -45,34 +45,34 @@ async function cleanIndexHtml(response) {
 
     let html = await response.text();
 
-    // Den alten Inline-Push-Code vollständig entfernen, unabhängig von
-    // Zeilenumbrüchen oder zusätzlichen Leerzeichen.
+    // Alten Inline-Push-Code vollständig entfernen.
     html = html.replace(
       /<script[^>]*>[\s\S]*?async\s+function\s+enablePushNotifications\s*\([\s\S]*?<\/script>/gi,
       ""
     );
 
-    // Den alten Inline-Handler am Push-Button entfernen.
+    // Alten Inline-Handler am Push-Button entfernen.
     html = html.replace(
       /\s+onclick\s*=\s*["']enablePushNotifications\s*\(\)\s*["']/gi,
       ""
     );
 
-    // Alte/mehrfach eingefügte zentrale Push-Skripte entfernen.
+    // Alte zentrale Push-Skripte entfernen, falls sie bereits eingefügt wurden.
     html = html.replace(
       /<script[^>]*id=["']atsv-push-fix-script["'][^>]*>[\s\S]*?<\/script>/gi,
       ""
     );
 
-    // Nur unsere aktuelle Push-Datei laden.
+    // Vorhandene Einbindung von js/script.js entfernen, damit sie nur einmal geladen wird.
     html = html.replace(
       /<script[^>]*src=["'][^"']*\/js\/script\.js[^"']*["'][^>]*><\/script>/gi,
       ""
     );
 
+    // Aktuelle Push-Datei immer ganz am Ende laden.
     html = html.replace(
       /<\/body>/i,
-      '<script id="atsv-push-fix-script" src="./js/script.js?v=12"></script></body>'
+      '<script id="atsv-push-fix-script" src="./js/script.js?v=13"></script></body>'
     );
 
     const headers = new Headers(response.headers);
@@ -93,6 +93,7 @@ async function cleanIndexHtml(response) {
 self.addEventListener("fetch", event => {
   const request = event.request;
 
+  // Jede Navigation bekommt die aktuelle HTML-Version direkt vom Server.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request, { cache: "no-store" })
@@ -105,6 +106,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
+  // Push-Skript niemals aus dem alten Cache laden.
   if (new URL(request.url).pathname.endsWith("/js/script.js")) {
     event.respondWith(fetch(request, { cache: "no-store" }));
     return;
