@@ -1,0 +1,51 @@
+name: Fix Push Integration
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix-push:
+    if: ${{ !startsWith(github.event.head_commit.message, 'Auto-fix push integration') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Remove legacy inline push code and load the new script
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+
+          pattern = r'<script>\s*async function enablePushNotifications\(\).*?</script>'
+          new_html, count = re.subn(pattern, '', html, count=1, flags=re.S)
+
+          script_tag = '<script src="./js/script.js?v=17"></script>'
+          if script_tag not in new_html:
+              new_html = new_html.replace('</body>', f'{script_tag}\n</body>')
+
+          if count == 0 and script_tag in html:
+              print('No legacy block found; nothing to change.')
+          else:
+              path.write_text(new_html, encoding='utf-8')
+              print(f'Legacy push blocks removed: {count}')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Auto-fix push integration"
+            git push
+          fi
