@@ -2,6 +2,7 @@
 const ATSV_SUPABASE_URL = "https://xmtrtpibldbiiikkkmnd.supabase.co";
 const ATSV_SUPABASE_KEY = "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
 const ATSV_VAPID_PUBLIC_KEY = "BMAhQ9LSniSmZDTjza6FHf9-RGG-0qCd6diob0khvQFs4EqzoJMAwka2eniWHtubyMbGcYin6z2DVtx-mUmV-go";
+const ATSV_REBIND_FLAG = "atsv_push_rebind_v1";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -38,12 +39,24 @@ async function atsVEnablePush() {
 
     let subscription = await registration.pushManager.getSubscription();
     const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
+
+    // Einmalige saubere Neu-Registrierung aller bereits vorhandenen Abos.
+    // Die vorhandenen VAPID-Secrets werden dabei nicht verändert.
+    if (subscription && localStorage.getItem(ATSV_REBIND_FLAG) !== "done") {
+      await subscription.unsubscribe();
+      subscription = null;
+    }
+
     if (subscription && savedVapidKey && savedVapidKey !== ATSV_VAPID_PUBLIC_KEY) {
       await subscription.unsubscribe();
       subscription = null;
     }
+
     if (!subscription) {
-      subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(ATSV_VAPID_PUBLIC_KEY) });
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(ATSV_VAPID_PUBLIC_KEY)
+      });
     }
 
     const subscriptionJson = subscription.toJSON();
@@ -53,7 +66,11 @@ async function atsVEnablePush() {
     if (!endpoint || !p256dh || !auth) throw new Error("Der Browser hat keine vollständigen Push-Daten geliefert.");
 
     const supabaseClient = window.supabase.createClient(ATSV_SUPABASE_URL, ATSV_SUPABASE_KEY);
-    const { data: existing, error: lookupError } = await supabaseClient.from("push_subscriptions").select("id").eq("endpoint", endpoint).limit(1);
+    const { data: existing, error: lookupError } = await supabaseClient
+      .from("push_subscriptions")
+      .select("id")
+      .eq("endpoint", endpoint)
+      .limit(1);
     if (lookupError) throw new Error(`Supabase ${lookupError.code || "Fehler"}: ${lookupError.message || "Unbekannter Fehler"}`);
 
     if (!existing?.length) {
@@ -63,6 +80,7 @@ async function atsVEnablePush() {
 
     localStorage.setItem("atsv_push_enabled", "true");
     localStorage.setItem("atsv_vapid_public_key", ATSV_VAPID_PUBLIC_KEY);
+    localStorage.setItem(ATSV_REBIND_FLAG, "done");
     updateAtsvPushButton();
     alert("Push-Benachrichtigungen wurden erfolgreich aktiviert.");
   } catch (error) {
@@ -80,7 +98,6 @@ async function updateAtsvPushButton() {
   if (!button) return;
   button.onclick = atsVEnablePush;
   try {
-    // Immer den aktuell kontrollierenden Service Worker verwenden.
     const registration = await registerAtsvServiceWorker();
     const subscription = registration ? await registration.pushManager.getSubscription() : null;
     const enabled = Notification.permission === "granted" && !!subscription;
