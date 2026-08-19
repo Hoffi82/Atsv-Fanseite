@@ -47,8 +47,8 @@ async function atsVEnablePush() {
     let subscription = await registration.pushManager.getSubscription();
     const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
 
-    // Ein Browser-Push-Abo ist fest an den VAPID-Key gebunden. Wenn das Gerät
-    // noch ein Abo mit einem alten Key besitzt, muss dieses zuerst weg.
+    // Ein Browser-Push-Abo ist fest an den VAPID-Key gebunden.
+    // Falls noch ein altes Abo vorhanden ist, wird es einmalig ersetzt.
     if (subscription && savedVapidKey !== ATSV_VAPID_PUBLIC_KEY) {
       await subscription.unsubscribe();
       subscription = null;
@@ -65,16 +65,22 @@ async function atsVEnablePush() {
     const endpoint = subscriptionJson.endpoint;
     const p256dh = subscriptionJson.keys?.p256dh;
     const auth = subscriptionJson.keys?.auth;
-    if (!endpoint || !p256dh || !auth) throw new Error("Der Browser hat keine vollständigen Push-Daten geliefert.");
+
+    if (!endpoint || !p256dh || !auth) {
+      throw new Error("Der Browser hat keine vollständigen Push-Daten geliefert.");
+    }
 
     const supabase = window.supabase.createClient(ATSV_SUPABASE_URL, ATSV_SUPABASE_KEY);
+
     const { data: existing, error: lookupError } = await supabase
       .from("push_subscriptions")
       .select("id")
       .eq("endpoint", endpoint)
       .limit(1);
 
-    if (lookupError) throw new Error(`Supabase ${lookupError.code || "Fehler"}: ${lookupError.message || "Unbekannter Fehler"}`);
+    if (lookupError) {
+      throw new Error(`Supabase ${lookupError.code || "Fehler"}: ${lookupError.message || "Unbekannter Fehler"}`);
+    }
 
     if (!existing?.length) {
       const { error } = await supabase
