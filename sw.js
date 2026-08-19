@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v10";
+const CACHE_NAME = "atsv-fan-app-v11";
 
 const FILES_TO_CACHE = [
   "./",
@@ -45,24 +45,28 @@ async function cleanIndexHtml(response) {
 
     let html = await response.text();
 
-    // Alte Inline-Push-Funktion vollständig entfernen. Genau diese Funktion
-    // erzeugte bisher den fehlerhaften ?on_conflict=endpoint-Aufruf.
+    // Alte Inline-Push-Funktion entfernen. Sie verwendete einen alten VAPID-Key
+    // und führte dadurch zum InvalidStateError.
     html = html.replace(
       /<script>\s*async function enablePushNotifications\(\)[\s\S]*?<\/script>/,
       ""
     );
 
-    // Alten Inline-onclick ebenfalls entfernen.
     html = html.replace(
-      /\s*onclick=["']enablePushNotifications\(\)["']/i,
+      /\s*onclick=["']enablePushNotifications\(\)["']/gi,
       ""
     );
 
-    // Unsere zentrale Push-Funktion einmalig einbinden.
+    // Zentrale aktuelle Push-Funktion laden.
+    html = html.replace(
+      /<script id="atsv-push-fix-script"[\s\S]*?<\/script>/gi,
+      ""
+    );
+
     if (!html.includes('id="atsv-push-fix-script"')) {
       html = html.replace(
         "</body>",
-        '<script id="atsv-push-fix-script" src="./js/script.js?v=10"></script></body>'
+        '<script id="atsv-push-fix-script" src="./js/script.js?v=11"></script></body>'
       );
     }
 
@@ -129,9 +133,7 @@ self.addEventListener("push", event => {
     vibrate: [200, 100, 200]
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", event => {
@@ -139,18 +141,14 @@ self.addEventListener("notificationclick", event => {
   const targetUrl = event.notification.data?.url || "./index.html";
 
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true })
-      .then(windowClients => {
-        for (const client of windowClients) {
-          if ("focus" in client) {
-            client.navigate(targetUrl);
-            return client.focus();
-          }
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients) {
+        if ("focus" in client) {
+          client.navigate(targetUrl);
+          return client.focus();
         }
-
-        if (clients.openWindow) {
-          return clients.openWindow(targetUrl);
-        }
-      })
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+    })
   );
 });
