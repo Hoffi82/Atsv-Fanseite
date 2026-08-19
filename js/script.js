@@ -13,7 +13,8 @@ function urlBase64ToUint8Array(base64String) {
 async function registerAtsvServiceWorker() {
   if (!("serviceWorker" in navigator)) return null;
   try {
-    return await navigator.serviceWorker.register("./sw.js?v=16", { scope: "./" });
+    await navigator.serviceWorker.register("./sw.js?v=17", { scope: "./" });
+    return await navigator.serviceWorker.ready;
   } catch (error) {
     console.error("ATSV Service Worker konnte nicht registriert werden:", error);
     return null;
@@ -35,7 +36,6 @@ async function atsVEnablePush() {
       if (permission !== "granted") throw new Error("Die Push-Berechtigung wurde nicht erteilt.");
     }
 
-    await navigator.serviceWorker.ready;
     let subscription = await registration.pushManager.getSubscription();
     const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
     if (subscription && savedVapidKey && savedVapidKey !== ATSV_VAPID_PUBLIC_KEY) {
@@ -80,15 +80,21 @@ async function updateAtsvPushButton() {
   if (!button) return;
   button.onclick = atsVEnablePush;
   try {
+    // Immer den aktuell kontrollierenden Service Worker verwenden.
     const registration = await registerAtsvServiceWorker();
     const subscription = registration ? await registration.pushManager.getSubscription() : null;
-    // Die echte Browser-Push-Subscription ist die zuverlässige Quelle.
-    // localStorage darf den Status nicht mehr zurücksetzen.
     const enabled = Notification.permission === "granted" && !!subscription;
-    if (enabled) { button.textContent = "🔔 Push-Benachrichtigungen aktiviert ✓"; button.style.background = "#228B22"; }
-    else { button.textContent = "🔔 Push-Benachrichtigungen aktivieren"; button.style.background = "#d00020"; }
+    if (enabled) {
+      button.textContent = "🔔 Push-Benachrichtigungen aktiviert ✓";
+      button.style.background = "#228B22";
+    } else {
+      button.textContent = "🔔 Push-Benachrichtigungen aktivieren";
+      button.style.background = "#d00020";
+    }
     button.disabled = false;
-  } catch (error) { console.error("ATSV Push-Status konnte nicht geprüft werden:", error); }
+  } catch (error) {
+    console.error("ATSV Push-Status konnte nicht geprüft werden:", error);
+  }
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateAtsvPushButton);
