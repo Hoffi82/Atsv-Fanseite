@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v16";
+const CACHE_NAME = "atsv-fan-app-v17";
 
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
@@ -12,16 +12,60 @@ self.addEventListener("activate", event => {
   );
 });
 
-async function prepareIndex(response) {
+async function prepareIndex(response, request) {
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
 
   const html = await response.text();
 
   // Nur den alten Button-Aufruf umleiten. Der restliche HTML-Code bleibt 1:1 erhalten.
-  const fixedHtml = html
+  let fixedHtml = html
     .replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"')
-    .replace(/<\/body>/i, '<script src="./js/script.js?v=16"></script></body>');
+    .replace(/<\/body>/i, '<script src="./js/script.js?v=17"></script></body>');
+
+  // Wenn die Seite durch einen Push geöffnet wurde, zeigen wir die Push-Nachricht
+  // direkt auf der Fanseite als ATSV-Popup an.
+  const pageUrl = new URL(request.url);
+  const pushTitle = pageUrl.searchParams.get("pushTitle");
+  const pushBody = pageUrl.searchParams.get("pushBody");
+
+  if (pushTitle || pushBody) {
+    const safeTitle = JSON.stringify(pushTitle || "ATSV Forchheim").replace(/</g, "\\u003c");
+    const safeBody = JSON.stringify(pushBody || "Neue Nachricht vom ATSV Forchheim").replace(/</g, "\\u003c");
+
+    const pushPopup = `
+<style>
+#atsvPushPopup{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:99999}
+#atsvPushPopup .atsvPushBox{width:min(520px,100%);background:#151515;border:2px solid #d00020;border-radius:16px;padding:24px;color:#fff;box-shadow:0 0 35px rgba(208,0,32,.35);font-family:Arial,Helvetica,sans-serif}
+#atsvPushPopup .atsvPushLabel{color:#d00020;font-size:13px;font-weight:900;letter-spacing:2px;margin-bottom:10px}
+#atsvPushPopup h2{margin:0 0 12px;font-size:23px}
+#atsvPushPopup p{margin:0 0 20px;color:#ddd;line-height:1.55;white-space:pre-wrap}
+#atsvPushPopup button{width:100%;background:#d00020;color:#fff;border:0;border-radius:9px;padding:13px;font-size:15px;font-weight:900;cursor:pointer}
+</style>
+<div id="atsvPushPopup" role="dialog" aria-label="ATSV Push-Nachricht">
+  <div class="atsvPushBox">
+    <div class="atsvPushLabel">🔔 ATSV PUSH-NACHRICHT</div>
+    <h2 id="atsvPushPopupTitle"></h2>
+    <p id="atsvPushPopupBody"></p>
+    <button id="atsvPushPopupClose">OK – ZUR FANSEITE</button>
+  </div>
+</div>
+<script>
+window.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("atsvPushPopupTitle").textContent=${safeTitle};
+  document.getElementById("atsvPushPopupBody").textContent=${safeBody};
+  document.getElementById("atsvPushPopupClose").addEventListener("click",function(){
+    const cleanUrl=new URL(window.location.href);
+    cleanUrl.searchParams.delete("pushTitle");
+    cleanUrl.searchParams.delete("pushBody");
+    window.history.replaceState({},"",cleanUrl.pathname+cleanUrl.search+cleanUrl.hash);
+    document.getElementById("atsvPushPopup").remove();
+  });
+});
+</script>`;
+
+    fixedHtml = fixedHtml.replace(/<\/body>/i, pushPopup + "</body>");
+  }
 
   const headers = new Headers(response.headers);
   headers.delete("content-length");
@@ -39,7 +83,7 @@ self.addEventListener("fetch", event => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request, { cache: "no-store" }).then(prepareIndex)
+      fetch(request, { cache: "no-store" }).then(response => prepareIndex(response, request))
     );
     return;
   }
@@ -57,7 +101,10 @@ self.addEventListener("push", event => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: "ATSV Forchheim", body: event.data ? event.data.text() : "Neue Nachricht" };
+    data = {
+      title: "ATSV Forchheim",
+      body: event.data ? event.data.text() : "Neue Nachricht"
+    };
   }
 
   event.waitUntil(
@@ -65,7 +112,11 @@ self.addEventListener("push", event => {
       body: data.body || "Es gibt eine neue Nachricht.",
       icon: "./bilder/ATSV_Wappen_4K_transparent.png",
       badge: "./bilder/ATSV_Wappen_4K_transparent.png",
-      data: { url: data.url || "./index.html" },
+      data: {
+        url: data.url || "./index.html",
+        title: data.title || "ATSV Forchheim",
+        body: data.body || "Es gibt eine neue Nachricht."
+      },
       vibrate: [200, 100, 200]
     })
   );
@@ -73,7 +124,24 @@ self.addEventListener("push", event => {
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || "./index.html";
+
+  const notificationData = event.notification.data || {};
+  const rawTarget = notificationData.url || "./index.html";
+  let targetUrl = rawTarget;
+
+  try {
+    const target = new URL(rawTarget, self.location.origin);
+
+    // Auf der ATSV-Fanseite wird die Push-Nachricht beim Öffnen direkt angezeigt.
+    if (target.origin === self.location.origin) {
+      target.searchParams.set("pushTitle", notificationData.title || event.notification.title || "ATSV Forchheim");
+      target.searchParams.set("pushBody", notificationData.body || event.notification.body || "Neue Nachricht vom ATSV Forchheim");
+      targetUrl = target.href;
+    }
+  } catch {
+    targetUrl = rawTarget;
+  }
+
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(windowClients => {
       for (const client of windowClients) {
