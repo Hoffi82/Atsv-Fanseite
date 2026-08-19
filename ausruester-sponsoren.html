@@ -1,184 +1,52 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#d00020">
-  <title>ATSV Forchheim – Ausrüster & Sponsoren</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    .sponsor-page {
-      width: min(1100px, 92%);
-      margin: 45px auto 70px;
-    }
-
-    .sponsor-heading {
-      text-align: center;
-      color: #d00020;
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-    }
-
-    .sponsor-intro {
-      text-align: center;
-      color: #aaa;
-      max-width: 700px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-    }
-
-    .sponsor-section {
-      margin-bottom: 50px;
-    }
-
-    .sponsor-section-title {
-      color: white;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 900;
-      margin-bottom: 22px;
-    }
-
-    .sponsor-section-title span {
-      color: #d00020;
-    }
-
-    .sponsor-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-
-    .sponsor-card {
-      background: #111;
-      border: 2px solid #d00020;
-      border-radius: 16px;
-      padding: 22px;
-      min-height: 190px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(208, 0, 32, 0.16);
-    }
-
-    .sponsor-card img {
-      width: 100%;
-      height: 130px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .sponsor-placeholder {
-      width: 100%;
-      height: 130px;
-      border: 1px dashed #555;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #777;
-      font-size: 14px;
-    }
-
-    .sponsor-name {
-      color: white;
-      font-size: 16px;
-      font-weight: 900;
-      margin-top: 14px;
-    }
-
-    @media (max-width: 600px) {
-      .sponsor-page {
-        width: 94%;
-      }
-
-      .sponsor-heading {
-        font-size: 23px;
-      }
-
-      .sponsor-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#d00020">
+<title>ATSV Forchheim – Ausrüster & Sponsoren</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.sponsor-page{width:min(1200px,94%);margin:45px auto 70px}.sponsor-hero{text-align:center;margin-bottom:42px}.sponsor-hero h2{margin:0;color:#fff;font-size:clamp(30px,5vw,54px);font-weight:900;letter-spacing:2px;text-transform:uppercase}.sponsor-hero h2 span{color:#d00020}.sponsor-hero p{color:#aaa;margin:12px auto 0;font-size:15px}.sponsor-section{margin:0 0 48px}.section-label{display:inline-block;background:linear-gradient(90deg,#d00020,#8d0015);color:#fff;padding:11px 28px;font-size:21px;font-weight:900;letter-spacing:1px;text-transform:uppercase;clip-path:polygon(0 0,92% 0,100% 100%,0 100%);margin-bottom:14px}.sponsor-frame{background:#090909;border:1px solid #3b3b3b;border-radius:18px;padding:10px;box-shadow:0 0 28px rgba(208,0,32,.16);position:relative;overflow:hidden}.sponsor-frame:after{content:"";position:absolute;top:-40%;left:-35%;width:18%;height:180%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.26),transparent);transform:rotate(24deg);animation:shine 4.5s ease-in-out infinite;pointer-events:none}.sponsor-feature{min-height:250px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;background:linear-gradient(105deg,#8c6424 0%,#b88935 48%,#eee 48%,#fafafa 100%);color:#111}.allfinanz-logo{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;width:min(900px,95%);text-align:left}.allfinanz-mark{font-size:76px;font-weight:900;color:#fff;line-height:1}.allfinanz-brand{font-size:clamp(26px,4vw,46px);font-weight:900}.allfinanz-sub{font-size:18px;margin-top:4px}.frank{margin-left:auto;text-align:center;font-size:18px}.frank strong{display:block;font-size:clamp(24px,3.5vw,42px);margin-top:8px}.sponsor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.sponsor-card{height:230px;border-radius:14px;border:1px solid #444;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;box-shadow:0 0 20px rgba(208,0,32,.12)}.sponsor-card:after{content:"";position:absolute;top:-30%;left:-45%;width:22%;height:170%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:rotate(25deg);animation:shine 5s ease-in-out infinite}.monius{background:linear-gradient(135deg,#fff,#d8d8d8);color:#111}.schief{background:#050505;color:#fff}.anemos{background:linear-gradient(135deg,#071b31,#0b3557);color:#fff}.logo-text{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:1px}.logo-sub{font-size:14px;margin-top:7px;letter-spacing:1px}.schief .logo-text{font-weight:400;font-size:38px}.schief .green{color:#00a651}.anemos .logo-text{font-family:Georgia,serif;font-weight:400;font-size:42px}.anemos .logo-sub{font-weight:700}.footer-note{text-align:center;color:#777;font-size:13px;margin-top:30px}@keyframes shine{0%{left:-45%;opacity:0}18%{opacity:1}45%{left:125%;opacity:1}55%,100%{left:125%;opacity:0}}@media(max-width:800px){.sponsor-grid{grid-template-columns:1fr}.sponsor-feature{min-height:300px}.allfinanz-logo{grid-template-columns:1fr;text-align:center}.frank{margin:12px 0 0}.allfinanz-mark{font-size:60px}.sponsor-card{height:210px}}
+</style>
 </head>
 <body>
-
-  <header class="hero">
-    <div class="badge">
-      <img src="bilder/ATSV_Wappen_4K_transparent.png"
-           alt="ATSV Forchheim Wappen"
-           style="width:85px; height:85px; object-fit:contain; display:block;">
-    </div>
-
-    <p class="eyebrow">ATSV FORCHHEIM</p>
-
-    <h1>
-      Ausrüster.<br>
-      <span>Unsere Sponsoren.</span>
-    </h1>
-
-    <p class="intro">
-      Die Partner, die den ATSV Forchheim unterstützen.
-    </p>
-
-    <nav>
-      <a href="index.html">Start</a>
-      <a href="spieler.html">Spieler</a>
-      <a href="vorbereitung-26-27.html">Vorbereitung 26/27</a>
-      <a href="liga-26-27.html">Liga 26/27</a>
-      <a href="ergebnisse.html">Ergebnisse & Tabelle</a>
-      <a href="ergebnisplan-26-27.html">🏆 Ergebnisplan</a>
-      <a href="spielberichte.html">Spielberichte</a>
-      <a href="galerie.html">Galerie</a>
-      <a href="news.html">📰 News</a>
-      <a href="ausruester-sponsoren.html">🤝 Ausrüster & Sponsoren</a>
-    </nav>
-  </header>
-
-  <main class="sponsor-page">
-    <h2 class="sponsor-heading">🤝 Ausrüster & Sponsoren</h2>
-    <p class="sponsor-intro">
-      Hier stellen wir nach und nach unsere Ausrüster und weiteren Sponsoren vor.
-    </p>
-
-    <section class="sponsor-section">
-      <h3 class="sponsor-section-title"><span>01</span> · Ausrüster</h3>
-      <div class="sponsor-grid">
-        <div class="sponsor-card">
-          <div class="sponsor-placeholder">Ausrüster-Bild folgt</div>
-          <div class="sponsor-name">Unser Ausrüster</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sponsor-section">
-      <h3 class="sponsor-section-title"><span>02</span> · Weitere Sponsoren</h3>
-      <div class="sponsor-grid">
-        <div class="sponsor-card">
-          <div class="sponsor-placeholder">Sponsor-Bild folgt</div>
-          <div class="sponsor-name">Sponsor 1</div>
-        </div>
-        <div class="sponsor-card">
-          <div class="sponsor-placeholder">Sponsor-Bild folgt</div>
-          <div class="sponsor-name">Sponsor 2</div>
-        </div>
-        <div class="sponsor-card">
-          <div class="sponsor-placeholder">Sponsor-Bild folgt</div>
-          <div class="sponsor-name">Sponsor 3</div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    ATSV Forchheim · Fanseite · 1903 ·
-    <a href="impressum.html">Impressum</a>
-  </footer>
-
+<header class="hero">
+<div class="badge"><img src="bilder/ATSV_Wappen_4K_transparent.png" alt="ATSV Forchheim Wappen" style="width:85px;height:85px;object-fit:contain;display:block;"></div>
+<p class="eyebrow">ATSV FORCHHEIM</p>
+<h1>Unsere Partner.<br><span>Unser Rückhalt.</span></h1>
+<p class="intro">Ausrüster und Sponsoren, die den ATSV Forchheim unterstützen.</p>
+<nav>
+<a href="index.html">Start</a>
+<a href="spieler.html">Spieler</a>
+<a href="vorbereitung-26-27.html">Vorbereitung 26/27</a>
+<a href="liga-26-27.html">Liga 26/27</a>
+<a href="ergebnisse.html">Ergebnisse & Tabelle</a>
+<a href="ergebnisplan-26-27.html">🏆 Ergebnisplan</a>
+<a href="spielberichte.html">Spielberichte</a>
+<a href="galerie.html">Galerie</a>
+<a href="news.html">📰 News</a>
+<a href="ausruester-sponsoren.html">🤝 Ausrüster & Sponsoren</a>
+</nav>
+</header>
+<main class="sponsor-page">
+<section class="sponsor-hero"><h2>Ausrüster <span>&</span> Sponsoren</h2><p>Wir danken unseren Partnern für ihre Unterstützung.</p></section>
+<section class="sponsor-section">
+<div class="section-label">Ausrüster</div>
+<div class="sponsor-frame"><div class="sponsor-feature">
+<div class="allfinanz-logo"><div class="allfinanz-mark">V</div><div><div class="allfinanz-brand">Allfinanz</div><div class="allfinanz-sub">Deutsche Vermögensberatung</div></div><div class="frank">Vermögensberater<strong>Frank Höhn</strong></div></div>
+</div></div>
+</section>
+<section class="sponsor-section">
+<div class="section-label">Weitere Sponsoren</div>
+<div class="sponsor-frame"><div class="sponsor-grid">
+<div class="sponsor-card monius"><div><div class="logo-text">MONIUS</div><div class="logo-sub">SANITÄR · HEIZUNG · KLIMA</div></div></div>
+<div class="sponsor-card schief"><div><div class="logo-text">DAS <span class="green">SCHIEFE</span> HAUS</div><div class="logo-sub">FORCHHEIM</div></div></div>
+<div class="sponsor-card anemos"><div><div class="logo-text">ΑΝΕΜΟΣ</div><div class="logo-sub">GRIECHISCHES RESTAURANT</div></div></div>
+</div></div>
+</section>
+<div class="footer-note">Weitere Partner können jederzeit ergänzt werden.</div>
+</main>
+<footer>ATSV Forchheim · Fanseite · 1903 · <a href="impressum.html">Impressum</a></footer>
 </body>
 </html>
