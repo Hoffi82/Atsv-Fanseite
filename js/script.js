@@ -40,8 +40,6 @@ async function atsVEnablePush() {
     let subscription = await registration.pushManager.getSubscription();
     const savedVapidKey = localStorage.getItem("atsv_vapid_public_key");
 
-    // Einmalige saubere Neu-Registrierung aller bereits vorhandenen Abos.
-    // Die vorhandenen VAPID-Secrets werden dabei nicht verändert.
     if (subscription && localStorage.getItem(ATSV_REBIND_FLAG) !== "done") {
       await subscription.unsubscribe();
       subscription = null;
@@ -114,5 +112,132 @@ async function updateAtsvPushButton() {
   }
 }
 
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", updateAtsvPushButton);
-else updateAtsvPushButton();
+/* ATSV Gegner-Wappen – Countdown und Live-Ticker */
+const ATSV_OPPONENT_LOGOS = {
+  "SpVgg Jahn Forchheim 2": "spvgg-jahn-forchheim-ii.jpg",
+  "ASV Möhrendorf": "asv-moehrendorf.jpg",
+  "DJK Schnaid-Rothensand": "djk-schnaid-rothensand.jpg",
+  "DJK Schnaid/Rothensand": "djk-schnaid-rothensand.jpg",
+  "ATSV Erlangen U23 2": "atsv-erlangen-u23.jpg",
+  "ATSV Erlangen 1898": "atsv-erlangen-u23.jpg",
+  "BSC Erlangen": "bsc-erlangen.jpg",
+  "DJK Hallerndorf": "djk-hallerndorf.jpg",
+  "ASV Niederndorf": "asv-niederndorf.jpg",
+  "DJK Erlangen II": "djk-erlangen-ii.jpg",
+  "SpVgg Uehlfeld": "spvgg-uehlfeld.png",
+  "SpVgg Hausen": "spvgg-hausen.jpg",
+  "SV Buckenhofen II": "sv-buckenhofen-ii.jpg",
+  "TSV Neuhaus": "tsv-neuhaus.jpg",
+  "Hammerbacher SV": "hammerbacher-sv.jpg",
+  "SpVgg Heßdorf/Großenseebach": "spvgg-hessdorf-grossenseebach.jpg",
+  "SpVgg Hessdorf/Großenseebach": "spvgg-hessdorf-grossenseebach.jpg",
+  "TKV Forchheim": "tkv-forchheim.jpg",
+  "DJK Eggolsheim": "djk-eggolsheim.png",
+  "TSV Hemhofen": "tsv-hemhofen.jpg",
+  "SpVgg Heroldsbach": "spvgg-heroldsbach-thurn.jpg",
+  "SpVgg/DJK Heroldsbach-Thurn": "spvgg-heroldsbach-thurn.jpg"
+};
+
+const ATSV_LOGO = "bilder/ATSV_Wappen_4K_transparent.png";
+
+function atsvLogoFile(name) {
+  const file = ATSV_OPPONENT_LOGOS[name] || "";
+  return file ? "bilder/" + file : "";
+}
+
+function atsvLogoImage(src, alt, className) {
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = alt;
+  img.className = className;
+  img.loading = "eager";
+  img.onerror = function () {
+    if (!this.dataset.fallback && /\.(jpg|jpeg|png)$/i.test(this.src)) {
+      this.dataset.fallback = "1";
+      this.src = this.src.replace(/\.(jpg|jpeg|png)$/i, ".$&".replace(".", ""));
+    }
+  };
+  return img;
+}
+
+function atsvFindLogo(teamName) {
+  const clean = String(teamName || "").trim();
+  const key = Object.keys(ATSV_OPPONENT_LOGOS).find(k => k.toLowerCase() === clean.toLowerCase());
+  return atsvLogoFile(key || clean);
+}
+
+function atsvStyleWappen() {
+  if (document.getElementById("atsv-wappen-style")) return;
+  const style = document.createElement("style");
+  style.id = "atsv-wappen-style";
+  style.textContent = `
+    .atsv-match-crest-wrap{display:flex;align-items:center;justify-content:center;gap:18px;margin:4px 0 18px}
+    .atsv-match-crest{width:78px;height:78px;object-fit:contain;display:block}
+    .atsv-match-crest-vs{color:#d00020;font-weight:900;font-size:18px}
+    .home-live-team .atsv-team-name,.next-match-team-name{display:block;margin-top:6px;font-size:13px;color:#aaa}
+    .home-live-crest{width:70px;height:70px;object-fit:contain;margin:auto;display:block}
+    @media(max-width:600px){.atsv-match-crest{width:62px;height:62px}.atsv-match-crest-wrap{gap:12px}.home-live-crest{width:58px;height:58px}}
+  `;
+  document.head.appendChild(style);
+}
+
+function atsvBuildCountdownWappen() {
+  const box = document.querySelector(".next-match");
+  if (!box || box.dataset.wappenDone) return;
+  const teams = box.querySelector(".next-match-teams");
+  if (!teams) return;
+  const text = teams.textContent.replace(/\s+/g," ").trim();
+  const opponent = /ASV Niederndorf/i.test(text) ? "ASV Niederndorf" : "";
+  if (!opponent) return;
+  teams.innerHTML = "";
+  const wrap = document.createElement("div");
+  wrap.className = "atsv-match-crest-wrap";
+  const home = atsvLogoImage(ATSV_LOGO,"ATSV Forchheim Wappen","atsv-match-crest");
+  const vs = document.createElement("span"); vs.className="atsv-match-crest-vs"; vs.textContent="VS.";
+  const awaySrc = atsvFindLogo(opponent);
+  const away = atsvLogoImage(awaySrc,opponent+" Wappen","atsv-match-crest");
+  wrap.append(home,vs,away);
+  const names = document.createElement("div");
+  names.innerHTML = "<span class=\"next-match-team-name\">ATSV Forchheim</span><span class=\"next-match-team-name\">"+opponent+"</span>";
+  teams.append(wrap,names);
+  box.dataset.wappenDone="1";
+}
+
+function atsvBuildLiveWappen() {
+  const teams = document.querySelector(".teams");
+  if (!teams) return;
+  const teamEls = teams.querySelectorAll(".team");
+  if (teamEls.length < 2) return;
+  const homeName = teamEls[0].textContent.trim();
+  const awayName = teamEls[1].textContent.trim();
+  if (!homeName || !awayName || homeName === "Gegner" || awayName === "Gegner") return;
+  let wrap = teams.querySelector(".atsv-match-crest-wrap");
+  if (!wrap) {
+    wrap = document.createElement("div");
+    wrap.className="atsv-match-crest-wrap";
+    teams.insertBefore(wrap, teams.firstChild);
+  }
+  wrap.innerHTML="";
+  const homeSrc = /atsv/i.test(homeName) ? ATSV_LOGO : atsvFindLogo(homeName);
+  const awaySrc = /atsv/i.test(awayName) ? ATSV_LOGO : atsvFindLogo(awayName);
+  wrap.append(atsvLogoImage(homeSrc,homeName+" Wappen","atsv-match-crest"));
+  const vs=document.createElement("span"); vs.className="atsv-match-crest-vs"; vs.textContent="VS."; wrap.append(vs);
+  wrap.append(atsvLogoImage(awaySrc,awayName+" Wappen","atsv-match-crest"));
+  teamEls.forEach(el=>el.style.fontSize="13px");
+}
+
+function initAtsvWappenDisplays() {
+  atsvStyleWappen();
+  atsvBuildCountdownWappen();
+  atsvBuildLiveWappen();
+  const observer = new MutationObserver(() => atsvBuildLiveWappen());
+  const teams = document.querySelector(".teams");
+  if (teams) observer.observe(teams,{subtree:true,childList:true,characterData:true});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => { updateAtsvPushButton(); initAtsvWappenDisplays(); });
+} else {
+  updateAtsvPushButton();
+  initAtsvWappenDisplays();
+}
