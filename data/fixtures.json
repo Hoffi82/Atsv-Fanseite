@@ -1,0 +1,22 @@
+{
+  "season": "2026/27",
+  "team": "ATSV Forchheim",
+  "fixtures": [
+    {
+      "date": "2026-08-23",
+      "time": "15:00",
+      "home": "ATSV Forchheim",
+      "away": "DJK Erlangen II",
+      "homeLogo": "bilder/ATSV_Wappen_4K_transparent.png",
+      "awayLogo": "bilder/djk-erlangen-ii.jpg.jpg"
+    },
+    {
+      "date": "2026-08-30",
+      "time": "15:00",
+      "home": "ATSV Forchheim",
+      "away": "Spvgg Jahn Forchheim II",
+      "homeLogo": "bilder/ATSV_Wappen_4K_transparent.png",
+      "awayLogo": "bilder/spvgg-jahn-forchheim-2.jpg.jpg"
+    }
+  ]
+}
