@@ -185,3 +185,59 @@
   }
 
 }
+
+/* COUNTDOWN – feste Wappen per CSS, unabhängig vom laufenden Countdown */
+.next-match-teams {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 22px !important;
+  min-height: 92px;
+  font-size: 0 !important;
+}
+
+.next-match-teams::before,
+.next-match-teams::after {
+  content: "";
+  display: block;
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.next-match-teams::before {
+  background-image: url('../bilder/ATSV_Wappen_4K_transparent.png');
+}
+
+.next-match-teams::after {
+  background-image: url('../bilder/djk-erlangen-ii.jpg.jpg');
+}
+
+.next-match-teams span {
+  display: block !important;
+  color: #d00020 !important;
+  font-size: 16px !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 600px) {
+  .next-match-teams {
+    gap: 14px !important;
+    min-height: 72px;
+  }
+
+  .next-match-teams::before,
+  .next-match-teams::after {
+    width: 58px;
+    height: 58px;
+    flex-basis: 58px;
+  }
+
+  .next-match-teams span {
+    font-size: 14px !important;
+  }
+}
