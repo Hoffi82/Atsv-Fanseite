@@ -98,91 +98,9 @@ async function updateAtsvPushButton() {
   }
 }
 
-/* ATSV Gegner-Wappen – zunächst nur für den Countdown */
-const ATSV_OPPONENT_LOGOS = {
-  "DJK Erlangen II": "djk-erlangen-ii.jpg.jpg"
-};
-const ATSV_LOGO = "bilder/ATSV_Wappen_4K_transparent.png";
-
-function atsvFindLogo(teamName) {
-  const clean = String(teamName || "").trim();
-  const key = Object.keys(ATSV_OPPONENT_LOGOS).find(k => k.toLowerCase() === clean.toLowerCase());
-  return key ? "bilder/" + ATSV_OPPONENT_LOGOS[key] : "";
-}
-
-function atsvLogoImage(src, alt, className) {
-  const img = document.createElement("img");
-  img.src = src;
-  img.alt = alt;
-  img.className = className;
-  img.loading = "eager";
-  return img;
-}
-
-function atsvStyleCountdownWappen() {
-  if (document.getElementById("atsv-countdown-wappen-style")) return;
-  const style = document.createElement("style");
-  style.id = "atsv-countdown-wappen-style";
-  style.textContent = `
-    .atsv-countdown-crest-wrap{display:flex;align-items:center;justify-content:center;gap:24px;margin:2px auto 10px;width:100%;}
-    .atsv-countdown-crest{width:72px;height:72px;object-fit:contain;display:block;flex:0 0 72px;}
-    .atsv-countdown-vs{color:#d00020;font-weight:900;font-size:16px;line-height:1;flex:0 0 auto;}
-    .atsv-countdown-team-name{display:inline-block;margin:0 8px 8px;color:#aaa;font-size:13px;font-weight:700;}
-    @media(max-width:600px){.atsv-countdown-crest-wrap{gap:14px}.atsv-countdown-crest{width:60px;height:60px;flex-basis:60px}.atsv-countdown-vs{font-size:14px}}
-  `;
-  document.head.appendChild(style);
-}
-
-function atsvBuildCountdownWappen() {
-  const box = document.querySelector(".next-match");
-  const teams = box?.querySelector(".next-match-teams");
-  if (!teams || teams.dataset.countdownWappenDone === "1") return;
-
-  const opponent = "DJK Erlangen II";
-  teams.innerHTML = "";
-
-  const wrap = document.createElement("div");
-  wrap.className = "atsv-countdown-crest-wrap";
-  wrap.append(
-    atsvLogoImage(ATSV_LOGO, "ATSV Forchheim Wappen", "atsv-countdown-crest")
-  );
-
-  const vs = document.createElement("span");
-  vs.className = "atsv-countdown-vs";
-  vs.textContent = "VS.";
-  wrap.append(vs);
-
-  wrap.append(
-    atsvLogoImage(atsvFindLogo(opponent), opponent + " Wappen", "atsv-countdown-crest")
-  );
-  teams.appendChild(wrap);
-
-  const names = document.createElement("div");
-  names.innerHTML = '<span class="atsv-countdown-team-name">ATSV Forchheim</span><span class="atsv-countdown-team-name">DJK Erlangen II</span>';
-  teams.appendChild(names);
-  teams.dataset.countdownWappenDone = "1";
-}
-
-/* Der Countdown aktualisiert die Mannschaften jede Sekunde. Danach die Wappen erneut einsetzen. */
-const atsvOriginalUpdateNextMatch = window.updateNextMatch;
-if (typeof atsvOriginalUpdateNextMatch === "function") {
-  window.updateNextMatch = function () {
-    atsvOriginalUpdateNextMatch();
-    atsvBuildCountdownWappen();
-  };
-}
-
-function initAtsvCountdownWappen() {
-  atsvStyleCountdownWappen();
-  atsvBuildCountdownWappen();
-}
-
+// Countdown-Wappen-Code entfernt. Die Wappen werden direkt im Countdown-HTML eingebaut.
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    updateAtsvPushButton();
-    initAtsvCountdownWappen();
-  });
+  document.addEventListener("DOMContentLoaded", updateAtsvPushButton);
 } else {
   updateAtsvPushButton();
-  initAtsvCountdownWappen();
 }
