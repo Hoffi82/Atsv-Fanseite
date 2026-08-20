@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form der Mannschaft – ATSV Forchheim</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/form-data.js"></script>
+<style>
+.form-page{max-width:1050px;margin:0 auto;padding:25px 18px 60px}.form-title{text-align:center;margin:15px 0 6px}.form-subtitle{text-align:center;color:#aaa;margin-bottom:28px}.form-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:25px}.stat{background:#111;border:1px solid #333;border-radius:12px;padding:15px;text-align:center}.stat span{display:block;color:#999;font-size:12px;margin-bottom:5px}.stat strong{font-size:24px;color:white}.stat.win strong{color:#36c76f}.stat.loss strong{color:#e00020}.stat.points strong{color:#d00020}.chart-card,.games-card{background:#111;border:2px solid #d00020;border-radius:16px;box-shadow:0 0 25px rgba(208,0,32,.18);padding:20px;margin-bottom:24px}.section-title{text-align:center;color:#d00020;letter-spacing:2px;font-size:18px;margin:0 0 15px}.chart-wrap{position:relative;overflow-x:auto}.chart{width:100%;min-width:680px;height:330px;display:block}.axis{stroke:#444;stroke-width:1}.grid{stroke:#252525;stroke-width:1}.curve{fill:none;stroke:#d00020;stroke-width:4;stroke-linejoin:round;stroke-linecap:round}.point-win{fill:#36c76f;stroke:#111;stroke-width:3}.point-draw{fill:#f0b429;stroke:#111;stroke-width:3}.point-loss{fill:#e00020;stroke:#111;stroke-width:3}.chart-label{fill:#aaa;font-size:12px}.chart-result{fill:white;font-weight:bold;font-size:12px}.legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:12px;color:#aaa;font-size:12px}.legend b{color:white}.games{display:flex;flex-direction:column;gap:10px}.game{display:grid;grid-template-columns:105px 95px 1fr 90px 65px;align-items:center;gap:10px;background:#181818;border-left:4px solid #555;border-radius:8px;padding:12px}.game.win{border-left-color:#36c76f}.game.loss{border-left-color:#e00020}.game.draw{border-left-color:#f0b429}.game-date{color:#aaa;font-size:12px}.game-type{color:#d00020;font-size:11px;font-weight:bold;text-transform:uppercase}.game-teams{text-align:center}.team{display:flex;align-items:center;justify-content:center;gap:8px;color:white;font-weight:700}.team img{width:34px;height:34px;object-fit:contain}.team-logo-placeholder{width:34px;height:34px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#2a2a2a;color:#aaa;font-size:10px;font-weight:900}.game-score{text-align:center;color:#d00020;font-size:22px;font-weight:900}.game-result{text-align:center;font-size:12px;font-weight:900}.game-result.win{color:#36c76f}.game-result.draw{color:#f0b429}.game-result.loss{color:#e00020}.note{text-align:center;color:#777;font-size:12px;margin-top:15px}.back-button{display:inline-block;margin-bottom:10px;padding:10px 18px;color:white;text-decoration:none;border:1px solid #d00020}.back-button:hover{background:#d00020}@media(max-width:700px){.form-summary{grid-template-columns:repeat(2,1fr)}.game{grid-template-columns:1fr;gap:7px;text-align:center}.game-date,.game-teams,.game-score,.game-result{text-align:center}.team{font-size:14px}.chart{min-width:620px}}
+</style>
+</head>
+<body>
+<main class="form-page">
+<a class="back-button" href="index.html">← Zurück</a>
+<p class="eyebrow">ATSV FORCHHEIM</p>
+<h1 class="form-title">📈 FORM DER MANNSCHAFT</h1>
+<p class="form-subtitle">Vorbereitung & Liga 2026/27 · Die Kurve wächst automatisch mit jedem neuen Spiel</p>
+
+<section class="form-summary" id="summary"></section>
+
+<section class="chart-card">
+<h2 class="section-title">FORMKURVE</h2>
+<div class="chart-wrap"><svg id="formChart" class="chart" viewBox="0 0 900 330" preserveAspectRatio="none"></svg></div>
+<div class="legend"><span>🟢 <b>Sieg</b> +1</span><span>🟡 <b>Unentschieden</b> 0</span><span>🔴 <b>Niederlage</b> −1</span></div>
+<p class="note">Die Kurve zeigt die Formdynamik: Siege führen nach oben, Niederlagen nach unten. Testspiele zählen für die Form, aber nicht für Ligapunkte.</p>
+</section>
+
+<section class="games-card">
+<h2 class="section-title">LETZTE SPIELE</h2>
+<div class="games" id="games"></div>
+</section>
+</main>
+
+<script>
+(function(){
+  const cfg=window.ATSV_FORM_CONFIG;
+  const allGames=[...window.ATSV_FORM_GAMES].sort((a,b)=>a.date.localeCompare(b.date));
+  const games=allGames.slice(-cfg.maxGames);
+  const atsv='ATSV Forchheim';
+
+  function result(g){
+    if(g.homeScore===g.awayScore)return 'draw';
+    const atsHome=g.home===atsv;
+    const atsScore=atsHome?g.homeScore:g.awayScore;
+    const oppScore=atsHome?g.awayScore:g.homeScore;
+    return atsScore>oppScore?'win':'loss';
+  }
+  function resultText(r){return r==='win'?'SIEG':r==='draw'?'REMIS':'NIEDERLAGE';}
+  function formatDate(s){return new Date(s+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});}
+  function logo(name){
+    if(name===atsv)return `<img src="${cfg.atsvLogo}" alt="ATSV Forchheim Wappen">`;
+    const src=cfg.opponentLogos[name];
+    return src?`<img src="${src}" alt="${name} Wappen">`:`<span class="team-logo-placeholder">${name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase()}</span>`;
+  }
+
+  let wins=0,draws=0,losses=0,goalsFor=0,goalsAgainst=0,leaguePoints=0,level=0;
+  const points=[];
+  games.forEach((g,i)=>{
+    const r=result(g); if(r==='win'){wins++;level++;} else if(r==='draw'){draws++;} else {losses++;level--;}
+    const atsHome=g.home===atsv; goalsFor+=atsHome?g.homeScore:g.awayScore; goalsAgainst+=atsHome?g.awayScore:g.homeScore;
+    if(g.type==='Liga') leaguePoints += r==='win'?3:r==='draw'?1:0;
+    points.push({g,r,level,index:i});
+  });
+  const summary=document.getElementById('summary');
+  summary.innerHTML=`<div class="stat"><span>Spiele</span><strong>${games.length}</strong></div><div class="stat win"><span>Siege</span><strong>${wins}</strong></div><div class="stat"><span>Remis</span><strong>${draws}</strong></div><div class="stat loss"><span>Niederlagen</span><strong>${losses}</strong></div><div class="stat points"><span>Liga-Punkte</span><strong>${leaguePoints}</strong></div>`;
+
+  const svg=document.getElementById('formChart');
+  const W=900,H=330,pad={l:45,r:25,t:25,b:55};
+  const max=Math.max(4,...points.map(p=>Math.abs(p.level))); const min=-max, range=max-min;
+  const x=i=>pad.l+(games.length===1?0:(W-pad.l-pad.r)*i/(games.length-1));
+  const y=v=>pad.t+(H-pad.t-pad.b)*(max-v)/range;
+  let markup='';
+  for(let v=min;v<=max;v++){const yy=y(v); markup+=`<line class="grid" x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}"/><text class="chart-label" x="8" y="${yy+4}">${v>0?'+':''}${v}</text>`;}
+  markup+=`<line class="axis" x1="${pad.l}" y1="${y(0)}" x2="${W-pad.r}" y2="${y(0)}"/>`;
+  const d=points.map((p,i)=>(i?'L':'M')+` ${x(i)} ${y(p.level)}`).join(' ');
+  if(points.length>1)markup+=`<path class="curve" d="${d}"/>`;
+  points.forEach((p,i)=>{const xx=x(i),yy=y(p.level), cls=p.r==='win'?'point-win':p.r==='draw'?'point-draw':'point-loss'; const letter=p.r==='win'?'S':p.r==='draw'?'U':'N'; markup+=`<circle class="${cls}" cx="${xx}" cy="${yy}" r="7"/><text class="chart-result" text-anchor="middle" x="${xx}" y="${yy-13}">${letter}</text><text class="chart-label" text-anchor="middle" x="${xx}" y="${H-28}">${formatDate(p.g.date).slice(0,5)}</text>`;});
+  svg.innerHTML=markup;
+
+  const gamesEl=document.getElementById('games');
+  [...points].reverse().forEach(p=>{const g=p.g, r=p.r; gamesEl.innerHTML+=`<article class="game ${r}"><div class="game-date"><strong>${formatDate(g.date)}</strong><br><span class="game-type">${g.type}</span></div><div class="game-teams"><div class="team">${logo(g.home)}<span>${g.home}</span></div><div style="color:#777">vs.</div><div class="team">${logo(g.away)}<span>${g.away}</span></div></div><div class="game-score">${g.homeScore} : ${g.awayScore}</div><div class="game-result ${r}">${resultText(r)}</div><div style="color:#777;text-align:center;font-size:12px">Form<br><b style="color:white">${p.level>0?'+':''}${p.level}</b></div></article>`;});
+})();
+</script>
+</body>
+</html>
