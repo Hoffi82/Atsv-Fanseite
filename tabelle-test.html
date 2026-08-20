@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATSV – Tabelle Test</title>
+<style>
+body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-serif;padding:25px 10px}.box{max-width:900px;margin:auto;background:#111;border:1px solid #333;border-radius:12px;padding:20px}.eyebrow{color:#d00020;font-weight:900;letter-spacing:2px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px 6px;border-bottom:1px solid #333;text-align:center}th{color:#aaa;font-size:12px}th:first-child,td:first-child{text-align:center}td.team{text-align:left;font-weight:700}.atsv{color:#d00020;font-weight:900}.status{padding:12px;background:#181818;border-radius:8px;margin-top:15px}.error{color:#ff6666}@media(max-width:600px){body{padding:12px 6px}.box{padding:14px}th,td{padding:8px 3px;font-size:12px}.team{max-width:130px;overflow-wrap:anywhere}}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="eyebrow">ATSV FORCHHEIM</div>
+<h1>🏆 Tabelle – Test</h1>
+<div id="status" class="status">Daten werden geladen …</div>
+<table>
+<thead><tr><th>#</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>Tore</th><th>Diff.</th><th>Pkt.</th></tr></thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<script src="js/results-loader.js"></script>
+<script src="js/table-calculator.js"></script>
+<script>
+(async function(){
+ const status=document.getElementById('status'), body=document.getElementById('tableBody');
+ const results=await window.getAtsvResults();
+ const rows=window.calculateAtsvTable(results);
+ if(!rows.length){status.textContent='Keine abgeschlossenen Ergebnisse gefunden.';status.classList.add('error');return;}
+ status.textContent=rows.length+' Mannschaften aus den Ergebnisdaten berechnet.';
+ body.innerHTML=rows.map((r,i)=>`<tr class="${r.team==='ATSV Forchheim'?'atsv':''}"><td>${i+1}</td><td class="team">${r.team}</td><td>${r.games}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.goalsFor}:${r.goalsAgainst}</td><td>${r.goalDifference>0?'+':''}${r.goalDifference}</td><td><strong>${r.points}</strong></td></tr>`).join('');
+})();
+</script>
+</body>
+</html>
