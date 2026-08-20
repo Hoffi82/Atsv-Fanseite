@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATSV – Ergebnisdaten Test</title>
+<style>
+body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-serif;padding:30px 15px}.box{max-width:700px;margin:auto;background:#111;border:1px solid #333;border-radius:12px;padding:25px}.eyebrow{color:#d00020;font-weight:900;letter-spacing:2px}.status{margin:15px 0;padding:12px;border-radius:8px;background:#181818}.result{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #333}.team{text-align:center;font-weight:700}.score{font-size:20px;font-weight:900;color:#d00020;white-space:nowrap}.error{color:#ff6666}a{display:inline-block;margin-top:20px;color:#fff;text-decoration:none;border:1px solid #d00020;padding:10px 16px}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="eyebrow">ATSV FORCHHEIM</div>
+<h1>Ergebnisdaten-Test</h1>
+<div id="status" class="status">Ergebnisdaten werden geladen …</div>
+<div id="results"></div>
+<a href="ergebnisplan-26-27.html">← Zum Ergebnisplan</a>
+</div>
+<script src="js/results-loader.js"></script>
+<script>
+(async function(){
+ const status=document.getElementById('status');
+ const target=document.getElementById('results');
+ const results=await window.getAtsvResults();
+ if(!results.length){status.textContent='Keine Ergebnisdaten gefunden.';status.classList.add('error');return;}
+ status.textContent=results.length+' Ergebnis(se) erfolgreich geladen.';
+ target.innerHTML=results.map(r=>`<div class="result"><div class="team">${r.home}</div><div class="score">${r.homeGoals} : ${r.awayGoals}</div><div class="team">${r.away}</div></div>`).join('');
+})();
+</script>
+</body>
+</html>
