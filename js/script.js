@@ -163,6 +163,15 @@ function atsvBuildCountdownWappen() {
   teams.dataset.countdownWappenDone = "1";
 }
 
+/* Der Countdown aktualisiert die Mannschaften jede Sekunde. Danach die Wappen erneut einsetzen. */
+const atsvOriginalUpdateNextMatch = window.updateNextMatch;
+if (typeof atsvOriginalUpdateNextMatch === "function") {
+  window.updateNextMatch = function () {
+    atsvOriginalUpdateNextMatch();
+    atsvBuildCountdownWappen();
+  };
+}
+
 function initAtsvCountdownWappen() {
   atsvStyleCountdownWappen();
   atsvBuildCountdownWappen();
