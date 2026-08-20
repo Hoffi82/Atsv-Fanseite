@@ -36,5 +36,33 @@ body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-ser
 <script>
 (function(){const stats={};document.querySelectorAll('.result-card[data-home]').forEach(card=>{const home=card.dataset.home,away=card.dataset.away,hs=Number(card.dataset.homeScore),as=Number(card.dataset.awayScore);if(!Number.isFinite(hs)||!Number.isFinite(as))return;[home,away].forEach(team=>{if(!stats[team])stats[team]={team,sp:0,s:0,u:0,n:0,gf:0,ga:0,pts:0}});stats[home].sp++;stats[away].sp++;stats[home].gf+=hs;stats[home].ga+=as;stats[away].gf+=as;stats[away].ga+=hs;if(hs>as){stats[home].s++;stats[away].n++;stats[home].pts+=3}else if(hs<as){stats[away].s++;stats[home].n++;stats[away].pts+=3}else{stats[home].u++;stats[away].u++;stats[home].pts++;stats[away].pts++}});const rows=Object.values(stats).sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.team.localeCompare(b.team,'de'));const body=document.getElementById('standingsBody');rows.forEach((r,i)=>{const p=i+1,diff=r.gf-r.ga;let status='neutral',arrow='—',pc='';if(p===1){status='green';arrow='↑';pc='points-green'}else if(p===2){status='blue';arrow='↑';pc='points-blue'}else if(p===12||p===13){status='yellow';arrow='↓';pc='points-yellow'}else if(p===14){status='red';arrow='↓';pc='points-red'}const tr=document.createElement('tr');if(r.team==='ATSV Forchheim')tr.className='atsv-row';tr.innerHTML=`<td class="position-cell"><div class="position-badge status-${status}"><span>${p}</span><span class="arrow">${arrow}</span></div></td><td class="team-name"></td><td>${r.sp}</td><td>${r.s}</td><td>${r.u}</td><td>${r.n}</td><td>${r.gf}:${r.ga}</td><td>${r.ga}</td><td>${diff>0?'+':''}${diff}</td><td class="points ${pc}">${r.pts}</td>`;tr.querySelector('.team-name').textContent=r.team;body.appendChild(tr)})})();
 </script>
+<script src="js/results-loader.js"></script>
+<script src="js/table-calculator.js"></script>
+<script>
+(async function(){
+  try {
+    const results = await window.getAtsvResults();
+    const rows = window.calculateAtsvTable(results);
+    const body = document.getElementById('standingsBody');
+    if (!body || !rows.length) return;
+    body.innerHTML = '';
+    rows.forEach((r,i) => {
+      const p=i+1, diff=r.goalDifference;
+      let status='neutral', arrow='—', pc='';
+      if(p===1){status='green';arrow='↑';pc='points-green'}
+      else if(p===2){status='blue';arrow='↑';pc='points-blue'}
+      else if(p===12||p===13){status='yellow';arrow='↓';pc='points-yellow'}
+      else if(p===14){status='red';arrow='↓';pc='points-red'}
+      const tr=document.createElement('tr');
+      if(r.team==='ATSV Forchheim') tr.className='atsv-row';
+      tr.innerHTML=`<td class="position-cell"><div class="position-badge status-${status}"><span>${p}</span><span class="arrow">${arrow}</span></div></td><td class="team-name"></td><td>${r.games}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${r.goalsFor}</td><td>${r.goalsAgainst}</td><td>${diff>0?'+':''}${diff}</td><td class="points ${pc}">${r.points}</td>`;
+      tr.querySelector('.team-name').textContent=r.team;
+      body.appendChild(tr);
+    });
+  } catch (error) {
+    console.error('ATSV Tabelle:', error);
+  }
+})();
+</script>
 </body>
 </html>
