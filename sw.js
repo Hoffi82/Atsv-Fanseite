@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v17";
+const CACHE_NAME = "atsv-fan-app-v18";
 
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
@@ -18,13 +18,13 @@ async function prepareIndex(response, request) {
 
   const html = await response.text();
 
-  // Nur den alten Button-Aufruf umleiten. Der restliche HTML-Code bleibt 1:1 erhalten.
-  let fixedHtml = html
-    .replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"')
-    .replace(/<\/body>/i, '<script src="./js/script.js?v=17"></script></body>');
+  // Nur den alten Button-Aufruf umleiten. script.js wird nicht doppelt eingefügt.
+  let fixedHtml = html.replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"');
 
-  // Wenn die Seite durch einen Push geöffnet wurde, zeigen wir die Push-Nachricht
-  // direkt auf der Fanseite als ATSV-Popup an.
+  if (!/js\/script\.js/i.test(fixedHtml)) {
+    fixedHtml = fixedHtml.replace(/<\/body>/i, '<script src="./js/script.js?v=18"></script></body>');
+  }
+
   const pageUrl = new URL(request.url);
   const pushTitle = pageUrl.searchParams.get("pushTitle");
   const pushBody = pageUrl.searchParams.get("pushBody");
@@ -132,7 +132,6 @@ self.addEventListener("notificationclick", event => {
   try {
     const target = new URL(rawTarget, self.location.origin);
 
-    // Auf der ATSV-Fanseite wird die Push-Nachricht beim Öffnen direkt angezeigt.
     if (target.origin === self.location.origin) {
       target.searchParams.set("pushTitle", notificationData.title || event.notification.title || "ATSV Forchheim");
       target.searchParams.set("pushBody", notificationData.body || event.notification.body || "Neue Nachricht vom ATSV Forchheim");
