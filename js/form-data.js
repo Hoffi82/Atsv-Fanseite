@@ -15,6 +15,28 @@ window.ATSV_FORM_GAMES = [
 window.ATSV_FORM_CONFIG = {
   maxGames: 10,
   atsvLogo: 'bilder/ATSV_Wappen_4K_transparent.png',
-  // Sobald die Original-Gegnerwappen im Ordner liegen, hier die Dateinamen ergänzen.
-  opponentLogos: {}
+  opponentLogos: {
+    'SpVgg Jahn Forchheim 2': 'bilder/spvgg-jahn-forchheim-ii.jpg',
+    'ASV Möhrendorf': 'bilder/asv-moehrendorf.jpg',
+    'DJK Schnaid-Rothensand': 'bilder/djk-schnaid-rothensand.jpg',
+    'DJK Schnaid/Rothensand': 'bilder/djk-schnaid-rothensand.jpg',
+    'ATSV Erlangen U23 2': 'bilder/atsv-erlangen-u23.jpg',
+    'ATSV Erlangen 1898': 'bilder/atsv-erlangen-u23.jpg',
+    'BSC Erlangen': 'bilder/bsc-erlangen.jpg',
+    'DJK Hallerndorf': 'bilder/djk-hallerndorf.jpg',
+    'ASV Niederndorf': 'bilder/asv-niederndorf.jpg',
+    'DJK Erlangen II': 'bilder/djk-erlangen-ii.jpg',
+    'SpVgg Uehlfeld': 'bilder/spvgg-uehlfeld.png',
+    'SpVgg Hausen': 'bilder/spvgg-hausen.jpg',
+    'SV Buckenhofen II': 'bilder/sv-buckenhofen-ii.jpg',
+    'TSV Neuhaus': 'bilder/tsv-neuhaus.jpg',
+    'Hammerbacher SV': 'bilder/hammerbacher-sv.jpg',
+    'SpVgg Heßdorf/Großenseebach': 'bilder/spvgg-hessdorf-grossenseebach.jpg',
+    'SpVgg Hessdorf/Großenseebach': 'bilder/spvgg-hessdorf-grossenseebach.jpg',
+    'TKV Forchheim': 'bilder/tkv-forchheim.jpg',
+    'DJK Eggolsheim': 'bilder/djk-eggolsheim.png',
+    'TSV Hemhofen': 'bilder/tsv-hemhofen.jpg',
+    'SpVgg Heroldsbach': 'bilder/spvgg-heroldsbach-thurn.jpg',
+    'SpVgg/DJK Heroldsbach-Thurn': 'bilder/spvgg-heroldsbach-thurn.jpg'
+  }
 };
