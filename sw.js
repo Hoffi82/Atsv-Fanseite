@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v18";
+const CACHE_NAME = "atsv-fan-app-v19";
 
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
@@ -18,12 +18,87 @@ async function prepareIndex(response, request) {
 
   const html = await response.text();
 
-  // Nur den alten Button-Aufruf umleiten. script.js wird nicht doppelt eingefügt.
   let fixedHtml = html.replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"');
 
   if (!/js\/script\.js/i.test(fixedHtml)) {
     fixedHtml = fixedHtml.replace(/<\/body>/i, '<script src="./js/script.js?v=18"></script></body>');
   }
+
+  // Der bestehende Countdown in index.html enthält noch die alte, fest
+  // eingetragene Partie. Dieses Override läuft bewusst ganz am Ende der Seite,
+  // nachdem der alte Countdown initialisiert wurde, und setzt die Anzeige
+  // zuverlässig auf das automatisch nächste Spiel.
+  const countdownFix = `
+<script>
+(function(){
+  const box = document.querySelector('.next-match');
+  if (!box || typeof matches === 'undefined') return;
+
+  function getRealNextMatch(){
+    const now = new Date();
+    return matches
+      .map(match => ({ ...match, start: new Date(match.date) }))
+      .filter(match => !Number.isNaN(match.start.getTime()) && match.start > now)
+      .sort((a,b) => a.start - b.start)[0] || null;
+  }
+
+  function renderRealNextMatch(){
+    const match = getRealNextMatch();
+    const dateEl = box.querySelector('.next-match-date');
+    const teamsEl = box.querySelector('.next-match-teams');
+    const countdown = box.querySelector('.countdown');
+    const liveMessage = box.querySelector('#live-message');
+
+    if (!match){
+      if (dateEl) dateEl.textContent = 'Keine weiteren Spiele';
+      if (teamsEl) teamsEl.innerHTML = 'Saisonpause';
+      if (countdown) countdown.style.display = 'none';
+      if (liveMessage) liveMessage.innerHTML = '';
+      return;
+    }
+
+    const diff = match.start - new Date();
+    if (dateEl) {
+      dateEl.textContent = match.start.toLocaleDateString('de-DE', {
+        weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
+      }) + ' · ' + match.start.toLocaleTimeString('de-DE', {
+        hour: '2-digit', minute: '2-digit'
+      }) + ' Uhr';
+    }
+    if (teamsEl) {
+      teamsEl.innerHTML = match.home + '<span>VS.</span>' + match.away;
+    }
+
+    if (diff <= 0){
+      if (countdown) countdown.style.display = 'none';
+      if (liveMessage) liveMessage.innerHTML = '<div class="game-live">🔴 DAS SPIEL LÄUFT!</div>';
+      return;
+    }
+
+    if (countdown) countdown.style.display = 'grid';
+    if (liveMessage) liveMessage.innerHTML = '';
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff / 3600000) % 24);
+    const minutes = Math.floor((diff / 60000) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    const d = box.querySelector('#days');
+    const h = box.querySelector('#hours');
+    const m = box.querySelector('#minutes');
+    const s = box.querySelector('#seconds');
+    if (d) d.textContent = String(days).padStart(2,'0');
+    if (h) h.textContent = String(hours).padStart(2,'0');
+    if (m) m.textContent = String(minutes).padStart(2,'0');
+    if (s) s.textContent = String(seconds).padStart(2,'0');
+  }
+
+  renderRealNextMatch();
+  setInterval(renderRealNextMatch, 1000);
+})();
+</script>`;
+
+  fixedHtml = fixedHtml.replace(/<\/body>/i, countdownFix + "</body>");
 
   const pageUrl = new URL(request.url);
   const pushTitle = pageUrl.searchParams.get("pushTitle");
