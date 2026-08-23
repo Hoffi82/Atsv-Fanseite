@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATSV Forchheim – Tippspiel</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{background:#090909;color:#fff}
+    .tipps-wrap{width:min(1000px,92%);margin:35px auto 70px}
+    .tipps-head{text-align:center;margin-bottom:28px}
+    .tipps-head h1{color:#d00020;font-size:32px;margin:0 0 8px;font-weight:900}
+    .tipps-head p{color:#aaa;margin:0;line-height:1.5}
+    .tipps-card{background:#111;border:2px solid #d00020;border-radius:16px;padding:22px;box-shadow:0 0 25px rgba(208,0,32,.18);margin-bottom:22px}
+    .tipps-card h2{margin:0 0 14px;color:#fff;font-size:20px}
+    .name-row{display:flex;gap:10px;flex-wrap:wrap}
+    .name-row input{flex:1;min-width:220px;background:#1a1a1a;border:1px solid #444;color:#fff;border-radius:9px;padding:13px;font-size:16px}
+    .tipps-button{background:#d00020;color:#fff;border:0;border-radius:9px;padding:13px 18px;font-weight:900;cursor:pointer}
+    .tipps-button:hover{background:#a80019}
+    .tipps-button:disabled{opacity:.5;cursor:not-allowed}
+    .notice{margin-top:12px;color:#aaa;font-size:13px}
+    .game{background:#181818;border:1px solid #333;border-radius:12px;padding:16px;margin:12px 0}
+    .game-top{display:flex;justify-content:space-between;gap:10px;color:#aaa;font-size:12px;margin-bottom:10px}
+    .game-teams{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;text-align:center;font-weight:900}
+    .game-teams .team:last-child{text-align:center}
+    .score-inputs{display:flex;align-items:center;gap:5px}
+    .score-inputs input{width:48px;background:#0c0c0c;border:1px solid #555;color:#fff;border-radius:7px;padding:9px;text-align:center;font-size:18px;font-weight:900}
+    .score-inputs span{color:#d00020;font-size:20px;font-weight:900}
+    .closed{border-color:#333;opacity:.72}
+    .closed .score-inputs input{border-color:#333;color:#aaa}
+    .status{margin-top:10px;font-size:12px;color:#aaa;text-align:center}
+    .result{color:#d00020;font-weight:900}
+    .leaderboard{width:100%;border-collapse:collapse}
+    .leaderboard th,.leaderboard td{padding:11px 8px;border-bottom:1px solid #2a2a2a;text-align:left}
+    .leaderboard th{color:#aaa;font-size:12px;text-transform:uppercase}
+    .leaderboard td:last-child,.leaderboard th:last-child{text-align:right}
+    .rank{color:#d00020;font-weight:900}
+    .empty{text-align:center;color:#777;padding:15px}
+    .back{text-align:center;margin-top:25px}
+    .back a{color:#fff;text-decoration:none;background:#222;border:1px solid #444;padding:10px 16px;border-radius:8px;font-weight:700}
+    @media(max-width:650px){.game-teams{grid-template-columns:1fr}.score-inputs{justify-content:center}.name-row{flex-direction:column}.name-row input{min-width:0}.tipps-button{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="hero" style="padding-bottom:30px">
+    <div class="badge"><img src="bilder/ATSV_Wappen_4K_transparent.png" alt="ATSV Forchheim Wappen" style="width:85px;height:85px;object-fit:contain;display:block"></div>
+    <p class="eyebrow">ATSV FORCHHEIM</p>
+    <h1>Unser Tippspiel.<br><span>Unser ATSV.</span></h1>
+    <p class="intro">Nur ATSV-Spiele · 3 Punkte für das exakt richtige Ergebnis · bis zur Winterpause</p>
+    <nav>
+      <a href="index.html">Start</a>
+      <a href="spieler.html">Spieler</a>
+      <a href="liga-26-27.html">Liga 26/27</a>
+      <a href="ergebnisse.html">Ergebnisse & Tabelle</a>
+      <a href="spielberichte.html">Spielberichte</a>
+      <a href="galerie.html">Galerie</a>
+      <a href="news.html">📰 News</a>
+      <a href="tippspiel.html">🎯 Tippspiel</a>
+    </nav>
+  </header>
+
+  <main class="tipps-wrap">
+    <section class="tipps-head">
+      <h1>🎯 ATSV-Tippspiel</h1>
+      <p>Tippe ausschließlich die Spiele des ATSV Forchheim.<br><strong>Exakt richtig = 3 Punkte · sonst 0 Punkte.</strong></p>
+    </section>
+
+    <section class="tipps-card">
+      <h2>👤 Dein Name</h2>
+      <div class="name-row">
+        <input id="nameInput" maxlength="30" placeholder="Bitte Namen eingeben" autocomplete="name">
+        <button class="tipps-button" id="saveNameButton">Name speichern</button>
+      </div>
+      <div class="notice">Der Name ist Pflicht. Deine Tipps werden diesem Teilnehmer zugeordnet.</div>
+      <div id="nameStatus" class="notice"></div>
+    </section>
+
+    <section class="tipps-card">
+      <h2>⚽ Deine Tipps</h2>
+      <div id="games"></div>
+      <button class="tipps-button" id="saveTipsButton" disabled>💾 Tipps speichern</button>
+      <div id="saveStatus" class="notice"></div>
+    </section>
+
+    <section class="tipps-card">
+      <h2>🏆 Rangliste</h2>
+      <div id="leaderboard"><div class="empty">Rangliste wird geladen …</div></div>
+      <div class="notice">Die Rangliste zählt nur exakt richtige Ergebnisse mit jeweils 3 Punkten.</div>
+    </section>
+
+    <div class="back"><a href="index.html">← Zur ATSV-Fanseite</a></div>
+  </main>
+
+<script>
+const SUPABASE_URL="https://xmtrtpibldbiiikkkmnd.supabase.co";
+const SUPABASE_KEY="sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const ATSV="ATSV Forchheim";
+const games=[
+ {id:"2026-08-23-ATSV-DJK2",date:"2026-08-23",time:"15:00",home:"ATSV Forchheim",away:"DJK Erlangen II"},
+ {id:"2026-08-30-UEHL-ATSV",date:"2026-08-30",time:"15:00",home:"SpVgg Uehlfeld",away:"ATSV Forchheim"},
+ {id:"2026-09-06-ATSV-HAUSEN",date:"2026-09-06",time:"15:00",home:"ATSV Forchheim",away:"SpVgg Hausen"},
+ {id:"2026-09-13-BUCK-ATSV",date:"2026-09-13",time:"15:00",home:"SV Buckenhofen II",away:"ATSV Forchheim"},
+ {id:"2026-09-20-ATSV-NEUHAUS",date:"2026-09-20",time:"15:00",home:"ATSV Forchheim",away:"TSV Neuhaus"},
+ {id:"2026-09-27-HAMM-ATSV",date:"2026-09-27",time:"15:00",home:"Hammerbacher SV",away:"ATSV Forchheim"},
+ {id:"2026-10-04-ATSV-HESS",date:"2026-10-04",time:"15:00",home:"ATSV Forchheim",away:"(SG) Hessdorf II / Großenseebach"},
+ {id:"2026-10-11-TKV-ATSV",date:"2026-10-11",time:"15:00",home:"TKV Forchheim",away:"ATSV Forchheim"},
+ {id:"2026-10-18-ATSV-EGG",date:"2026-10-18",time:"15:00",home:"ATSV Forchheim",away:"SV DJK Eggolsheim"},
+ {id:"2026-10-25-HEM-ATSV",date:"2026-10-25",time:"15:00",home:"TSV Hemhofen",away:"ATSV Forchheim"},
+ {id:"2026-11-01-ATSV-HER",date:"2026-11-01",time:"14:30",home:"ATSV Forchheim",away:"SpVgg / DJK Heroldsbach / Thurn"},
+ {id:"2026-11-08-HALL-ATSV",date:"2026-11-08",time:"14:30",home:"DJK Hallerndorf",away:"ATSV Forchheim"},
+ {id:"2026-11-15-ATSV-NIED",date:"2026-11-15",time:"14:30",home:"ATSV Forchheim",away:"ASV Niederndorf"}
+];
+let results=[];
+let tips=[];
+let participantId=localStorage.getItem("atsv_tippspiel_participant_id");
+if(!participantId){participantId=(crypto.randomUUID?crypto.randomUUID():"atsv-"+Date.now()+"-"+Math.random()).replace(/[^a-zA-Z0-9-]/g,"");localStorage.setItem("atsv_tippspiel_participant_id",participantId);}
+const savedName=localStorage.getItem("atsv_tippspiel_name")||"";
+const nameInput=document.getElementById("nameInput");
+nameInput.value=savedName;
+
+function kickoff(game){return new Date(game.date+"T"+game.time+":00");}
+function fmtDate(game){return new Date(game.date+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"2-digit",month:"2-digit",year:"numeric"})+" · "+game.time+" Uhr";}
+function closed(game){return new Date()>=kickoff(game);}
+function resultFor(game){return results.find(r=>r.date===game.date&&r.home===game.home&&r.away===game.away&&r.status==="finished");}
+
+async function loadResults(){
+ try{const r=await fetch("data/results-26-27.json?v=1");const j=await r.json();results=j.results||[];}catch(e){console.error(e);results=[];}
+}
+
+async function loadTips(){
+ const {data,error}=await db.from("tippspiel_tipps").select("participant_id,name,match_id,tip_home,tip_away,home_team,away_team");
+ if(error){console.error("Tippspiel-Laden:",error);tips=[];return;}
+ tips=data||[];
+}
+
+function renderGames(){
+ const box=document.getElementById("games");
+ box.innerHTML=games.map(g=>{
+   const own=tips.find(t=>t.participant_id===participantId&&t.match_id===g.id);
+   const r=resultFor(g);
+   const isClosed=closed(g);
+   return `<div class="game ${isClosed?"closed":""}">
+      <div class="game-top"><span>${fmtDate(g)}</span><span>${isClosed?(r?"ERGEBNIS DA":"GESCHLOSSEN"):"TIPP MÖGLICH"}</span></div>
+      <div class="game-teams"><div class="team">${g.home}</div><div class="score-inputs"><input type="number" min="0" max="99" inputmode="numeric" data-id="${g.id}" data-side="home" value="${own?own.tip_home:""}" ${isClosed?"disabled":""}><span>:</span><input type="number" min="0" max="99" inputmode="numeric" data-id="${g.id}" data-side="away" value="${own?own.tip_away:""}" ${isClosed?"disabled":""}></div><div class="team">${g.away}</div></div>
+      <div class="status">${r?`Endstand: <span class="result">${r.homeGoals}:${r.awayGoals}</span> · Exakt richtig = 3 Punkte`:isClosed?"Tippabgabe beendet – kein Tipp mehr möglich.":"Tipp bis zum Anpfiff möglich."}</div>
+    </div>`;
+ }).join("");
+}
+
+function calculateLeaderboard(){
+ const map={};
+ tips.forEach(t=>{
+   const g=games.find(x=>x.id===t.match_id); if(!g)return;
+   const r=resultFor(g); const name=(t.name||"Unbekannt").trim();
+   if(!map[name])map[name]={name,tipps:0,punkte:0};
+   map[name].tipps++;
+   if(r&&Number(t.tip_home)===Number(r.homeGoals)&&Number(t.tip_away)===Number(r.awayGoals))map[name].punkte+=3;
+ });
+ const rows=Object.values(map).sort((a,b)=>b.punkte-a.punkte||b.tipps-a.tipps||a.name.localeCompare(b.name,"de"));
+ const el=document.getElementById("leaderboard");
+ if(!rows.length){el.innerHTML='<div class="empty">Noch keine Teilnehmer.</div>';return;}
+ el.innerHTML='<table class="leaderboard"><thead><tr><th>Platz</th><th>Name</th><th>Tipps</th><th>Punkte</th></tr></thead><tbody>'+rows.map((r,i)=>`<tr><td class="rank">${i+1}</td><td>${r.name}</td><td>${r.tipps}</td><td><strong>${r.punkte}</strong></td></tr>`).join("")+'</tbody></table>';
+}
+
+document.getElementById("saveNameButton").addEventListener("click",()=>{
+ const name=nameInput.value.trim();
+ if(name.length<2){document.getElementById("nameStatus").textContent="Bitte einen Namen mit mindestens 2 Zeichen eingeben.";return;}
+ localStorage.setItem("atsv_tippspiel_name",name);
+ document.getElementById("nameStatus").textContent="Name gespeichert ✓";
+ document.getElementById("saveTipsButton").disabled=false;
+});
+
+document.getElementById("saveTipsButton").addEventListener("click",async()=>{
+ const name=nameInput.value.trim();
+ if(name.length<2){document.getElementById("nameStatus").textContent="Bitte zuerst einen Namen eingeben.";return;}
+ localStorage.setItem("atsv_tippspiel_name",name);
+ const status=document.getElementById("saveStatus");
+ status.textContent="Tipps werden gespeichert …";
+ const payload=[];
+ document.querySelectorAll(".score-inputs input").forEach(input=>{
+   const game=games.find(g=>g.id===input.dataset.id); if(!game||closed(game))return;
+   let existing=payload.find(p=>p.match_id===game.id);
+   if(!existing){existing={participant_id:participantId,name,match_id:game.id,home_team:game.home,away_team:game.away,tip_home:0,tip_away:0};payload.push(existing);}
+   if(input.dataset.side==="home")existing.tip_home=Math.max(0,Math.min(99,Number(input.value||0)));
+   else existing.tip_away=Math.max(0,Math.min(99,Number(input.value||0)));
+ });
+ if(!payload.length){status.textContent="Keine offenen Tipps zum Speichern.";return;}
+ const {error}=await db.from("tippspiel_tipps").upsert(payload,{onConflict:"participant_id,match_id"});
+ if(error){console.error(error);status.textContent="Speichern fehlgeschlagen. Bitte die Datenbank-Einrichtung prüfen.";return;}
+ status.textContent="Deine Tipps wurden gespeichert ✓";
+ await loadTips(); renderGames(); calculateLeaderboard();
+});
+
+(async()=>{
+ await loadResults();
+ await loadTips();
+ renderGames();
+ calculateLeaderboard();
+ if(savedName)document.getElementById("saveTipsButton").disabled=false;
+})();
+</script>
+</body>
+</html>
