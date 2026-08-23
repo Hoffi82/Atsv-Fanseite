@@ -14,7 +14,7 @@ function urlBase64ToUint8Array(base64String) {
 async function registerAtsvServiceWorker() {
   if (!("serviceWorker" in navigator)) return null;
   try {
-    await navigator.serviceWorker.register("./sw.js?v=20", { scope: "./" });
+    await navigator.serviceWorker.register("./sw.js?v=21", { scope: "./" });
     return await navigator.serviceWorker.ready;
   } catch (error) {
     console.error("ATSV Service Worker konnte nicht registriert werden:", error);
@@ -98,34 +98,24 @@ async function updateAtsvPushButton() {
   }
 }
 
-// Countdown-Fix: Das nächste Spiel wird unabhängig vom alten, fest eingetragenen
-// Countdown ermittelt. Nach dem heutigen Spiel ist das Uehlfeld-Spiel das Ziel.
 function updateAtsvNextMatchCountdown() {
   const box = document.querySelector(".next-match");
   if (!box) return;
-
   const matchDate = new Date("2026-08-30T15:00:00");
-  const now = new Date();
-  const difference = matchDate - now;
-
+  const difference = matchDate - new Date();
   const dateEl = box.querySelector(".next-match-date");
   const teamsEl = box.querySelector(".next-match-teams");
   const countdown = box.querySelector(".countdown");
   const liveMessage = box.querySelector("#live-message");
-
   if (dateEl) dateEl.textContent = "Sonntag, 30.08.2026 · 15:00 Uhr";
   if (teamsEl) teamsEl.innerHTML = "SpVgg Uehlfeld<span>VS.</span>ATSV Forchheim";
-
   if (difference <= 0) return;
-
   if (countdown) countdown.style.display = "grid";
   if (liveMessage) liveMessage.innerHTML = "";
-
   const set = (id, value) => {
     const el = document.getElementById(id);
     if (el) el.textContent = String(value).padStart(2, "0");
   };
-
   set("days", Math.floor(difference / 86400000));
   set("hours", Math.floor((difference / 3600000) % 24));
   set("minutes", Math.floor((difference / 60000) % 60));
@@ -135,15 +125,11 @@ function updateAtsvNextMatchCountdown() {
 function restoreAtsvCrest() {
   const crest = document.querySelector(".badge img");
   if (!crest) return;
-  crest.src = "./bilder/ATSV_Wappen_4K_transparent.png?v=20";
+  crest.src = "./bilder/ATSV_Wappen_4K_transparent.png?v=21";
   crest.alt = "ATSV Forchheim Wappen";
-  crest.onerror = () => {
-    crest.src = "./bilder/ATSV_Wappen_4K.jpg?v=20";
-  };
+  crest.onerror = () => { crest.src = "./bilder/ATSV_Wappen_4K.jpg?v=21"; };
 }
 
-// Startseite: Nur ein wirklich aktuelles Live-Spiel darf angezeigt werden.
-// Alte Datensätze mit status=live werden nach 2 Stunden automatisch ausgeblendet.
 async function refreshAtsvHomeLiveTicker() {
   const statusEl = document.getElementById("homeLiveStatus");
   const homeEl = document.getElementById("liveHomeTeam");
@@ -153,27 +139,14 @@ async function refreshAtsvHomeLiveTicker() {
   const minuteEl = document.getElementById("liveCurrentMinute");
   const eventsEl = document.getElementById("homeLiveEvents");
   if (!statusEl || !homeEl || !awayEl || !homeScoreEl || !awayScoreEl || !minuteEl || !eventsEl || !window.supabase) return;
-
   const client = window.supabase.createClient(ATSV_SUPABASE_URL, ATSV_SUPABASE_KEY);
-  const { data: matches, error } = await client
-    .from("live_matches")
-    .select("*")
-    .eq("status", "live")
-    .order("created_at", { ascending: false })
-    .limit(1);
-
+  const { data: matches, error } = await client.from("live_matches").select("*").eq("status", "live").order("created_at", { ascending: false }).limit(1);
   let match = matches?.[0] || null;
-
-  if (error) {
-    console.error("ATSV Startseiten-Liveticker Fehler:", error);
-    return;
-  }
-
+  if (error) { console.error("ATSV Startseiten-Liveticker Fehler:", error); return; }
   if (match?.created_at) {
     const age = Date.now() - new Date(match.created_at).getTime();
     if (age > 2 * 60 * 60 * 1000) match = null;
   }
-
   if (!match) {
     statusEl.textContent = "KEIN SPIEL LIVE";
     statusEl.style.background = "#333";
@@ -185,7 +158,6 @@ async function refreshAtsvHomeLiveTicker() {
     eventsEl.innerHTML = '<div class="home-live-no-events">Aktuell findet kein Spiel statt.</div>';
     return;
   }
-
   statusEl.textContent = "🔴 LIVE";
   statusEl.style.background = "#d00020";
   homeEl.textContent = match.home_team || "ATSV Forchheim";
@@ -193,18 +165,8 @@ async function refreshAtsvHomeLiveTicker() {
   homeScoreEl.textContent = match.home_score ?? 0;
   awayScoreEl.textContent = match.away_score ?? 0;
   minuteEl.textContent = match.current_minute ?? 0;
-
-  const { data: events } = await client
-    .from("live_events")
-    .select("*")
-    .eq("match_id", match.id)
-    .order("created_at", { ascending: false });
-
-  if (!events?.length) {
-    eventsEl.innerHTML = '<div class="home-live-no-events">Noch keine Ereignisse.</div>';
-    return;
-  }
-
+  const { data: events } = await client.from("live_events").select("*").eq("match_id", match.id).order("created_at", { ascending: false });
+  if (!events?.length) { eventsEl.innerHTML = '<div class="home-live-no-events">Noch keine Ereignisse.</div>'; return; }
   eventsEl.innerHTML = events.map(item => {
     let message = item.description || "Ereignis";
     if (item.event_type === "homeGoal") message = "⚽ Tor Heimteam " + (item.player || "");
@@ -218,8 +180,64 @@ async function refreshAtsvHomeLiveTicker() {
   }).join("");
 }
 
-function initAtsvPageFixes() {
+function removeAtsvSponsors() {
+  document.querySelectorAll('a[href="ausruester-sponsoren.html"]').forEach(el => el.remove());
+  document.querySelectorAll("section, article, div").forEach(el => {
+    const text = (el.textContent || "").trim();
+    if (text.length < 500 && /Ausrüster\s*&\s*Sponsoren/i.test(text)) el.remove();
+  });
+}
+
+function loadFormData() {
+  return new Promise(resolve => {
+    if (window.ATSV_FORM_GAMES) return resolve();
+    const script = document.createElement("script");
+    script.src = "./js/form-data.js?v=1";
+    script.onload = resolve;
+    script.onerror = resolve;
+    document.head.appendChild(script);
+  });
+}
+
+function addHomeFormStyles() {
+  if (document.getElementById("homeFormStyles")) return;
+  const style = document.createElement("style");
+  style.id = "homeFormStyles";
+  style.textContent = `
+.home-form-section{width:min(900px,92%);margin:0 auto 45px}.home-form-title{text-align:center;color:#d00020;font-size:20px;font-weight:900;letter-spacing:3px;margin-bottom:15px}.home-form-card{background:#111;border:2px solid #d00020;border-radius:16px;padding:20px;box-shadow:0 0 25px rgba(208,0,32,.18);text-align:center}.home-form-top{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.home-form-top div{background:#181818;border-radius:10px;padding:12px}.home-form-top span{display:block;color:#888;font-size:11px;margin-bottom:5px}.home-form-top strong{display:block;color:white;font-size:17px}.home-form-badges{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:10px 0 12px}.home-form-badge{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border:2px solid #222}.home-form-badge.w{background:#36c76f}.home-form-badge.d{background:#f0b429}.home-form-badge.l{background:#e00020}.home-form-series{color:#aaa;font-size:13px;margin:10px 0 15px}.home-form-button{display:inline-block;background:#d00020;color:#fff;text-decoration:none;padding:11px 18px;border-radius:8px;font-weight:900;font-size:12px}.home-form-button:hover{background:#a80019}@media(max-width:600px){.home-form-top{grid-template-columns:1fr 1fr}.home-form-top div:first-child{grid-column:1/-1}}
+`;
+  document.head.appendChild(style);
+}
+
+function renderHomeForm() {
+  if (document.getElementById("homeFormSection") || !window.ATSV_FORM_GAMES) return;
+  const games = window.ATSV_FORM_GAMES.filter(g => g.homeScore !== null && g.awayScore !== null).sort((a,b) => a.date.localeCompare(b.date)).slice(-5);
+  if (!games.length) return;
+  const atsv = "ATSV Forchheim";
+  const result = g => g.homeScore === g.awayScore ? "D" : ((g.home === atsv ? g.homeScore > g.awayScore : g.awayScore > g.homeScore) ? "W" : "L");
+  const labels = {W:"S",D:"U",L:"N"};
+  const counts = games.reduce((o,g) => { o[result(g)]++; return o; }, {W:0,D:0,L:0});
+  const points = games.reduce((p,g) => p + (result(g)==="W" ? 3 : result(g)==="D" ? 1 : 0), 0);
+  const goalsFor = games.reduce((n,g) => n + (g.home===atsv ? g.homeScore : g.awayScore), 0);
+  const goalsAgainst = games.reduce((n,g) => n + (g.home===atsv ? g.awayScore : g.homeScore), 0);
+  let streak = 0;
+  for (let i=games.length-1;i>=0;i--) { if (result(games[i]) === "L") streak++; else break; }
+  const badges = games.map(g => { const r=result(g); return `<span class="home-form-badge ${r.toLowerCase()}" title="${g.home} ${g.homeScore}:${g.awayScore} ${g.away}">${labels[r]}</span>`; }).join("");
+  const section = document.createElement("section");
+  section.id = "homeFormSection";
+  section.className = "home-form-section";
+  section.innerHTML = `<div class="home-form-title">📈 FORM DER MANNSCHAFT</div><div class="home-form-card"><div class="home-form-top"><div><span>LETZTE 5 SPIELE</span><strong>${counts.W} S · ${counts.D} U · ${counts.L} N</strong></div><div><span>PUNKTE</span><strong>${points}</strong></div><div><span>TORE</span><strong>${goalsFor}:${goalsAgainst}</strong></div></div><div class="home-form-badges">${badges}</div><div class="home-form-series">${streak >= 2 ? `🔥 ${streak} Niederlagen in Folge` : "Aktuelle Form im Überblick"}</div><a class="home-form-button" href="form.html">FORM KOMPLETT ANSEHEN</a></div>`;
+  const main = document.querySelector("main");
+  const live = document.getElementById("homeLiveTicker");
+  if (main) main.insertBefore(section, live || main.firstChild);
+}
+
+async function initAtsvPageFixes() {
   restoreAtsvCrest();
+  removeAtsvSponsors();
+  addHomeFormStyles();
+  await loadFormData();
+  renderHomeForm();
   updateAtsvNextMatchCountdown();
   refreshAtsvHomeLiveTicker();
   setInterval(updateAtsvNextMatchCountdown, 1000);
