@@ -99,6 +99,44 @@ async function updateAtsvPushButton() {
 }
 
 // Countdown-Wappen-Code entfernt. Die Wappen werden direkt im Countdown-HTML eingebaut.
+
+// Countdown-Fix: Nach einem abgelaufenen Spiel muss der Countdown für das
+// automatisch ermittelte nächste Spiel wieder sichtbar werden.
+function updateCountdown(matchDate) {
+  const now = new Date();
+  const difference = matchDate - now;
+  const countdown = document.querySelector(".countdown");
+  const liveMessage = document.getElementById("live-message");
+
+  if (difference <= 0) {
+    if (countdown) countdown.style.display = "none";
+    if (liveMessage) {
+      liveMessage.innerHTML = '<div class="game-live">🔴 DAS SPIEL LÄUFT!</div>';
+    }
+    return;
+  }
+
+  // Wichtig: Der alte Countdown kann nach dem letzten Spiel auf display:none
+  // gesetzt worden sein. Beim nächsten Spiel wieder auf das Grid zurücksetzen.
+  if (countdown) countdown.style.display = "grid";
+  if (liveMessage) liveMessage.innerHTML = "";
+
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((difference / (1000 * 60)) % 60);
+  const seconds = Math.floor((difference / 1000) % 60);
+
+  const daysEl = document.getElementById("days");
+  const hoursEl = document.getElementById("hours");
+  const minutesEl = document.getElementById("minutes");
+  const secondsEl = document.getElementById("seconds");
+
+  if (daysEl) daysEl.textContent = String(days).padStart(2, "0");
+  if (hoursEl) hoursEl.textContent = String(hours).padStart(2, "0");
+  if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, "0");
+  if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, "0");
+}
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", updateAtsvPushButton);
 } else {
