@@ -17,28 +17,23 @@ create table if not exists public.tippspiel_tipps (
 
 alter table public.tippspiel_tipps enable row level security;
 
--- Teilnehmer dürfen ihre eigenen Tipps speichern/ändern.
+drop policy if exists "tippspiel select" on public.tippspiel_tipps;
+create policy "tippspiel select"
+on public.tippspiel_tipps for select
+to anon, authenticated
+using (true);
+
 drop policy if exists "tippspiel insert" on public.tippspiel_tipps;
 create policy "tippspiel insert"
 on public.tippspiel_tipps for insert
 to anon, authenticated
 with check (length(trim(name)) between 2 and 30 and length(trim(participant_id)) >= 20);
 
-drop policy if exists "tippspiel update own" on public.tippspiel_tipps;
-create policy "tippspiel update own"
+drop policy if exists "tippspiel update" on public.tippspiel_tipps;
+create policy "tippspiel update"
 on public.tippspiel_tipps for update
 to anon, authenticated
 using (length(trim(participant_id)) >= 20)
 with check (length(trim(name)) between 2 and 30 and length(trim(participant_id)) >= 20);
 
--- Öffentliche Rangliste ohne Veröffentlichung der einzelnen Tipps.
-create or replace view public.tippspiel_rangliste as
-select
-  name,
-  count(*) as tipps,
-  0::bigint as punkte
-from public.tippspiel_tipps
-group by name;
-
-grant select on public.tippspiel_rangliste to anon, authenticated;
-grant insert, update on public.tippspiel_tipps to anon, authenticated;
+grant select, insert, update on public.tippspiel_tipps to anon, authenticated;
