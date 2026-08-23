@@ -84,3 +84,38 @@ window.renderHomeForm = function() {
   const live = document.getElementById('homeLiveTicker');
   if (main) main.insertBefore(section, live || main.firstChild);
 };
+
+// Startseiten-Liveticker: verhindert widersprüchliche Alt-Daten nach Spielende.
+// Wenn der Live-Bereich bereits "Aktuell findet kein Spiel statt." meldet,
+// werden auch Gegner, Spielstand, Minute und Status konsequent zurückgesetzt.
+function resetAtsvFinishedHomeTicker() {
+  const statusEl = document.getElementById('homeLiveStatus');
+  const awayEl = document.getElementById('liveAwayTeam');
+  const homeEl = document.getElementById('liveHomeTeam');
+  const homeScoreEl = document.getElementById('liveHomeScore');
+  const awayScoreEl = document.getElementById('liveAwayScore');
+  const minuteEl = document.getElementById('liveCurrentMinute');
+  const eventsEl = document.getElementById('homeLiveEvents');
+  if (!statusEl || !awayEl || !homeEl || !homeScoreEl || !awayScoreEl || !minuteEl || !eventsEl) return;
+
+  const noGameMessage = (eventsEl.textContent || '').includes('Aktuell findet kein Spiel statt.');
+  if (!noGameMessage) return;
+
+  statusEl.textContent = 'KEIN SPIEL LIVE';
+  statusEl.style.background = '#333';
+  homeEl.textContent = 'ATSV Forchheim';
+  awayEl.textContent = 'Kein Spiel';
+  homeScoreEl.textContent = '–';
+  awayScoreEl.textContent = '–';
+  minuteEl.textContent = '-';
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(resetAtsvFinishedHomeTicker, 250);
+    setInterval(resetAtsvFinishedHomeTicker, 1000);
+  });
+} else {
+  setTimeout(resetAtsvFinishedHomeTicker, 250);
+  setInterval(resetAtsvFinishedHomeTicker, 1000);
+}
