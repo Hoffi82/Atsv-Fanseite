@@ -14,7 +14,7 @@ function urlBase64ToUint8Array(base64String) {
 async function registerAtsvServiceWorker() {
   if (!("serviceWorker" in navigator)) return null;
   try {
-    await navigator.serviceWorker.register("./sw.js?v=18", { scope: "./" });
+    await navigator.serviceWorker.register("./sw.js?v=19", { scope: "./" });
     return await navigator.serviceWorker.ready;
   } catch (error) {
     console.error("ATSV Service Worker konnte nicht registriert werden:", error);
@@ -98,47 +98,62 @@ async function updateAtsvPushButton() {
   }
 }
 
-// Countdown-Wappen-Code entfernt. Die Wappen werden direkt im Countdown-HTML eingebaut.
+// Countdown-Fix: Das nächste Spiel wird unabhängig vom alten, fest eingetragenen
+// Countdown ermittelt. Nach dem heutigen Spiel ist das Uehlfeld-Spiel das Ziel.
+function updateAtsvNextMatchCountdown() {
+  const box = document.querySelector(".next-match");
+  if (!box) return;
 
-// Countdown-Fix: Nach einem abgelaufenen Spiel muss der Countdown für das
-// automatisch ermittelte nächste Spiel wieder sichtbar werden.
-function updateCountdown(matchDate) {
+  const matchDate = new Date("2026-08-30T15:00:00");
   const now = new Date();
   const difference = matchDate - now;
-  const countdown = document.querySelector(".countdown");
-  const liveMessage = document.getElementById("live-message");
 
-  if (difference <= 0) {
-    if (countdown) countdown.style.display = "none";
-    if (liveMessage) {
-      liveMessage.innerHTML = '<div class="game-live">🔴 DAS SPIEL LÄUFT!</div>';
-    }
-    return;
-  }
+  const dateEl = box.querySelector(".next-match-date");
+  const teamsEl = box.querySelector(".next-match-teams");
+  const countdown = box.querySelector(".countdown");
+  const liveMessage = box.querySelector("#live-message");
 
-  // Wichtig: Der alte Countdown kann nach dem letzten Spiel auf display:none
-  // gesetzt worden sein. Beim nächsten Spiel wieder auf das Grid zurücksetzen.
+  if (dateEl) dateEl.textContent = "Sonntag, 30.08.2026 · 15:00 Uhr";
+  if (teamsEl) teamsEl.innerHTML = "SpVgg Uehlfeld<span>VS.</span>ATSV Forchheim";
+
+  if (difference <= 0) return;
+
   if (countdown) countdown.style.display = "grid";
   if (liveMessage) liveMessage.innerHTML = "";
 
-  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((difference / (1000 * 60)) % 60);
-  const seconds = Math.floor((difference / 1000) % 60);
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value).padStart(2, "0");
+  };
 
-  const daysEl = document.getElementById("days");
-  const hoursEl = document.getElementById("hours");
-  const minutesEl = document.getElementById("minutes");
-  const secondsEl = document.getElementById("seconds");
+  set("days", Math.floor(difference / 86400000));
+  set("hours", Math.floor((difference / 3600000) % 24));
+  set("minutes", Math.floor((difference / 60000) % 60));
+  set("seconds", Math.floor((difference / 1000) % 60));
+}
 
-  if (daysEl) daysEl.textContent = String(days).padStart(2, "0");
-  if (hoursEl) hoursEl.textContent = String(hours).padStart(2, "0");
-  if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, "0");
-  if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, "0");
+function restoreAtsvCrest() {
+  const crest = document.querySelector(".badge img");
+  if (!crest) return;
+  crest.src = "./bilder/ATSV_Wappen_4K_transparent.png?v=19";
+  crest.alt = "ATSV Forchheim Wappen";
+  crest.onerror = () => {
+    crest.src = "./bilder/ATSV_Wappen_4K.jpg?v=19";
+  };
+}
+
+function initAtsvPageFixes() {
+  restoreAtsvCrest();
+  updateAtsvNextMatchCountdown();
+  setInterval(updateAtsvNextMatchCountdown, 1000);
 }
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", updateAtsvPushButton);
+  document.addEventListener("DOMContentLoaded", () => {
+    updateAtsvPushButton();
+    initAtsvPageFixes();
+  });
 } else {
   updateAtsvPushButton();
+  initAtsvPageFixes();
 }
