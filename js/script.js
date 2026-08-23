@@ -14,7 +14,7 @@ function urlBase64ToUint8Array(base64String) {
 async function registerAtsvServiceWorker() {
   if (!("serviceWorker" in navigator)) return null;
   try {
-    await navigator.serviceWorker.register("./sw.js?v=19", { scope: "./" });
+    await navigator.serviceWorker.register("./sw.js?v=20", { scope: "./" });
     return await navigator.serviceWorker.ready;
   } catch (error) {
     console.error("ATSV Service Worker konnte nicht registriert werden:", error);
@@ -135,17 +135,95 @@ function updateAtsvNextMatchCountdown() {
 function restoreAtsvCrest() {
   const crest = document.querySelector(".badge img");
   if (!crest) return;
-  crest.src = "./bilder/ATSV_Wappen_4K_transparent.png?v=19";
+  crest.src = "./bilder/ATSV_Wappen_4K_transparent.png?v=20";
   crest.alt = "ATSV Forchheim Wappen";
   crest.onerror = () => {
-    crest.src = "./bilder/ATSV_Wappen_4K.jpg?v=19";
+    crest.src = "./bilder/ATSV_Wappen_4K.jpg?v=20";
   };
+}
+
+// Startseite: Nur ein wirklich aktuelles Live-Spiel darf angezeigt werden.
+// Alte Datensätze mit status=live werden nach 2 Stunden automatisch ausgeblendet.
+async function refreshAtsvHomeLiveTicker() {
+  const statusEl = document.getElementById("homeLiveStatus");
+  const homeEl = document.getElementById("liveHomeTeam");
+  const awayEl = document.getElementById("liveAwayTeam");
+  const homeScoreEl = document.getElementById("liveHomeScore");
+  const awayScoreEl = document.getElementById("liveAwayScore");
+  const minuteEl = document.getElementById("liveCurrentMinute");
+  const eventsEl = document.getElementById("homeLiveEvents");
+  if (!statusEl || !homeEl || !awayEl || !homeScoreEl || !awayScoreEl || !minuteEl || !eventsEl || !window.supabase) return;
+
+  const client = window.supabase.createClient(ATSV_SUPABASE_URL, ATSV_SUPABASE_KEY);
+  const { data: matches, error } = await client
+    .from("live_matches")
+    .select("*")
+    .eq("status", "live")
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  let match = matches?.[0] || null;
+
+  if (error) {
+    console.error("ATSV Startseiten-Liveticker Fehler:", error);
+    return;
+  }
+
+  if (match?.created_at) {
+    const age = Date.now() - new Date(match.created_at).getTime();
+    if (age > 2 * 60 * 60 * 1000) match = null;
+  }
+
+  if (!match) {
+    statusEl.textContent = "KEIN SPIEL LIVE";
+    statusEl.style.background = "#333";
+    homeEl.textContent = "ATSV Forchheim";
+    awayEl.textContent = "Kein Spiel";
+    homeScoreEl.textContent = "–";
+    awayScoreEl.textContent = "–";
+    minuteEl.textContent = "-";
+    eventsEl.innerHTML = '<div class="home-live-no-events">Aktuell findet kein Spiel statt.</div>';
+    return;
+  }
+
+  statusEl.textContent = "🔴 LIVE";
+  statusEl.style.background = "#d00020";
+  homeEl.textContent = match.home_team || "ATSV Forchheim";
+  awayEl.textContent = match.away_team || "Gegner";
+  homeScoreEl.textContent = match.home_score ?? 0;
+  awayScoreEl.textContent = match.away_score ?? 0;
+  minuteEl.textContent = match.current_minute ?? 0;
+
+  const { data: events } = await client
+    .from("live_events")
+    .select("*")
+    .eq("match_id", match.id)
+    .order("created_at", { ascending: false });
+
+  if (!events?.length) {
+    eventsEl.innerHTML = '<div class="home-live-no-events">Noch keine Ereignisse.</div>';
+    return;
+  }
+
+  eventsEl.innerHTML = events.map(item => {
+    let message = item.description || "Ereignis";
+    if (item.event_type === "homeGoal") message = "⚽ Tor Heimteam " + (item.player || "");
+    if (item.event_type === "awayGoal") message = "⚽ Tor Gastteam " + (item.player || "");
+    if (item.event_type === "yellow") message = "🟨 Gelbe Karte " + (item.player || "");
+    if (item.event_type === "red") message = "🟥 Rote Karte " + (item.player || "");
+    if (item.event_type === "substitution") message = "🔄 Wechsel " + (item.player || "");
+    if (item.event_type === "halftime") message = "⏱️ Halbzeit";
+    if (item.event_type === "final") message = "🏁 Abpfiff";
+    return '<div class="home-live-event"><span class="home-live-event-minute">' + (item.minute ?? "-") + "'</span>" + message + "</div>";
+  }).join("");
 }
 
 function initAtsvPageFixes() {
   restoreAtsvCrest();
   updateAtsvNextMatchCountdown();
+  refreshAtsvHomeLiveTicker();
   setInterval(updateAtsvNextMatchCountdown, 1000);
+  setInterval(refreshAtsvHomeLiveTicker, 10000);
 }
 
 if (document.readyState === "loading") {
