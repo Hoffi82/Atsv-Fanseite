@@ -73,9 +73,6 @@ async function subscribeToATSVPush(registration) {
     });
   }
 
-  // Die Subscription bleibt lokal erhalten. Im nächsten Schritt wird sie
-  // zusätzlich an unseren sicheren Push-Server übergeben, damit echte
-  // ATSV-Nachrichten verschickt werden können.
   localStorage.setItem(PUSH_ENABLED_KEY, "true");
   localStorage.setItem(PUSH_SUBSCRIPTION_KEY, "true");
   localStorage.setItem("atsv_push_subscription_data", JSON.stringify(subscription.toJSON()));
@@ -138,8 +135,63 @@ async function enablePushNotifications() {
   }
 }
 
+// Startseiten-Liveticker: niemals ein altes Spiel als LIVE anzeigen.
+// Es wird ausschließlich ein aktuell als "live" markiertes Spiel angezeigt.
+async function updateHomeLiveTickerSafely() {
+  const card = document.querySelector("#homeLiveTicker .home-live-card");
+  const status = document.getElementById("homeLiveStatus");
+  const homeTeam = document.getElementById("liveHomeTeam");
+  const awayTeam = document.getElementById("liveAwayTeam");
+  const homeScore = document.getElementById("liveHomeScore");
+  const awayScore = document.getElementById("liveAwayScore");
+  const minute = document.getElementById("liveCurrentMinute");
+  const events = document.getElementById("homeLiveEvents");
+
+  if (!card || !status || !window.supabase) return;
+
+  try {
+    const client = window.supabase.createClient(
+      "https://xmtrtpibldbiiikkkmnd.supabase.co",
+      "sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B"
+    );
+
+    const { data: match, error } = await client
+      .from("live_matches")
+      .select("*")
+      .eq("status", "live")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !match) {
+      status.textContent = "KEIN SPIEL LIVE";
+      status.style.background = "#333";
+      if (homeTeam) homeTeam.textContent = "ATSV Forchheim";
+      if (awayTeam) awayTeam.textContent = "Kein Spiel";
+      if (homeScore) homeScore.textContent = "–";
+      if (awayScore) awayScore.textContent = "–";
+      if (minute) minute.textContent = "–";
+      if (events) events.innerHTML = '<div class="home-live-no-events">Aktuell läuft kein Spiel.</div>';
+      return;
+    }
+
+    status.textContent = "🔴 LIVE";
+    status.style.background = "#d00020";
+    if (homeTeam) homeTeam.textContent = match.home_team || "ATSV Forchheim";
+    if (awayTeam) awayTeam.textContent = match.away_team || "Gegner";
+    if (homeScore) homeScore.textContent = match.home_score ?? 0;
+    if (awayScore) awayScore.textContent = match.away_score ?? 0;
+    if (minute) minute.textContent = match.current_minute ?? 0;
+
+  } catch (error) {
+    console.error("Home-Liveticker konnte nicht aktualisiert werden:", error);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   updatePushButton();
+  updateHomeLiveTickerSafely();
+  setInterval(updateHomeLiveTickerSafely, 5000);
 
   if ("Notification" in window && Notification.permission === "granted") {
     try {
