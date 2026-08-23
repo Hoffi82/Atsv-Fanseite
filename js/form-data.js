@@ -41,3 +41,46 @@ window.ATSV_FORM_CONFIG = {
     'SpVgg/DJK Heroldsbach-Thurn': 'bilder/spvgg-heroldsbach-thurn.jpg.jpg'
   }
 };
+
+// Korrektur für die kompakte Form-Anzeige auf der Startseite:
+// Testspiele zählen zur Form, aber niemals zu den Liga-Punkten.
+window.renderHomeForm = function() {
+  if (document.getElementById('homeFormSection') || !window.ATSV_FORM_GAMES) return;
+  const games = window.ATSV_FORM_GAMES
+    .filter(g => g.homeScore !== null && g.awayScore !== null)
+    .sort((a,b) => a.date.localeCompare(b.date))
+    .slice(-5);
+  if (!games.length) return;
+
+  const atsv = 'ATSV Forchheim';
+  const result = g => g.homeScore === g.awayScore ? 'D' : ((g.home === atsv ? g.homeScore > g.awayScore : g.awayScore > g.homeScore) ? 'W' : 'L');
+  const labels = {W:'S', D:'U', L:'N'};
+  const counts = games.reduce((o,g) => { o[result(g)]++; return o; }, {W:0,D:0,L:0});
+  const points = games.reduce((p,g) => p + (g.type === 'Liga' ? (result(g) === 'W' ? 3 : result(g) === 'D' ? 1 : 0) : 0), 0);
+  const goalsFor = games.reduce((n,g) => n + (g.home === atsv ? g.homeScore : g.awayScore), 0);
+  const goalsAgainst = games.reduce((n,g) => n + (g.home === atsv ? g.awayScore : g.homeScore), 0);
+
+  let streak = 0;
+  const lastResult = result(games[games.length - 1]);
+  for (let i=games.length-1; i>=0; i--) {
+    if (result(games[i]) === lastResult) streak++;
+    else break;
+  }
+  const streakText = lastResult === 'W' && streak >= 2 ? `🔥 ${streak} Siege in Folge` :
+    lastResult === 'L' && streak >= 2 ? `🔥 ${streak} Niederlagen in Folge` :
+    lastResult === 'D' && streak >= 2 ? `🔥 ${streak} Remis in Folge` : 'Aktuelle Form im Überblick';
+
+  const badges = games.map(g => {
+    const r = result(g);
+    return `<span class="home-form-badge ${r.toLowerCase()}" title="${g.home} ${g.homeScore}:${g.awayScore} ${g.away}">${labels[r]}</span>`;
+  }).join('');
+
+  const section = document.createElement('section');
+  section.id = 'homeFormSection';
+  section.className = 'home-form-section';
+  section.innerHTML = `<div class="home-form-title">📈 FORM DER MANNSCHAFT</div><div class="home-form-card"><div class="home-form-top"><div><span>LETZTE 5 SPIELE</span><strong>${counts.W} S · ${counts.D} U · ${counts.L} N</strong></div><div><span>LIGA-PUNKTE</span><strong>${points}</strong></div><div><span>TORE</span><strong>${goalsFor}:${goalsAgainst}</strong></div></div><div class="home-form-badges">${badges}</div><div class="home-form-series">${streakText}</div><a class="home-form-button" href="form.html">FORM KOMPLETT ANSEHEN</a></div>`;
+
+  const main = document.querySelector('main');
+  const live = document.getElementById('homeLiveTicker');
+  if (main) main.insertBefore(section, live || main.firstChild);
+};
