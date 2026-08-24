@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v19";
+const CACHE_NAME = "atsv-fan-app-v20";
 
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
@@ -17,18 +17,22 @@ async function prepareIndex(response, request) {
   if (!contentType.includes("text/html")) return response;
 
   const html = await response.text();
+  const pageUrl = new URL(request.url);
+  const pathname = pageUrl.pathname.toLowerCase();
+  const isHomePage = pathname.endsWith("/") || pathname.endsWith("/index.html");
+  const isFormPage = pathname.endsWith("/form.html");
+  const needsAtsvScript = isHomePage || isFormPage;
 
   let fixedHtml = html.replace(/onclick=["']enablePushNotifications\(\)["']/gi, 'onclick="atsVEnablePush()"');
 
-  if (!/js\/script\.js/i.test(fixedHtml)) {
-    fixedHtml = fixedHtml.replace(/<\/body>/i, '<script src="./js/script.js?v=18"></script></body>');
+  // script.js nur auf Startseite und Form-Seite laden.
+  if (needsAtsvScript && !/js\/script\.js/i.test(fixedHtml)) {
+    fixedHtml = fixedHtml.replace(/<\/body>/i, '<script src="./js/script.js?v=19"></script></body>');
   }
 
-  // Der bestehende Countdown in index.html enthält noch die alte, fest
-  // eingetragene Partie. Dieses Override läuft bewusst ganz am Ende der Seite,
-  // nachdem der alte Countdown initialisiert wurde, und setzt die Anzeige
-  // zuverlässig auf das automatisch nächste Spiel.
-  const countdownFix = `
+  // Der automatische Countdown gehört ausschließlich auf die Startseite.
+  if (isHomePage) {
+    const countdownFix = `
 <script>
 (function(){
   const box = document.querySelector('.next-match');
@@ -65,9 +69,7 @@ async function prepareIndex(response, request) {
         hour: '2-digit', minute: '2-digit'
       }) + ' Uhr';
     }
-    if (teamsEl) {
-      teamsEl.innerHTML = match.home + '<span>VS.</span>' + match.away;
-    }
+    if (teamsEl) teamsEl.innerHTML = match.home + '<span>VS.</span>' + match.away;
 
     if (diff <= 0){
       if (countdown) countdown.style.display = 'none';
@@ -97,10 +99,9 @@ async function prepareIndex(response, request) {
   setInterval(renderRealNextMatch, 1000);
 })();
 </script>`;
+    fixedHtml = fixedHtml.replace(/<\/body>/i, countdownFix + "</body>");
+  }
 
-  fixedHtml = fixedHtml.replace(/<\/body>/i, countdownFix + "</body>");
-
-  const pageUrl = new URL(request.url);
   const pushTitle = pageUrl.searchParams.get("pushTitle");
   const pushBody = pageUrl.searchParams.get("pushBody");
 
@@ -138,7 +139,6 @@ window.addEventListener("DOMContentLoaded",function(){
   });
 });
 </script>`;
-
     fixedHtml = fixedHtml.replace(/<\/body>/i, pushPopup + "</body>");
   }
 
@@ -206,7 +206,6 @@ self.addEventListener("notificationclick", event => {
 
   try {
     const target = new URL(rawTarget, self.location.origin);
-
     if (target.origin === self.location.origin) {
       target.searchParams.set("pushTitle", notificationData.title || event.notification.title || "ATSV Forchheim");
       target.searchParams.set("pushBody", notificationData.body || event.notification.body || "Neue Nachricht vom ATSV Forchheim");
