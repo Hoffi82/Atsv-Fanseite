@@ -253,3 +253,24 @@ if (document.readyState === "loading") {
   updateAtsvPushButton();
   initAtsvPageFixes();
 }
+
+// iPhone/Safari: make the existing install button show the correct Add-to-Home-Screen instructions.
+function setupAtsvIosInstallButton() {
+  const button = document.getElementById("installAppButton");
+  if (!button) return;
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isStandalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  if (!isIOS) return;
+  button.textContent = isStandalone ? "📱 App geöffnet" : "📱 Zum Home-Bildschirm";
+  button.onclick = () => {
+    if (isStandalone) return;
+    alert("ATSV Fanseite installieren:\n\n1. Tippe unten auf das Teilen-Symbol (□↑).\n2. Wähle „Zum Home-Bildschirm“.\n3. Tippe oben rechts auf „Hinzufügen“.\n\nDanach findest du die ATSV-Fanseite wie eine App auf deinem iPhone.");
+  };
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupAtsvIosInstallButton);
+} else {
+  setupAtsvIosInstallButton();
+}
