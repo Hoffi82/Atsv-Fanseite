@@ -2,21 +2,18 @@
   "season": "2026/27",
   "team": "ATSV Forchheim",
   "fixtures": [
-    {
-      "date": "2026-08-23",
-      "time": "15:00",
-      "home": "ATSV Forchheim",
-      "away": "DJK Erlangen II",
-      "homeLogo": "bilder/ATSV_Wappen_4K_transparent.png",
-      "awayLogo": "bilder/djk-erlangen-ii.jpg.jpg"
-    },
-    {
-      "date": "2026-08-30",
-      "time": "15:00",
-      "home": "ATSV Forchheim",
-      "away": "Spvgg Jahn Forchheim II",
-      "homeLogo": "bilder/ATSV_Wappen_4K_transparent.png",
-      "awayLogo": "bilder/spvgg-jahn-forchheim-2.jpg.jpg"
-    }
+    {"matchday":3,"date":"2026-08-23","time":"15:00","home":"ATSV Forchheim","away":"DJK Erlangen II","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":"bilder/djk-erlangen-ii.jpg.jpg"},
+    {"matchday":4,"date":"2026-08-30","time":"15:00","home":"SpVgg Uehlfeld","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":5,"date":"2026-09-06","time":"15:00","home":"ATSV Forchheim","away":"SpVgg Hausen","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""},
+    {"matchday":6,"date":"2026-09-13","time":"15:00","home":"SV Buckenhofen II","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":7,"date":"2026-09-20","time":"15:00","home":"ATSV Forchheim","away":"TSV Neuhaus","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""},
+    {"matchday":8,"date":"2026-09-27","time":"15:00","home":"Hammerbacher SV","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":9,"date":"2026-10-04","time":"15:00","home":"ATSV Forchheim","away":"(SG) Hessdorf II / Großenseebach","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""},
+    {"matchday":10,"date":"2026-10-11","time":"15:00","home":"TKV Forchheim","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":11,"date":"2026-10-18","time":"15:00","home":"ATSV Forchheim","away":"SV DJK Eggolsheim","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""},
+    {"matchday":12,"date":"2026-10-25","time":"15:00","home":"TSV Hemhofen","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":13,"date":"2026-11-01","time":"14:30","home":"ATSV Forchheim","away":"SpVgg / DJK Heroldsbach / Thurn","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""},
+    {"matchday":14,"date":"2026-11-08","time":"14:30","home":"DJK Hallerndorf","away":"ATSV Forchheim","homeLogo":"","awayLogo":"bilder/ATSV_Wappen_4K_transparent.png"},
+    {"matchday":15,"date":"2026-11-15","time":"14:30","home":"ATSV Forchheim","away":"ASV Niederndorf","homeLogo":"bilder/ATSV_Wappen_4K_transparent.png","awayLogo":""}
   ]
 }
