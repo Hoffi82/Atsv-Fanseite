@@ -1,0 +1,27 @@
+name: Temporary rename table button
+on:
+  push:
+    paths:
+      - '.github/workflows/temporary-rename-table.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Rename results navigation to table
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('Ergebnisse & Tabelle</a>', 'Tabelle</a>')
+          s=s.replace('<h2>Ergebnisse</h2><p>Aktuelle Ergebnisse und Tabellen.</p>', '<h2>Tabelle</h2><p>Aktuelle Tabelle der Liga.</p>')
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Ergebnisse-Button in Tabelle umbenennen' || exit 0
+          git push
