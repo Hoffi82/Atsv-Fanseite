@@ -1,0 +1,30 @@
+name: Temporary hide results display
+on:
+  push:
+    paths:
+      - '.github/workflows/temporary-hide-results.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Hide visible results section
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('ergebnisse.html')
+          s = p.read_text(encoding='utf-8')
+          s = s.replace('Ergebnisse & Tabelle · Saison 2026/27', 'Tabelle · Saison 2026/27')
+          s = s.replace('.matchday-box{background:#0d0d0d;border:1px solid #333;border-left:3px solid #d00020;border-radius:10px;padding:10px;margin-bottom:14px}', '.matchday-box{background:#0d0d0d;border:1px solid #333;border-left:3px solid #d00020;border-radius:10px;padding:10px;margin-bottom:14px;display:none}')
+          s = re.sub(r'<script>\s*\(function\(\)\{\s*const c=document\.querySelector\(\'.results-container\'\);.*?subtitle\.after\(tableTitle,table,legend,note,resultsTitle,\.\.\.matches\);\s*\}\)\(\);\s*</script>', '', s, flags=re.S)
+          s = s.replace('</body>', '<script>\n(function(){const t=document.querySelectorAll(\'.results-container > .section-title\');if(t[1])t[1].style.display=\'none\';})();\n</script>\n</body>')
+          p.write_text(s, encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ergebnisse.html
+          git commit -m 'Nur Tabelle auf Ergebnisse-Seite anzeigen' || exit 0
+          git push
