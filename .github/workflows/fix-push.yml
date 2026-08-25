@@ -53,37 +53,6 @@ jobs:
           print('Result team names will wrap cleanly on small screens.')
           PY
 
-      - name: Enforce table before results
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('ergebnisse.html')
-          html = path.read_text(encoding='utf-8')
-          marker = '</body>'
-          fix = r'''<script>
-          (function(){
-            const c=document.querySelector('.results-container');
-            if(!c) return;
-            const subtitle=c.querySelector('.results-subtitle');
-            const titles=c.querySelectorAll(':scope > .section-title');
-            const table=c.querySelector(':scope > .table-wrapper');
-            const legend=c.querySelector(':scope > .legend');
-            const note=c.querySelector(':scope > .table-note');
-            const matches=[...c.querySelectorAll(':scope > .matchday-box')];
-            if(!subtitle || titles.length<2 || !table || !legend || !note || !matches.length) return;
-            const tableTitle=titles[0], resultsTitle=titles[1];
-            subtitle.after(tableTitle,table,legend,note,resultsTitle,...matches);
-          })();
-          </script>'''
-          if 'Enforce table before results' not in html:
-              html = html.replace(marker, fix + '\n' + marker, 1)
-              path.write_text(html, encoding='utf-8')
-              print('Table order enforcement added.')
-          else:
-              print('Table order enforcement already present.')
-          PY
-
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
