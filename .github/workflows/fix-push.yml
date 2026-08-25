@@ -53,30 +53,11 @@ jobs:
           print('Result team names will wrap cleanly on small screens.')
           PY
 
-      - name: Add permanent Push-Zentrale link to Live-Ticker admin
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('live.html')
-          html = path.read_text(encoding='utf-8')
-          marker = '</div>\n<div class="ticker">'
-          button = '<a href="admin-push.html" class="publish-button" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;">🔔 ATSV PUSH-ZENTRALE</a>\n'
-          if 'href="admin-push.html"' not in html:
-              if marker not in html:
-                  raise SystemExit('Could not find the Live-Ticker admin end marker.')
-              html = html.replace(marker, button + marker, 1)
-              path.write_text(html, encoding='utf-8')
-              print('Permanent Push-Zentrale link added to live.html.')
-          else:
-              print('Push-Zentrale link already present; nothing to change.')
-          PY
-
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html ergebnisse.html live.html
+          git add index.html ergebnisse.html
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
