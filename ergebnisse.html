@@ -75,5 +75,20 @@ body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-ser
   }
 })();
 </script>
+<script>
+(function(){
+  const c=document.querySelector('.results-container');
+  if(!c) return;
+  const subtitle=c.querySelector('.results-subtitle');
+  const titles=c.querySelectorAll(':scope > .section-title');
+  const table=c.querySelector(':scope > .table-wrapper');
+  const legend=c.querySelector(':scope > .legend');
+  const note=c.querySelector(':scope > .table-note');
+  const matches=[...c.querySelectorAll(':scope > .matchday-box')];
+  if(!subtitle || titles.length<2 || !table || !legend || !note || !matches.length) return;
+  const tableTitle=titles[0], resultsTitle=titles[1];
+  subtitle.after(tableTitle,table,legend,note,resultsTitle,...matches);
+})();
+</script>
 </body>
 </html>
