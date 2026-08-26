@@ -13,66 +13,19 @@
 /* ZOOM-FIX – Header-Elemente bleiben bei Browser-Zoom sauber angeordnet */
 @media (min-width:801px) {
   .hero h1{max-width:calc(100% - 430px)}
-  .next-match{
-    right:6%!important;
-    width:min(360px,32vw)!important;
-  }
-  .home-feature-player.senad{
-    left:auto!important;
-    right:calc(6% + min(360px,32vw) + 30px)!important;
-    transform:none!important;
-  }
+  .next-match{right:6%!important;width:min(360px,32vw)!important}
+  .home-feature-player.senad{left:auto!important;right:calc(6% + min(360px,32vw) + 30px)!important;transform:none!important}
 }
 
 /* Kompakter Desktop-Bereich für 125–200 % Browser-Zoom */
 @media (min-width:801px) and (max-width:1200px) {
   .hero h1{max-width:54%;font-size:clamp(3rem,7vw,5.2rem)}
-  .home-feature-players{
-    position:relative!important;
-    inset:auto!important;
-    display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    gap:10px!important;
-    margin:25px auto 0!important;
-    width:94%!important;
-    pointer-events:none;
-  }
-  .home-feature-player,
-  .home-feature-player.senad,
-  .home-feature-player.migo,
-  .home-feature-player.denis{
-    position:relative!important;
-    inset:auto!important;
-    left:auto!important;
-    right:auto!important;
-    bottom:auto!important;
-    top:auto!important;
-    transform:none!important;
-    display:flex!important;
-    flex-direction:column!important;
-    gap:3px!important;
-    align-items:center!important;
-  }
+  .home-feature-players{position:relative!important;inset:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;margin:25px auto 0!important;width:94%!important;pointer-events:none}
+  .home-feature-player,.home-feature-player.senad,.home-feature-player.migo,.home-feature-player.denis{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;bottom:auto!important;top:auto!important;transform:none!important;display:flex!important;flex-direction:column!important;gap:3px!important;align-items:center!important}
   .home-feature-player.senad{grid-column:auto!important}
-  .home-feature-player img,
-  .home-feature-player.senad img,
-  .home-feature-player.migo img,
-  .home-feature-player.denis img{
-    height:180px!important;
-    width:auto!important;
-  }
-  .home-feature-player .player-meta{text-align:center!important}
-  .home-feature-player .player-name{font-size:18px!important}
-  .home-feature-player .player-role{font-size:11px!important}
-  .home-feature-player .player-info{font-size:11px!important}
-  .next-match{
-    position:relative!important;
-    top:auto!important;
-    right:auto!important;
-    width:min(500px,94%)!important;
-    max-width:none!important;
-    margin:30px auto 0!important;
-  }
+  .home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:180px!important;width:auto!important}
+  .home-feature-player .player-meta{text-align:center!important}.home-feature-player .player-name{font-size:18px!important}.home-feature-player .player-role{font-size:11px!important}.home-feature-player .player-info{font-size:11px!important}
+  .next-match{position:relative!important;top:auto!important;right:auto!important;width:min(500px,94%)!important;max-width:none!important;margin:30px auto 0!important}
 }
 
 /* Feinschliff bei sehr starkem Desktop-Zoom */
@@ -80,11 +33,31 @@
   .hero h1{max-width:52%!important;font-size:clamp(2.8rem,6.5vw,4.6rem)!important}
   .next-match{width:min(440px,92%)!important;margin-top:24px!important}
   .home-feature-players{gap:8px!important;margin-top:20px!important}
-  .home-feature-player img,
-  .home-feature-player.senad img,
-  .home-feature-player.migo img,
-  .home-feature-player.denis img{height:150px!important}
-  .home-feature-player .player-name{font-size:16px!important}
-  .home-feature-player .player-role{font-size:10px!important;letter-spacing:1.5px!important}
-  .home-feature-player .player-info{font-size:10px!important}
+  .home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:150px!important}
+  .home-feature-player .player-name{font-size:16px!important}.home-feature-player .player-role{font-size:10px!important;letter-spacing:1.5px!important}.home-feature-player .player-info{font-size:10px!important}
+}
+
+/* 200%-Zoom-Fix: Spieler bleiben im Hero statt unter den Header zu rutschen */
+@media (min-width:801px) and (max-width:1200px){
+  .home-feature-players{position:absolute!important;inset:0!important;display:block!important;width:auto!important;margin:0!important}
+  .home-feature-player{position:absolute!important;display:flex!important;flex-direction:column!important;gap:3px!important;align-items:center!important}
+  .home-feature-player.senad{top:70px!important;left:auto!important;right:calc(6% + min(360px,32vw) + 20px)!important;transform:none!important}
+  .home-feature-player.migo{left:3%!important;right:auto!important;top:auto!important;bottom:18px!important}
+  .home-feature-player.denis{left:auto!important;right:3%!important;top:auto!important;bottom:18px!important}
+  .home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:145px!important;width:auto!important}
+  .home-feature-player .player-meta{text-align:center!important}.home-feature-player .player-name{font-size:16px!important}.home-feature-player .player-role{font-size:10px!important}.home-feature-player .player-info{font-size:10px!important}
+  .next-match{position:absolute!important;top:120px!important;right:6%!important;width:min(300px,36vw)!important;margin:0!important;padding:18px!important}
+  .next-match-title{font-size:12px!important;letter-spacing:2px!important}.next-match-date{font-size:12px!important;margin-bottom:12px!important}.next-match-teams{font-size:17px!important;margin-bottom:14px!important}.next-match-teams span{font-size:13px!important;margin:5px 0!important}.countdown{gap:5px!important}.countdown-box{padding:8px 3px!important}.countdown-box strong{font-size:20px!important}.countdown-box span{font-size:9px!important}
+}
+
+/* 200%-Zoom-Feinschliff: Box und Spieler räumlich trennen */
+@media (min-width:801px) and (max-width:900px){
+  .hero{min-height:520px!important}
+  .hero h1{max-width:52%!important;font-size:clamp(2.6rem,6vw,4.4rem)!important}
+  .home-feature-player.senad{top:55px!important;right:calc(6% + 36vw + 16px)!important}
+  .home-feature-player.migo{left:3%!important;bottom:18px!important}
+  .home-feature-player.denis{right:3%!important;bottom:18px!important}
+  .home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:125px!important}
+  .next-match{top:95px!important;right:6%!important;width:34vw!important;max-width:280px!important;padding:14px!important}
+  .next-match-teams{font-size:15px!important}.countdown-box strong{font-size:18px!important}
 }
