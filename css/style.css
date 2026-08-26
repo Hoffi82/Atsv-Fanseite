@@ -9,3 +9,68 @@
 
 /* COUNTDOWN – dynamische Mannschaften als Text, keine fest eingebauten Gegner-Wappen */
 .next-match-teams{display:flex!important;align-items:center!important;justify-content:center!important;gap:14px!important;min-height:48px;font-size:20px!important;font-weight:900!important;color:#fff!important;text-align:center!important}.next-match-teams::before,.next-match-teams::after{display:none!important}.next-match-teams span{display:block!important;color:#d00020!important;font-size:15px!important;margin:0!important;flex:0 0 auto!important}@media (max-width:600px){.next-match-teams{gap:10px!important;min-height:42px;font-size:17px!important}.next-match-teams span{font-size:14px!important}}
+
+/* ZOOM-FIX – Header-Elemente bleiben bei Browser-Zoom sauber angeordnet */
+@media (min-width:801px) {
+  .hero h1{max-width:calc(100% - 430px)}
+  .next-match{
+    right:6%!important;
+    width:min(360px,32vw)!important;
+  }
+  .home-feature-player.senad{
+    left:auto!important;
+    right:calc(6% + min(360px,32vw) + 30px)!important;
+    transform:none!important;
+  }
+}
+
+/* Kompakter Desktop-Bereich für 125–200 % Browser-Zoom */
+@media (min-width:801px) and (max-width:1200px) {
+  .hero h1{max-width:54%;font-size:clamp(3rem,7vw,5.2rem)}
+  .home-feature-players{
+    position:relative!important;
+    inset:auto!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:10px!important;
+    margin:25px auto 0!important;
+    width:94%!important;
+    pointer-events:none;
+  }
+  .home-feature-player,
+  .home-feature-player.senad,
+  .home-feature-player.migo,
+  .home-feature-player.denis{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    top:auto!important;
+    transform:none!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:3px!important;
+    align-items:center!important;
+  }
+  .home-feature-player.senad{grid-column:auto!important}
+  .home-feature-player img,
+  .home-feature-player.senad img,
+  .home-feature-player.migo img,
+  .home-feature-player.denis img{
+    height:180px!important;
+    width:auto!important;
+  }
+  .home-feature-player .player-meta{text-align:center!important}
+  .home-feature-player .player-name{font-size:18px!important}
+  .home-feature-player .player-role{font-size:11px!important}
+  .home-feature-player .player-info{font-size:11px!important}
+  .next-match{
+    position:relative!important;
+    top:auto!important;
+    right:auto!important;
+    width:min(500px,94%)!important;
+    max-width:none!important;
+    margin:30px auto 0!important;
+  }
+}
