@@ -10,7 +10,8 @@ window.ATSV_FORM_GAMES = [
   { date: '2026-08-02', type: 'Testspiel', home: 'ATSV Forchheim', away: 'BSC Erlangen', homeScore: 2, awayScore: 5 },
   { date: '2026-08-09', type: 'Liga', home: 'ATSV Forchheim', away: 'DJK Hallerndorf', homeScore: 2, awayScore: 4 },
   { date: '2026-08-15', type: 'Liga', home: 'ASV Niederndorf', away: 'ATSV Forchheim', homeScore: 3, awayScore: 0 },
-  { date: '2026-08-23', type: 'Liga', home: 'ATSV Forchheim', away: 'DJK Erlangen II', homeScore: 2, awayScore: 0 }
+  { date: '2026-08-23', type: 'Liga', home: 'ATSV Forchheim', away: 'DJK Erlangen II', homeScore: 2, awayScore: 0 },
+  { date: '2026-08-30', type: 'Liga', home: 'SpVgg Uehlfeld', away: 'ATSV Forchheim', homeScore: 2, awayScore: 4 }
 ];
 
 window.ATSV_FORM_CONFIG = {
@@ -42,8 +43,6 @@ window.ATSV_FORM_CONFIG = {
   }
 };
 
-// Korrektur für die kompakte Form-Anzeige auf der Startseite:
-// Testspiele zählen zur Form, aber niemals zu den Liga-Punkten.
 window.renderHomeForm = function() {
   if (document.getElementById('homeFormSection') || !window.ATSV_FORM_GAMES) return;
   const games = window.ATSV_FORM_GAMES
@@ -85,9 +84,6 @@ window.renderHomeForm = function() {
   if (main) main.insertBefore(section, live || main.firstChild);
 };
 
-// Startseiten-Liveticker: verhindert widersprüchliche Alt-Daten nach Spielende.
-// Wenn der Live-Bereich bereits "Aktuell findet kein Spiel statt." meldet,
-// werden auch Gegner, Spielstand, Minute und Status konsequent zurückgesetzt.
 function resetAtsvFinishedHomeTicker() {
   const statusEl = document.getElementById('homeLiveStatus');
   const awayEl = document.getElementById('liveAwayTeam');
