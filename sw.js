@@ -1,4 +1,4 @@
-const CACHE_NAME = "atsv-fan-app-v21";
+const CACHE_NAME = "atsv-fan-app-v22";
 
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
@@ -36,13 +36,30 @@ async function prepareIndex(response, request) {
 <script>
 (function(){
   const box = document.querySelector('.next-match');
-  if (!box || typeof matches === 'undefined') return;
-  function getRealNextMatch(){
-    const now = new Date();
-    return matches.map(match => ({ ...match, start: new Date(match.date) })).filter(match => !Number.isNaN(match.start.getTime()) && match.start > now).sort((a,b) => a.start - b.start)[0] || null;
+  if (!box) return;
+  let countdownTimer = null;
+
+  async function loadRealNextMatch(){
+    try {
+      const response = await fetch('./data/fixtures.json?v=' + Date.now(), { cache: 'no-store' });
+      if (!response.ok) throw new Error('Spielplan konnte nicht geladen werden.');
+      const data = await response.json();
+      const now = new Date();
+      return (data.fixtures || [])
+        .map(match => ({
+          ...match,
+          start: new Date(match.date + 'T' + (match.time || '00:00') + ':00')
+        }))
+        .filter(match => !Number.isNaN(match.start.getTime()) && match.start > now)
+        .sort((a,b) => a.start - b.start)[0] || null;
+    } catch (error) {
+      console.error('ATSV Countdown Spielplan:', error);
+      return null;
+    }
   }
-  function renderRealNextMatch(){
-    const match = getRealNextMatch();
+
+  async function renderRealNextMatch(){
+    const match = await loadRealNextMatch();
     const dateEl = box.querySelector('.next-match-date');
     const teamsEl = box.querySelector('.next-match-teams');
     const countdown = box.querySelector('.countdown');
@@ -74,8 +91,9 @@ async function prepareIndex(response, request) {
     if (m) m.textContent = String(minutes).padStart(2,'0');
     if (s) s.textContent = String(seconds).padStart(2,'0');
   }
+
   renderRealNextMatch();
-  setInterval(renderRealNextMatch, 1000);
+  countdownTimer = setInterval(renderRealNextMatch, 1000);
 })();
 </script>`;
     fixedHtml = fixedHtml.replace(/<\/body>/i, countdownFix + "</body>");
