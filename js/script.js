@@ -143,10 +143,6 @@ async function refreshAtsvHomeLiveTicker() {
   const { data: matches, error } = await client.from("live_matches").select("*").eq("status", "live").order("created_at", { ascending: false }).limit(1);
   let match = matches?.[0] || null;
   if (error) { console.error("ATSV Startseiten-Liveticker Fehler:", error); return; }
-  if (match?.created_at) {
-    const age = Date.now() - new Date(match.created_at).getTime();
-    if (age > 2 * 60 * 60 * 1000) match = null;
-  }
   if (!match) {
     statusEl.textContent = "KEIN SPIEL LIVE";
     statusEl.style.background = "#333";
