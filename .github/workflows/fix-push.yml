@@ -69,11 +69,41 @@ jobs:
               print('Stale-match filter already removed; nothing to do.')
           PY
 
+      - name: Fix automatic live match minute
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('live.html')
+          html = path.read_text(encoding='utf-8')
+          html = html.replace(
+              'status:"live",home_score:0,away_score:0,current_minute:1',
+              'status:"live",home_score:0,away_score:0,current_minute:1,live_started_at:new Date().toISOString()'
+          )
+          helper = '''function calculatedLiveMinute(m){if(!m||m.status!=="live")return m?.current_minute??1;const start=m.live_started_at||m.updated_at||m.created_at;if(!start)return m.current_minute??1;return Math.max(1,Math.floor((Date.now()-new Date(start).getTime())/60000)+1)}\n'''
+          if 'function calculatedLiveMinute(' not in html:
+              html = html.replace('function updateScreen(){', helper + 'function updateScreen(){', 1)
+          html = html.replace(
+              'document.getElementById("currentMinute").textContent=currentMatch.current_minute??1;',
+              'document.getElementById("currentMinute").textContent=calculatedLiveMinute(currentMatch);'
+          )
+          html = html.replace('checkAdminSession();', 'checkAdminSession();setInterval(loadActiveMatch,10000);')
+          path.write_text(html, encoding='utf-8')
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          inject = '''<script>\n(async function(){const sb=window.supabase?.createClient?.("https://xmtrtpibldbiiikkkmnd.supabase.co","sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B");if(!sb)return;async function refreshHomeLiveMinute(){const{data}=await sb.from("live_matches").select("status,current_minute,live_started_at,updated_at,created_at").eq("status","live").order("created_at",{ascending:false}).limit(1).maybeSingle();if(!data)return;const start=data.live_started_at||data.updated_at||data.created_at;if(!start)return;const minute=Math.max(1,Math.floor((Date.now()-new Date(start).getTime())/60000)+1);const el=document.getElementById("liveCurrentMinute");if(el)el.textContent=minute+"'";}refreshHomeLiveMinute();setInterval(refreshHomeLiveMinute,10000);})();\n</script>\n'''
+          if 'refreshHomeLiveMinute' not in html:
+              html = html.replace('</body>', inject + '</body>', 1)
+          path.write_text(html, encoding='utf-8')
+          print('Automatic live minute calculation added.')
+          PY
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html ergebnisse.html js/script.js
+          git add index.html ergebnisse.html js/script.js live.html
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
