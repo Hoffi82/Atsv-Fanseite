@@ -53,11 +53,27 @@ jobs:
           print('Result team names will wrap cleanly on small screens.')
           PY
 
+      - name: Make home live ticker show every active live match
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('js/script.js')
+          js = path.read_text(encoding='utf-8')
+          old = '''  if (match?.created_at) {\n    const age = Date.now() - new Date(match.created_at).getTime();\n    if (age > 2 * 60 * 60 * 1000) match = null;\n  }\n'''
+          if old in js:
+              js = js.replace(old, '')
+              path.write_text(js, encoding='utf-8')
+              print('Removed the 2-hour stale-match filter from the homepage live ticker.')
+          else:
+              print('Stale-match filter already removed; nothing to do.')
+          PY
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html ergebnisse.html
+          git add index.html ergebnisse.html js/script.js
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
