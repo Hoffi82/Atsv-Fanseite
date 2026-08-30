@@ -45,12 +45,8 @@ window.ATSV_FORM_CONFIG = {
 
 window.renderHomeForm = function() {
   if (document.getElementById('homeFormSection') || !window.ATSV_FORM_GAMES) return;
-  const games = window.ATSV_FORM_GAMES
-    .filter(g => g.homeScore !== null && g.awayScore !== null)
-    .sort((a,b) => a.date.localeCompare(b.date))
-    .slice(-5);
+  const games = window.ATSV_FORM_GAMES.filter(g => g.homeScore !== null && g.awayScore !== null).sort((a,b) => a.date.localeCompare(b.date)).slice(-5);
   if (!games.length) return;
-
   const atsv = 'ATSV Forchheim';
   const result = g => g.homeScore === g.awayScore ? 'D' : ((g.home === atsv ? g.homeScore > g.awayScore : g.awayScore > g.homeScore) ? 'W' : 'L');
   const labels = {W:'S', D:'U', L:'N'};
@@ -58,27 +54,15 @@ window.renderHomeForm = function() {
   const points = games.reduce((p,g) => p + (g.type === 'Liga' ? (result(g) === 'W' ? 3 : result(g) === 'D' ? 1 : 0) : 0), 0);
   const goalsFor = games.reduce((n,g) => n + (g.home === atsv ? g.homeScore : g.awayScore), 0);
   const goalsAgainst = games.reduce((n,g) => n + (g.home === atsv ? g.awayScore : g.homeScore), 0);
-
   let streak = 0;
   const lastResult = result(games[games.length - 1]);
-  for (let i=games.length-1; i>=0; i--) {
-    if (result(games[i]) === lastResult) streak++;
-    else break;
-  }
-  const streakText = lastResult === 'W' && streak >= 2 ? `🔥 ${streak} Siege in Folge` :
-    lastResult === 'L' && streak >= 2 ? `🔥 ${streak} Niederlagen in Folge` :
-    lastResult === 'D' && streak >= 2 ? `🔥 ${streak} Remis in Folge` : 'Aktuelle Form im Überblick';
-
-  const badges = games.map(g => {
-    const r = result(g);
-    return `<span class="home-form-badge ${r.toLowerCase()}" title="${g.home} ${g.homeScore}:${g.awayScore} ${g.away}">${labels[r]}</span>`;
-  }).join('');
-
+  for (let i=games.length-1; i>=0; i--) { if (result(games[i]) === lastResult) streak++; else break; }
+  const streakText = lastResult === 'W' && streak >= 2 ? `🔥 ${streak} Siege in Folge` : lastResult === 'L' && streak >= 2 ? `🔥 ${streak} Niederlagen in Folge` : lastResult === 'D' && streak >= 2 ? `🔥 ${streak} Remis in Folge` : 'Aktuelle Form im Überblick';
+  const badges = games.map(g => { const r=result(g); return `<span class="home-form-badge ${r.toLowerCase()}" title="${g.home} ${g.homeScore}:${g.awayScore} ${g.away}">${labels[r]}</span>`; }).join('');
   const section = document.createElement('section');
   section.id = 'homeFormSection';
   section.className = 'home-form-section';
   section.innerHTML = `<div class="home-form-title">📈 FORM DER MANNSCHAFT</div><div class="home-form-card"><div class="home-form-top"><div><span>LETZTE 5 SPIELE</span><strong>${counts.W} S · ${counts.D} U · ${counts.L} N</strong></div><div><span>LIGA-PUNKTE</span><strong>${points}</strong></div><div><span>TORE</span><strong>${goalsFor}:${goalsAgainst}</strong></div></div><div class="home-form-badges">${badges}</div><div class="home-form-series">${streakText}</div><a class="home-form-button" href="form.html">FORM KOMPLETT ANSEHEN</a></div>`;
-
   const main = document.querySelector('main');
   const live = document.getElementById('homeLiveTicker');
   if (main) main.insertBefore(section, live || main.firstChild);
@@ -93,10 +77,8 @@ function resetAtsvFinishedHomeTicker() {
   const minuteEl = document.getElementById('liveCurrentMinute');
   const eventsEl = document.getElementById('homeLiveEvents');
   if (!statusEl || !awayEl || !homeEl || !homeScoreEl || !awayScoreEl || !minuteEl || !eventsEl) return;
-
   const noGameMessage = (eventsEl.textContent || '').includes('Aktuell findet kein Spiel statt.');
   if (!noGameMessage) return;
-
   statusEl.textContent = 'KEIN SPIEL LIVE';
   statusEl.style.background = '#333';
   homeEl.textContent = 'ATSV Forchheim';
@@ -107,11 +89,53 @@ function resetAtsvFinishedHomeTicker() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(resetAtsvFinishedHomeTicker, 250);
-    setInterval(resetAtsvFinishedHomeTicker, 1000);
-  });
+  document.addEventListener('DOMContentLoaded', () => { setTimeout(resetAtsvFinishedHomeTicker, 250); setInterval(resetAtsvFinishedHomeTicker, 1000); });
 } else {
-  setTimeout(resetAtsvFinishedHomeTicker, 250);
-  setInterval(resetAtsvFinishedHomeTicker, 1000);
+  setTimeout(resetAtsvFinishedHomeTicker, 250); setInterval(resetAtsvFinishedHomeTicker, 1000);
 }
+
+// Countdown-Fix: immer das nächste noch nicht gestartete ATSV-Ligaspiel anzeigen.
+window.updateAtsvNextMatchCountdown = function() {
+  const box = document.querySelector('.next-match');
+  if (!box) return;
+  const matches = [
+    { date: '2026-09-06T15:00:00', label: 'Sonntag, 06.09.2026 · 15:00 Uhr', home: 'ATSV Forchheim', away: 'SpVgg Hausen' },
+    { date: '2026-09-13T15:00:00', label: 'Sonntag, 13.09.2026 · 15:00 Uhr', home: 'SV Buckenhofen II', away: 'ATSV Forchheim' },
+    { date: '2026-09-20T15:00:00', label: 'Sonntag, 20.09.2026 · 15:00 Uhr', home: 'ATSV Forchheim', away: 'TSV Neuhaus' },
+    { date: '2026-09-27T15:00:00', label: 'Sonntag, 27.09.2026 · 15:00 Uhr', home: 'Hammerbacher SV', away: 'ATSV Forchheim' },
+    { date: '2026-10-04T15:00:00', label: 'Sonntag, 04.10.2026 · 15:00 Uhr', home: 'ATSV Forchheim', away: '(SG) Hessdorf II / Großenseebach' },
+    { date: '2026-10-11T15:00:00', label: 'Sonntag, 11.10.2026 · 15:00 Uhr', home: 'TKV Forchheim', away: 'ATSV Forchheim' },
+    { date: '2026-10-18T15:00:00', label: 'Sonntag, 18.10.2026 · 15:00 Uhr', home: 'ATSV Forchheim', away: 'SV DJK Eggolsheim' },
+    { date: '2026-10-25T15:00:00', label: 'Sonntag, 25.10.2026 · 15:00 Uhr', home: 'TSV Hemhofen', away: 'ATSV Forchheim' },
+    { date: '2026-11-01T14:30:00', label: 'Sonntag, 01.11.2026 · 14:30 Uhr', home: 'ATSV Forchheim', away: 'SpVgg / DJK Heroldsbach / Thurn' },
+    { date: '2026-11-08T14:30:00', label: 'Sonntag, 08.11.2026 · 14:30 Uhr', home: 'DJK Hallerndorf', away: 'ATSV Forchheim' },
+    { date: '2026-11-15T14:30:00', label: 'Sonntag, 15.11.2026 · 14:30 Uhr', home: 'ATSV Forchheim', away: 'ASV Niederndorf' }
+  ];
+  const now = new Date();
+  const next = matches.find(match => new Date(match.date) > now);
+  const dateEl = box.querySelector('.next-match-date');
+  const teamsEl = box.querySelector('.next-match-teams');
+  const countdown = box.querySelector('.countdown');
+  const liveMessage = box.querySelector('#live-message');
+  if (!next) {
+    if (dateEl) dateEl.textContent = 'Saisonpause';
+    if (teamsEl) teamsEl.innerHTML = 'Keine weiteren Spiele<span>VORERST</span>Winterpause';
+    if (countdown) countdown.style.display = 'none';
+    if (liveMessage) liveMessage.innerHTML = '';
+    return;
+  }
+  const target = new Date(next.date);
+  const difference = target - now;
+  if (dateEl) dateEl.textContent = next.label;
+  if (teamsEl) teamsEl.innerHTML = `${next.home}<span>VS.</span>${next.away}`;
+  if (countdown) countdown.style.display = 'grid';
+  if (liveMessage) liveMessage.innerHTML = '';
+  const set = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(Math.max(0, value)).padStart(2, '0');
+  };
+  set('days', Math.floor(difference / 86400000));
+  set('hours', Math.floor((difference / 3600000) % 24));
+  set('minutes', Math.floor((difference / 60000) % 60));
+  set('seconds', Math.floor((difference / 1000) % 60));
+};
