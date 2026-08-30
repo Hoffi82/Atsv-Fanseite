@@ -99,6 +99,52 @@ jobs:
           print('Automatic live minute calculation added.')
           PY
 
+      - name: Stabilize admin live match refresh
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('live.html')
+          html = path.read_text(encoding='utf-8')
+
+          if 'let matchLoadInFlight=false;' not in html:
+              html = html.replace(
+                  'let selectedEvent="",currentMatch=null,minuteTimer=null,refreshTimer=null,testMode=false,testFinished=false,testStart=0,testScore=0,testMinute=1;',
+                  'let selectedEvent="",currentMatch=null,minuteTimer=null,refreshTimer=null,matchLoadInFlight=false,testMode=false,testFinished=false,testStart=0,testScore=0,testMinute=1;'
+              )
+
+          pattern = r'async function loadActiveMatch\(\)\{.*?\}\nfunction loadLiveEvents'
+          replacement = '''async function loadActiveMatch(){
+            if(testMode||matchLoadInFlight)return;
+            matchLoadInFlight=true;
+            try{
+              let r=await supabaseClient.from("live_matches").select("*").eq("status","live").order("created_at",{ascending:false}).limit(1).maybeSingle();
+              if(r.error)throw r.error;
+              let d=r.data;
+              if(!d){
+                r=await supabaseClient.from("live_matches").select("*").eq("status","upcoming").order("created_at",{ascending:false}).limit(1).maybeSingle();
+                if(r.error)throw r.error;
+                d=r.data;
+              }
+              if(d){currentMatch=d;updateScreen();}
+              else if(currentMatch){updateScreen();}
+            }catch(e){
+              console.error("ATSV Liveticker Laden:",e);
+              if(currentMatch)updateScreen();
+              else document.getElementById("matchInfo").textContent="Fehler beim Laden des Spiels";
+            }finally{matchLoadInFlight=false;}
+          }
+          function loadLiveEvents'''
+          new_html,count=re.subn(pattern,replacement,html,count=1,flags=re.S)
+          if count==1:
+              html=new_html
+              path.write_text(html,encoding='utf-8')
+              print('Admin live-match refresh stabilized: transient empty reads no longer clear the current match, and overlapping refreshes are blocked.')
+          else:
+              print('Could not locate loadActiveMatch; no change made.')
+          PY
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
