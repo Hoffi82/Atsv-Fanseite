@@ -1,0 +1,42 @@
+name: ATSV Navigation Umbau
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-navigation:
+    if: ${{ !contains(github.event.head_commit.message, 'ATSV Navigation Umbau automatisch') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Navigation anpassen
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old_nav = '<a href="index.html">Start</a><a href="spieler.html">Spieler</a><a href="vorbereitung-26-27.html">Vorbereitung 26/27</a><a href="liga-26-27.html">Liga 26/27</a><a href="ergebnisse.html">Tabelle</a><a href="ergebnisplan-26-27.html">🏆 Ergebnisplan</a><a href="spielberichte.html">Spielberichte</a><a href="galerie.html">Galerie</a><a href="news.html">📰 News</a><a href="tippspiel.html">🎯 Tippspiel</a><a href="ausruester-sponsoren.html">🤝 Ausrüster & Sponsoren</a>'
+          new_nav = '<a href="index.html">Start</a><a href="spieler.html">Spieler</a><a href="ergebnisse.html">Ergebnisse</a><a href="liga-26-27.html">Liga 26/27</a><a href="zweite-mannschaft.html">2. Mannschaft</a><a href="ergebnisplan-26-27.html">🏆 Ergebnisplan</a><a href="spielberichte.html">Spielberichte</a><a href="galerie.html">Galerie</a><a href="news.html">📰 News</a><a href="tippspiel.html">🎯 Tippspiel</a><a href="ausruester-sponsoren.html">🤝 Ausrüster & Sponsoren</a>'
+          s = s.replace(old_nav, new_nav)
+
+          s = s.replace('<a class="card" href="vorbereitung-26-27.html"><span>02</span><h2>Vorbereitung 26/27</h2><p>Alle Testspiele und Ergebnisse der Vorbereitung.</p></a>', '<a class="card" href="zweite-mannschaft.html"><span>02</span><h2>2. Mannschaft</h2><p>Tabelle und Ergebnisse der ATSV-Zweiten.</p></a>')
+          s = s.replace('<a class="card" href="ergebnisse.html"><span>04</span><h2>Tabelle</h2><p>Aktuelle Tabelle der Liga.</p></a>', '<a class="card" href="ergebnisse.html"><span>04</span><h2>Ergebnisse</h2><p>Ergebnisse und aktuelle Tabelle der Liga.</p></a>')
+
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Änderungen speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen nötig."
+          else
+            git commit -m "ATSV Navigation Umbau automatisch"
+            git push
+          fi
