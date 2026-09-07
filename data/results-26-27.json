@@ -46,6 +46,12 @@
     {"matchday":4,"date":"2026-08-30","home":"SpVgg Uehlfeld","away":"ATSV Forchheim","homeGoals":2,"awayGoals":4,"status":"finished"},
     {"matchday":4,"date":"2026-08-30","home":"Hammerbacher SV","away":"(SG) Hessdorf II/Großenseebach","homeGoals":4,"awayGoals":1,"status":"finished"},
     {"matchday":4,"date":"2026-08-30","home":"TSV Neuhaus","away":"TKV Forchheim","homeGoals":1,"awayGoals":1,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"ASV Niederndorf","away":"DJK Erlangen II","homeGoals":8,"awayGoals":0,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"DJK Hallerndorf","away":"SpVgg Uehlfeld","homeGoals":2,"awayGoals":1,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"SV DJK Eggolsheim","away":"TSV Neuhaus","homeGoals":1,"awayGoals":2,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"TSV Hemhofen","away":"SV Buckenhofen II","homeGoals":8,"awayGoals":2,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"TKV Forchheim","away":"Hammerbacher SV","homeGoals":1,"awayGoals":3,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"(SG) Hessdorf II/Großenseebach","away":"SpVgg/DJK Heroldsbach/Thurn","homeGoals":1,"awayGoals":6,"status":"finished"},
     {"matchday":5,"date":"2026-09-06","home":"ATSV Forchheim","away":"SpVgg Hausen","homeGoals":2,"awayGoals":2,"status":"finished"}
   ]
 }
