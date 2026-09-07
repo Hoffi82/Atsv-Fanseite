@@ -1,5 +1,6 @@
-// ATSV Fanseite – zentrale Ergebnisdaten laden und Ergebnisanzeige aktualisieren
+// ATSV Fanseite – zentrale Ergebnis- und Tabellendaten laden
 window.ATSV_RESULTS = [];
+window.ATSV_STANDINGS = [];
 
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -9,9 +10,8 @@ function formatDate(dateString) {
 }
 
 function renderAtsvResults(results) {
-  const firstSection = Array.from(document.querySelectorAll('.section-title'))[0];
   const tableSection = Array.from(document.querySelectorAll('.section-title')).find(el => el.textContent.includes('Tabelle'));
-  if (!firstSection || !tableSection) return;
+  if (!tableSection) return;
 
   document.querySelectorAll('.matchday-box').forEach(box => box.remove());
 
@@ -44,19 +44,15 @@ function renderAtsvResults(results) {
 
       const teams = document.createElement('div');
       teams.className = 'result-teams';
-
       const home = document.createElement('div');
       home.className = 'result-team home';
       home.textContent = match.home;
-
       const score = document.createElement('div');
       score.className = 'result-score';
       score.textContent = Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
-
       const away = document.createElement('div');
       away.className = 'result-team away';
       away.textContent = match.away;
-
       teams.append(home, score, away);
       card.appendChild(teams);
       box.appendChild(card);
@@ -73,13 +69,14 @@ async function getAtsvResults() {
 
     const data = await response.json();
     window.ATSV_RESULTS = Array.isArray(data.results) ? data.results : [];
+    window.ATSV_STANDINGS = Array.isArray(data.standings) ? data.standings : [];
 
-    // Auf der Ergebnisseite stammen die sichtbaren Ergebnisse jetzt ebenfalls aus der zentralen Datei.
     renderAtsvResults(window.ATSV_RESULTS);
     return window.ATSV_RESULTS;
   } catch (error) {
     console.error('ATSV Ergebnisdaten:', error);
     window.ATSV_RESULTS = [];
+    window.ATSV_STANDINGS = [];
     return [];
   }
 }
