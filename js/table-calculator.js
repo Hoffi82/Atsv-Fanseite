@@ -1,5 +1,22 @@
-// ATSV Fanseite – automatische Tabellenberechnung aus Ergebnisdaten
+// ATSV Fanseite – Tabellenberechnung
 window.calculateAtsvTable = function(results) {
+  // Wenn eine aktuelle offizielle Tabelle in den zentralen Daten hinterlegt ist,
+  // diese verwenden. So bleibt die Anzeige auch dann korrekt, wenn noch nicht
+  // alle Partien des aktuellen Spieltags als Einzelergebnis vorliegen.
+  if (Array.isArray(window.ATSV_STANDINGS) && window.ATSV_STANDINGS.length) {
+    return window.ATSV_STANDINGS.map(row => ({
+      team: row.team,
+      games: Number(row.games) || 0,
+      wins: Number(row.wins) || 0,
+      draws: Number(row.draws) || 0,
+      losses: Number(row.losses) || 0,
+      goalsFor: Number(row.goalsFor) || 0,
+      goalsAgainst: Number(row.goalsAgainst) || 0,
+      points: Number(row.points) || 0,
+      goalDifference: (Number(row.goalsFor) || 0) - (Number(row.goalsAgainst) || 0)
+    }));
+  }
+
   const table = {};
 
   for (const match of (Array.isArray(results) ? results : [])) {
@@ -15,7 +32,6 @@ window.calculateAtsvTable = function(results) {
     const away = table[match.away];
     const hg = Number(match.homeGoals);
     const ag = Number(match.awayGoals);
-
     if (!Number.isFinite(hg) || !Number.isFinite(ag)) continue;
 
     home.games++; away.games++;
