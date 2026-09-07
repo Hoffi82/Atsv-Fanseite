@@ -29,6 +29,7 @@
     {"matchday":4,"date":"2026-08-30","home":"SpVgg Hausen","away":"TSV Hemhofen","homeGoals":3,"awayGoals":3,"status":"finished"},
     {"matchday":4,"date":"2026-08-30","home":"SpVgg Uehlfeld","away":"ATSV Forchheim","homeGoals":2,"awayGoals":4,"status":"finished"},
     {"matchday":4,"date":"2026-08-30","home":"Hammerbacher SV","away":"(SG) Hessdorf II/Großenseebach","homeGoals":4,"awayGoals":1,"status":"finished"},
-    {"matchday":4,"date":"2026-08-30","home":"TSV Neuhaus","away":"TKV Forchheim","homeGoals":1,"awayGoals":1,"status":"finished"}
+    {"matchday":4,"date":"2026-08-30","home":"TSV Neuhaus","away":"TKV Forchheim","homeGoals":1,"awayGoals":1,"status":"finished"},
+    {"matchday":5,"date":"2026-09-06","home":"ATSV Forchheim","away":"SpVgg Hausen","homeGoals":2,"awayGoals":2,"status":"finished"}
   ]
 }
