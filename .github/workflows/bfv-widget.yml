@@ -1,0 +1,51 @@
+name: BFV Tabelle Widget
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  add-bfv-widget:
+    if: !contains(github.event.head_commit.message, 'BFV Tabelle Widget automatisch')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: BFV Widget in Tabelle einsetzen
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('ergebnisse.html')
+          text = p.read_text(encoding='utf-8')
+
+          include = "<script type='text/javascript' src=\"https://widget-prod.bfv.de/widget/widgetresource/widgetjs\"></script>"
+          widget = '''<div id="bfv1789126388886">Laden...</div>
+          <script>
+          BFVWidget.HTML5.zeigeWettbewerbsTabelle("0314BIOJEG000006VS5489BUVSBBVPEU-G", "bfv1789126388886", { height: "600", width: "300", teamPermanentId: "016PFLUEH0000000VV0AG811VUDIC8D7", colorResults: "undefined", colorNav: "undefined", colorClubName: "undefined", backgroundNav: "undefined"});
+          </script>'''
+
+          if 'widget-prod.bfv.de/widget/widgetresource/widgetjs' not in text:
+              text = text.replace('</head>', f'{include}\n</head>', 1)
+
+          marker = '<div class="section-title">🏆 Tabelle</div>'
+          if 'id="bfv1789126388886"' not in text and marker in text:
+              replacement = marker + '\n' + '<div class="bfv-widget-box" style="display:flex;justify-content:center;overflow-x:auto;margin:0 0 25px;">' + widget + '</div>'
+              text = text.replace(marker, replacement, 1)
+
+          p.write_text(text, encoding='utf-8')
+
+      - name: Änderungen speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ergebnisse.html
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen nötig."
+          else
+            git commit -m "BFV Tabelle Widget automatisch einsetzen"
+            git push
+          fi
