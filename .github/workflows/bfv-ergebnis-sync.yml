@@ -1,0 +1,164 @@
+name: BFV Ergebnis synchronisieren
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "*/15 * * * *"
+      timezone: "Europe/Berlin"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-result:
+    if: ${{ !contains(github.event.head_commit.message, 'BFV Ergebnis automatisch synchronisieren') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Python vorbereiten
+        run: python3 -m pip install --quiet requests beautifulsoup4
+
+      - name: Aktuelles BFV-Ergebnis prüfen und übernehmen
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from datetime import datetime
+          from pathlib import Path
+
+          import requests
+          from bs4 import BeautifulSoup
+
+          TEAM_URL = 'https://www.bfv.de/mannschaften/016PFLUEH0000000VV0AG811VUDIC8D7'
+          DATA_FILE = Path('data/results-26-27.json')
+          ATSV = 'ATSV Forchheim'
+
+          session = requests.Session()
+          session.headers.update({'User-Agent': 'Mozilla/5.0 ATSV-Fanseite Ergebnis-Sync'})
+
+          def norm(value):
+              value = re.sub(r'\\s+', ' ', value or '').strip().lower()
+              value = value.replace('spvgg', 'spvgg')
+              return value
+
+          def parse_date(text):
+              m = re.search(r'(?<!\\d)(\\d{2}\\.\\d{2}\\.\\d{4})(?!\\d)', text or '')
+              if not m:
+                  return None
+              try:
+                  return datetime.strptime(m.group(1), '%d.%m.%Y').date().isoformat()
+              except ValueError:
+                  return None
+
+          team_html = session.get(TEAM_URL, timeout=30)
+          team_html.raise_for_status()
+          team_soup = BeautifulSoup(team_html.text, 'html.parser')
+
+          candidates = []
+          seen = set()
+          for link in team_soup.find_all('a', href=True):
+              href = link['href']
+              if '/spiele/spielbericht/' not in href:
+                  continue
+              if href.startswith('/'):
+                  href = 'https://www.bfv.de' + href
+              if href in seen:
+                  continue
+              seen.add(href)
+              parent_text = link.parent.get_text(' ', strip=True) if link.parent else ''
+              grand_text = link.parent.parent.get_text(' ', strip=True) if link.parent and link.parent.parent else ''
+              candidates.append((href, parent_text + ' ' + grand_text))
+
+          latest = None
+          for href, surrounding in candidates:
+              hint_date = parse_date(surrounding)
+              if hint_date and not hint_date.startswith('2026-'):
+                  continue
+              try:
+                  r = session.get(href, timeout=30)
+                  r.raise_for_status()
+              except Exception:
+                  continue
+
+              soup = BeautifulSoup(r.text, 'html.parser')
+              text = soup.get_text(' ', strip=True)
+              date = parse_date(text) or hint_date
+              if not date or not date.startswith('2026-'):
+                  continue
+
+              m = re.search(r'Kreisklasse\\s+1\\s*:\s*(.+?)\\s+[–-]\\s+(.+?),\\s*(\\d+)\\s*:\\s*(\\d+)\\s*\\(', text)
+              if not m:
+                  continue
+
+              home, away = m.group(1).strip(), m.group(2).strip()
+              if ATSV.lower() not in (home.lower(), away.lower()):
+                  continue
+
+              item = {
+                  'date': date,
+                  'home': home,
+                  'away': away,
+                  'homeGoals': int(m.group(3)),
+                  'awayGoals': int(m.group(4)),
+                  'url': href,
+              }
+              if latest is None or item['date'] > latest['date']:
+                  latest = item
+
+          if latest is None:
+              raise SystemExit('Kein aktuelles ATSV-Ergebnis auf BFV gefunden.')
+
+          data = json.loads(DATA_FILE.read_text(encoding='utf-8'))
+          results = data.get('results', [])
+
+          def same_match(a, b):
+              return norm(a.get('home')) == norm(b['home']) and norm(a.get('away')) == norm(b['away'])
+
+          changed = False
+          existing = next((r for r in results if same_match(r, latest)), None)
+
+          if existing:
+              for key in ('date', 'homeGoals', 'awayGoals'):
+                  if existing.get(key) != latest[key]:
+                      existing[key] = latest[key]
+                      changed = True
+              existing['status'] = 'finished'
+          else:
+              atsv_days = [int(r.get('matchday', 0)) for r in results if ATSV.lower() in (r.get('home','').lower(), r.get('away','').lower())]
+              next_matchday = max(atsv_days, default=0) + 1
+              results.append({
+                  'matchday': next_matchday,
+                  'date': latest['date'],
+                  'home': latest['home'],
+                  'away': latest['away'],
+                  'homeGoals': latest['homeGoals'],
+                  'awayGoals': latest['awayGoals'],
+                  'status': 'finished'
+              })
+              changed = True
+
+          if not changed:
+              print(f"BFV-Ergebnis bereits vorhanden: {latest['home']} {latest['homeGoals']}:{latest['awayGoals']} {latest['away']}")
+              raise SystemExit(0)
+
+          results.sort(key=lambda r: (int(r.get('matchday', 0)), r.get('date', ''), r.get('home', '')))
+          data['results'] = results
+          DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\\n', encoding='utf-8')
+          print(f"BFV-Ergebnis übernommen: {latest['home']} {latest['homeGoals']}:{latest['awayGoals']} {latest['away']}")
+          PY
+
+      - name: Änderungen speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/results-26-27.json
+          if git diff --cached --quiet; then
+            echo "Keine neuen BFV-Ergebnisse vorhanden."
+          else
+            git commit -m "BFV Ergebnis automatisch synchronisieren"
+            git push
+          fi
