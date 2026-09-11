@@ -1,0 +1,60 @@
+name: BFV Liveticker einbauen
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  einbau:
+    if: ${{ !contains(github.event.head_commit.message, 'BFV Liveticker automatisch') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: BFV Liveticker in live.html einbauen
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('live.html')
+          text = p.read_text(encoding='utf-8')
+
+          include = '<script type=\'text/javascript\' src="https://widget-prod.bfv.de/widget/widgetresource/widgetjs"></script>'
+          if include not in text:
+              text = text.replace('</head>', include + '\n</head>', 1)
+
+          widget = '''<section class="bfv-widget-section">
+          <div class="bfv-widget-title">⚽ OFFIZIELLER BFV-LIVETICKER</div>
+          <div class="bfv-widget-box">
+          <div id="bfv1789126858294">Laden...</div>
+          <script>
+          BFVWidget.HTML5.zeigeMannschaftsLiveticker("00ES8GNKSG000002VV0AG08LVUPGND5I", "016PFLUEH0000000VV0AG811VUDIC8D7", "bfv1789126858294", { height: "750" , width: "350" , colorResults: "undefined" , colorNav: "undefined" , colorClubName : "undefined" , backgroundNav: "undefined" });
+          </script>
+          </div>
+          </section>'''
+
+          if 'id="bfv1789126858294"' not in text:
+              css = '.bfv-widget-section{margin-top:30px;text-align:center}.bfv-widget-title{color:#d00020;font-weight:900;letter-spacing:2px;margin-bottom:12px}.bfv-widget-box{display:flex;justify-content:center;overflow-x:auto;background:#111;border:1px solid #333;border-radius:16px;padding:10px;min-height:100px}'
+              text = text.replace('</style>', css + '</style>', 1)
+              marker = '<a href="index.html" class="back-button">← Zur Fanseite</a>'
+              text = text.replace(marker, widget + '\n' + marker, 1)
+
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Änderungen speichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add live.html
+          if git diff --cached --quiet; then
+            echo "Keine Änderungen notwendig."
+          else
+            git commit -m "BFV Liveticker automatisch einbauen"
+            git push
+          fi
