@@ -11,6 +11,9 @@ on:
 permissions:
   contents: write
 
+env:
+  BFV_SYNC_SEASON: "2026/27"
+
 jobs:
   sync-result:
     if: ${{ !contains(github.event.head_commit.message, 'BFV Ergebnis automatisch synchronisieren') }}
@@ -41,12 +44,11 @@ jobs:
           session.headers.update({'User-Agent': 'Mozilla/5.0 ATSV-Fanseite Ergebnis-Sync'})
 
           def norm(value):
-              value = re.sub(r'\\s+', ' ', value or '').strip().lower()
-              value = value.replace('spvgg', 'spvgg')
+              value = re.sub(r'\s+', ' ', value or '').strip().lower()
               return value
 
           def parse_date(text):
-              m = re.search(r'(?<!\\d)(\\d{2}\\.\\d{2}\\.\\d{4})(?!\\d)', text or '')
+              m = re.search(r'(?<!\d)(\d{2}\.\d{2}\.\d{4})(?!\d)', text or '')
               if not m:
                   return None
               try:
@@ -90,7 +92,7 @@ jobs:
               if not date or not date.startswith('2026-'):
                   continue
 
-              m = re.search(r'Kreisklasse\\s+1\\s*:\s*(.+?)\\s+[–-]\\s+(.+?),\\s*(\\d+)\\s*:\\s*(\\d+)\\s*\\(', text)
+              m = re.search(r'Kreisklasse\s+1\s*:\s*(.+?)\s+[–-]\s+(.+?),\s*(\d+)\s*:\s*(\d+)\s*\(', text)
               if not m:
                   continue
 
@@ -126,7 +128,9 @@ jobs:
                   if existing.get(key) != latest[key]:
                       existing[key] = latest[key]
                       changed = True
-              existing['status'] = 'finished'
+              if existing.get('status') != 'finished':
+                  existing['status'] = 'finished'
+                  changed = True
           else:
               atsv_days = [int(r.get('matchday', 0)) for r in results if ATSV.lower() in (r.get('home','').lower(), r.get('away','').lower())]
               next_matchday = max(atsv_days, default=0) + 1
@@ -147,7 +151,7 @@ jobs:
 
           results.sort(key=lambda r: (int(r.get('matchday', 0)), r.get('date', ''), r.get('home', '')))
           data['results'] = results
-          DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\\n', encoding='utf-8')
+          DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
           print(f"BFV-Ergebnis übernommen: {latest['home']} {latest['homeGoals']}:{latest['awayGoals']} {latest['away']}")
           PY
 
