@@ -1,20 +1,27 @@
 // ATSV Fanseite – Tabellenberechnung
 window.calculateAtsvTable = function(results) {
   // Wenn eine aktuelle offizielle Tabelle in den zentralen Daten hinterlegt ist,
-  // diese verwenden. So bleibt die Anzeige auch dann korrekt, wenn noch nicht
-  // alle Partien des aktuellen Spieltags als Einzelergebnis vorliegen.
+  // diese verwenden. Die Reihenfolge wird trotzdem immer nach den Tabellenregeln
+  // neu berechnet: Punkte, Tordifferenz, erzielte Tore.
   if (Array.isArray(window.ATSV_STANDINGS) && window.ATSV_STANDINGS.length) {
-    return window.ATSV_STANDINGS.map(row => ({
-      team: row.team,
-      games: Number(row.games) || 0,
-      wins: Number(row.wins) || 0,
-      draws: Number(row.draws) || 0,
-      losses: Number(row.losses) || 0,
-      goalsFor: Number(row.goalsFor) || 0,
-      goalsAgainst: Number(row.goalsAgainst) || 0,
-      points: Number(row.points) || 0,
-      goalDifference: (Number(row.goalsFor) || 0) - (Number(row.goalsAgainst) || 0)
-    }));
+    return window.ATSV_STANDINGS
+      .map(row => ({
+        team: row.team,
+        games: Number(row.games) || 0,
+        wins: Number(row.wins) || 0,
+        draws: Number(row.draws) || 0,
+        losses: Number(row.losses) || 0,
+        goalsFor: Number(row.goalsFor) || 0,
+        goalsAgainst: Number(row.goalsAgainst) || 0,
+        points: Number(row.points) || 0,
+        goalDifference: (Number(row.goalsFor) || 0) - (Number(row.goalsAgainst) || 0)
+      }))
+      .sort((a, b) =>
+        b.points - a.points ||
+        b.goalDifference - a.goalDifference ||
+        b.goalsFor - a.goalsFor ||
+        a.team.localeCompare(b.team, 'de')
+      );
   }
 
   const table = {};
@@ -49,5 +56,10 @@ window.calculateAtsvTable = function(results) {
 
   return Object.values(table)
     .map(row => ({ ...row, goalDifference: row.goalsFor - row.goalsAgainst }))
-    .sort((a, b) => b.points - a.points || b.goalDifference - a.goalDifference || b.goalsFor - a.goalsFor || a.team.localeCompare(b.team, 'de'));
+    .sort((a, b) =>
+      b.points - a.points ||
+      b.goalDifference - a.goalDifference ||
+      b.goalsFor - a.goalsFor ||
+      a.team.localeCompare(b.team, 'de')
+    );
 };
