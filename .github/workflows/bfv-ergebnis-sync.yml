@@ -30,7 +30,7 @@ jobs:
           python3 - <<'PY'
           import json
           import re
-          from datetime import datetime
+          from datetime import date, datetime
           from pathlib import Path
 
           import requests
@@ -39,20 +39,21 @@ jobs:
           TEAM_URL = 'https://www.bfv.de/mannschaften/016PFLUEH0000000VV0AG811VUDIC8D7'
           DATA_FILE = Path('data/results-26-27.json')
           ATSV = 'ATSV Forchheim'
+          SEASON_START = date(2026, 7, 1)
+          SEASON_END = date(2027, 6, 30)
 
           session = requests.Session()
           session.headers.update({'User-Agent': 'Mozilla/5.0 ATSV-Fanseite Ergebnis-Sync'})
 
           def norm(value):
-              value = re.sub(r'\s+', ' ', value or '').strip().lower()
-              return value
+              return re.sub(r'\s+', ' ', value or '').strip().lower()
 
           def parse_date(text):
               m = re.search(r'(?<!\d)(\d{2}\.\d{2}\.\d{4})(?!\d)', text or '')
               if not m:
                   return None
               try:
-                  return datetime.strptime(m.group(1), '%d.%m.%Y').date().isoformat()
+                  return datetime.strptime(m.group(1), '%d.%m.%Y').date()
               except ValueError:
                   return None
 
@@ -78,7 +79,7 @@ jobs:
           latest = None
           for href, surrounding in candidates:
               hint_date = parse_date(surrounding)
-              if hint_date and not hint_date.startswith('2026-'):
+              if hint_date and not (SEASON_START <= hint_date <= SEASON_END):
                   continue
               try:
                   r = session.get(href, timeout=30)
@@ -88,8 +89,8 @@ jobs:
 
               soup = BeautifulSoup(r.text, 'html.parser')
               text = soup.get_text(' ', strip=True)
-              date = parse_date(text) or hint_date
-              if not date or not date.startswith('2026-'):
+              parsed_date = parse_date(text) or hint_date
+              if not parsed_date or not (SEASON_START <= parsed_date <= SEASON_END):
                   continue
 
               m = re.search(r'Kreisklasse\s+1\s*:\s*(.+?)\s+[–-]\s+(.+?),\s*(\d+)\s*:\s*(\d+)\s*\(', text)
@@ -101,7 +102,7 @@ jobs:
                   continue
 
               item = {
-                  'date': date,
+                  'date': parsed_date.isoformat(),
                   'home': home,
                   'away': away,
                   'homeGoals': int(m.group(3)),
