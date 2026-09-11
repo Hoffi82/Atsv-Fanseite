@@ -47,13 +47,26 @@
     <section class="cards"><a class="card" href="spieler.html"><span>01</span><h2>Spieler</h2><p>Unsere Mannschaften und Spielerprofile.</p></a><a class="card" href="zweite-mannschaft.html"><span>02</span><h2>2. Mannschaft</h2><p>Tabelle und Ergebnisse der ATSV-Zweiten.</p></a><a class="card" href="liga-26-27.html"><span>03</span><h2>Liga 26/27</h2><p>Spielplan und Spiele des ATSV Forchheim in der Saison 2026/27.</p></a><a class="card" href="ergebnisse.html"><span>04</span><h2>Ergebnisse</h2><p>Ergebnisse und aktuelle Tabelle der Liga.</p></a><a class="card" href="spielberichte.html"><span>05</span><h2>Spielberichte</h2><p>Die Spiele aus Fan-Sicht.</p></a><a class="card" href="galerie.html"><span>06</span><h2>Galerie</h2><p>Bilder rund um den ATSV.</p></a><a class="card" href="tippspiel.html"><span>07</span><h2>🎯 Tippspiel</h2><p>Nur ATSV-Spiele tippen und 3 Punkte für den exakt richtigen Tipp sammeln.</p></a></section>
   </main>
   <footer>ATSV Forchheim · Fanseite · 1903 · <a href="impressum.html">Impressum</a></footer>
-  <script>if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(error=>console.error("Service Worker Fehler:",error)));</script>
-  <script>let deferredPrompt;window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();deferredPrompt=event;const b=document.getElementById("installAppButton");if(b)b.style.display="block"});</script>
-  <script src="./js/script.js?v=18"></script>
-  <script src="./js/next-match-current.js?v=1"></script>
-<script>
-(async function(){const sb=window.supabase?.createClient?.("https://xmtrtpibldbiiikkkmnd.supabase.co","sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B");if(!sb)return;async function refreshHomeLiveMinute(){const{data}=await sb.from("live_matches").select("status,current_minute,live_started_at,updated_at,created_at").eq("status","live").order("created_at",{ascending:false}).limit(1).maybeSingle();if(!data)return;const start=data.live_started_at||data.updated_at||data.created_at;if(!start)return;const minute=Math.max(1,Math.floor((Date.now()-new Date(start).getTime())/60000)+1);const el=document.getElementById("liveCurrentMinute");if(el)el.textContent=minute+"'";}refreshHomeLiveMinute();setInterval(refreshHomeLiveMinute,10000);})();
-</script>
-<script src="./js/script.js?v=17"></script>
+  <script>let deferredPrompt;window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredPrompt=event;const b=document.getElementById('installAppButton');if(b)b.style.display='block'});</script>
+  <script src="./js/script.js?v=25"></script>
+  <script>
+  (async function(){
+    const sb=window.supabase?.createClient?.('https://xmtrtpibldbiiikkkmnd.supabase.co','sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B');
+    if(!sb)return;
+    async function refreshHomeLiveMinute(){
+      try{
+        const {data}=await sb.from('live_matches').select('status,current_minute,live_started_at,updated_at,created_at').eq('status','live').order('created_at',{ascending:false}).limit(1).maybeSingle();
+        if(!data)return;
+        const start=data.live_started_at||data.updated_at||data.created_at;
+        if(!start)return;
+        const minute=Math.max(1,Math.floor((Date.now()-new Date(start).getTime())/60000)+1);
+        const el=document.getElementById('liveCurrentMinute');
+        if(el)el.textContent=minute+"'";
+      }catch(error){console.error('ATSV Live-Minute Fehler:',error)}
+    }
+    refreshHomeLiveMinute();
+    setInterval(refreshHomeLiveMinute,10000);
+  })();
+  </script>
 </body>
 </html>
