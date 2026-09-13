@@ -3,19 +3,19 @@
   "team": "ATSV Forchheim",
   "standings": [
     {"position":1,"team":"Hammerbacher SV","games":6,"wins":6,"draws":0,"losses":0,"goalsFor":23,"goalsAgainst":2,"points":18},
-    {"position":2,"team":"ASV Niederndorf","games":5,"wins":4,"draws":1,"losses":0,"goalsFor":22,"goalsAgainst":2,"points":13},
-    {"position":3,"team":"DJK Hallerndorf","games":5,"wins":3,"draws":0,"losses":2,"goalsFor":10,"goalsAgainst":10,"points":9},
-    {"position":4,"team":"SpVgg Hausen","games":5,"wins":2,"draws":2,"losses":1,"goalsFor":11,"goalsAgainst":8,"points":8},
-    {"position":5,"team":"TSV Neuhaus","games":6,"wins":2,"draws":2,"losses":2,"goalsFor":13,"goalsAgainst":14,"points":8},
-    {"position":6,"team":"SpVgg/DJK Heroldsbach/Thurn","games":5,"wins":2,"draws":1,"losses":2,"goalsFor":15,"goalsAgainst":8,"points":7},
-    {"position":7,"team":"ATSV Forchheim","games":5,"wins":2,"draws":1,"losses":2,"goalsFor":10,"goalsAgainst":11,"points":7},
-    {"position":8,"team":"TKV Forchheim","games":5,"wins":2,"draws":1,"losses":2,"goalsFor":7,"goalsAgainst":8,"points":7},
-    {"position":9,"team":"DJK Erlangen II","games":5,"wins":2,"draws":1,"losses":2,"goalsFor":4,"goalsAgainst":11,"points":7},
-    {"position":10,"team":"TSV Hemhofen","games":6,"wins":1,"draws":2,"losses":3,"goalsFor":19,"goalsAgainst":25,"points":5},
-    {"position":11,"team":"SpVgg Uehlfeld","games":5,"wins":1,"draws":1,"losses":3,"goalsFor":14,"goalsAgainst":14,"points":4},
-    {"position":12,"team":"SV DJK Eggolsheim","games":6,"wins":1,"draws":1,"losses":4,"goalsFor":10,"goalsAgainst":16,"points":4},
-    {"position":13,"team":"(SG) Hessdorf II/Großenseebach","games":5,"wins":1,"draws":1,"losses":3,"goalsFor":5,"goalsAgainst":15,"points":4},
-    {"position":14,"team":"SV Buckenhofen II","games":5,"wins":1,"draws":0,"losses":4,"goalsFor":5,"goalsAgainst":24,"points":3}
+    {"position":2,"team":"ASV Niederndorf","games":6,"wins":5,"draws":1,"losses":0,"goalsFor":24,"goalsAgainst":2,"points":16},
+    {"position":3,"team":"DJK Hallerndorf","games":6,"wins":4,"draws":0,"losses":2,"goalsFor":13,"goalsAgainst":12,"points":12},
+    {"position":4,"team":"SpVgg/DJK Heroldsbach/Thurn","games":6,"wins":3,"draws":1,"losses":2,"goalsFor":23,"goalsAgainst":8,"points":10},
+    {"position":5,"team":"ATSV Forchheim","games":6,"wins":3,"draws":1,"losses":2,"goalsFor":17,"goalsAgainst":11,"points":10},
+    {"position":6,"team":"SpVgg Hausen","games":6,"wins":2,"draws":2,"losses":2,"goalsFor":13,"goalsAgainst":11,"points":8},
+    {"position":7,"team":"TSV Neuhaus","games":6,"wins":2,"draws":2,"losses":2,"goalsFor":13,"goalsAgainst":14,"points":8},
+    {"position":8,"team":"TKV Forchheim","games":6,"wins":2,"draws":1,"losses":3,"goalsFor":7,"goalsAgainst":11,"points":7},
+    {"position":9,"team":"(SG) Hessdorf II/Großenseebach","games":6,"wins":2,"draws":1,"losses":3,"goalsFor":8,"goalsAgainst":15,"points":7},
+    {"position":10,"team":"DJK Erlangen II","games":6,"wins":2,"draws":1,"losses":3,"goalsFor":4,"goalsAgainst":19,"points":7},
+    {"position":11,"team":"TSV Hemhofen","games":6,"wins":1,"draws":2,"losses":3,"goalsFor":19,"goalsAgainst":25,"points":5},
+    {"position":12,"team":"SpVgg Uehlfeld","games":6,"wins":1,"draws":1,"losses":4,"goalsFor":14,"goalsAgainst":16,"points":4},
+    {"position":13,"team":"SV DJK Eggolsheim","games":6,"wins":1,"draws":1,"losses":4,"goalsFor":10,"goalsAgainst":16,"points":4},
+    {"position":14,"team":"SV Buckenhofen II","games":6,"wins":1,"draws":0,"losses":5,"goalsFor":5,"goalsAgainst":31,"points":3}
   ],
   "results": [
     {"matchday":1,"date":"2026-08-09","home":"ATSV Forchheim","away":"DJK Hallerndorf","homeGoals":2,"awayGoals":4,"status":"finished"},
@@ -54,6 +54,11 @@
     {"matchday":5,"date":"2026-09-06","home":"(SG) Hessdorf II/Großenseebach","away":"SpVgg/DJK Heroldsbach/Thurn","homeGoals":1,"awayGoals":6,"status":"finished"},
     {"matchday":5,"date":"2026-09-06","home":"ATSV Forchheim","away":"SpVgg Hausen","homeGoals":2,"awayGoals":2,"status":"finished"},
     {"matchday":6,"date":"2026-09-10","home":"TSV Neuhaus","away":"TSV Hemhofen","homeGoals":7,"awayGoals":3,"status":"finished"},
-    {"matchday":6,"date":"2026-09-12","home":"Hammerbacher SV","away":"SV DJK Eggolsheim","homeGoals":5,"awayGoals":0,"status":"finished"}
+    {"matchday":6,"date":"2026-09-12","home":"Hammerbacher SV","away":"SV DJK Eggolsheim","homeGoals":5,"awayGoals":0,"status":"finished"},
+    {"matchday":6,"date":"2026-09-13","home":"DJK Erlangen II","away":"SpVgg/DJK Heroldsbach/Thurn","homeGoals":0,"awayGoals":8,"status":"finished"},
+    {"matchday":6,"date":"2026-09-13","home":"(SG) Hessdorf II/Großenseebach","away":"TKV Forchheim","homeGoals":3,"awayGoals":0,"status":"finished"},
+    {"matchday":6,"date":"2026-09-13","home":"SV Buckenhofen II","away":"ATSV Forchheim","homeGoals":0,"awayGoals":7,"status":"finished"},
+    {"matchday":6,"date":"2026-09-13","home":"SpVgg Hausen","away":"DJK Hallerndorf","homeGoals":2,"awayGoals":3,"status":"finished"},
+    {"matchday":6,"date":"2026-09-13","home":"SpVgg Uehlfeld","away":"ASV Niederndorf","homeGoals":0,"awayGoals":2,"status":"finished"}
   ]
 }
