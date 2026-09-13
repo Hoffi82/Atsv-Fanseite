@@ -42,5 +42,6 @@ body{margin:0;background:#090909;color:white;font-family:Arial,Helvetica,sans-se
 <script>
 (async function(){const results=await window.getAtsvResults();if(!results.length)return;const matches=Array.from(document.querySelectorAll('.match:not(.prep)'));results.forEach(result=>{const match=matches.find(el=>{const teams=Array.from(el.querySelectorAll('.team')).map(t=>t.textContent.trim());return teams[0]===result.home&&teams[1]===result.away});if(!match)return;const score=match.querySelector('.score');if(score)score.textContent=`${result.homeGoals} : ${result.awayGoals}`})})();
 </script>
+<!-- Spieltag 6 Ergebnis ATSV Forchheim 0:7 SV Buckenhofen II geprüft am 13.09.2026 -->
 </body>
 </html>
