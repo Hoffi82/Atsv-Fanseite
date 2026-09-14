@@ -39,12 +39,18 @@
       return;
     }
 
-    const sameName = tips.find(t => normalizeName(t.name) === normalizeName(n));
-    const currentHasTips = tips.some(t => t.participant_id === pid);
+    const currentParticipantTips = tips.filter(t => t.participant_id === pid);
+    const currentName = currentParticipantTips[0]?.name || localStorage.getItem('atsv_tippspiel_name') || '';
+    if (currentParticipantTips.length && normalizeName(currentName) !== normalizeName(n)) {
+      document.getElementById('nameMsg').textContent = 'Der gespeicherte Teilnehmername kann nicht geändert werden.';
+      nameEl.value = currentName;
+      return;
+    }
 
+    const sameName = tips.find(t => normalizeName(t.name) === normalizeName(n));
     if (sameName && sameName.participant_id !== pid) {
-      if (currentHasTips) {
-        document.getElementById('nameMsg').textContent = 'Dieser Name wird bereits verwendet. Bitte den gespeicherten Namen verwenden.';
+      if (currentParticipantTips.length) {
+        document.getElementById('nameMsg').textContent = 'Dieser Name wird bereits verwendet. Bitte den gespeicherten Teilnehmer verwenden.';
         return;
       }
       pid = sameName.participant_id;
@@ -61,10 +67,16 @@
     const n = nameEl.value.trim();
     if (n.length < 2) return;
 
+    const currentParticipantTips = tips.filter(t => t.participant_id === pid);
+    const currentName = currentParticipantTips[0]?.name || localStorage.getItem('atsv_tippspiel_name') || '';
+    if (currentParticipantTips.length && normalizeName(currentName) !== normalizeName(n)) {
+      document.getElementById('saveMsg').textContent = 'Der gespeicherte Teilnehmername kann nicht geändert werden.';
+      return;
+    }
+
     const sameName = tips.find(t => normalizeName(t.name) === normalizeName(n));
-    const currentHasTips = tips.some(t => t.participant_id === pid);
     if (sameName && sameName.participant_id !== pid) {
-      if (currentHasTips) {
+      if (currentParticipantTips.length) {
         document.getElementById('saveMsg').textContent = 'Dieser Name wird bereits verwendet. Bitte den gespeicherten Teilnehmer verwenden.';
         return;
       }
