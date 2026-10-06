@@ -14,6 +14,9 @@ window.ATSV_FORM_GAMES = [
   { date: '2026-08-30', type: 'Liga', home: 'SpVgg Uehlfeld', away: 'ATSV Forchheim', homeScore: 2, awayScore: 4 },
   { date: '2026-09-06', type: 'Liga', home: 'ATSV Forchheim', away: 'SpVgg Hausen', homeScore: 2, awayScore: 2 },
   { date: '2026-09-13', type: 'Liga', home: 'SV Buckenhofen II', away: 'ATSV Forchheim', homeScore: 0, awayScore: 7 }
+  { date: '2026-09-20', type: 'Liga', home: 'ATSV Forchheim', away: 'TSV Neuhaus', homeScore: 4, awayScore: 1 },
+  { date: '2026-09-27', type: 'Liga', home: 'Hammerbacher SV', away: 'ATSV Forchheim', homeScore: 2, awayScore: 0 },
+  { date: '2026-10-04', type: 'Liga', home: 'ATSV Forchheim', away: '(SG) Hessdorf II/Großenseebach', homeScore: 9, awayScore: 0 }
 ];
 
 window.ATSV_FORM_CONFIG = {
