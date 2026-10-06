@@ -58,7 +58,7 @@ const games=[
 {id:'2026-09-13-BUCK-ATSV',date:'2026-09-13',time:'15:00',home:'SV Buckenhofen II',away:'ATSV Forchheim'},
 {id:'2026-09-20-ATSV-NEUHAUS',date:'2026-09-20',time:'15:00',home:'ATSV Forchheim',away:'TSV Neuhaus'},
 {id:'2026-09-27-HAMM-ATSV',date:'2026-09-27',time:'15:00',home:'Hammerbacher SV',away:'ATSV Forchheim'},
-{id:'2026-10-04-ATSV-HESS',date:'2026-10-04',time:'15:00',home:'ATSV Forchheim',away:'(SG) Hessdorf II / Großenseebach'},
+{id:'2026-10-04-ATSV-HESS',date:'2026-10-04',time:'15:00',home:'ATSV Forchheim',away:'(SG) Hessdorf II/Großenseebach'},
 {id:'2026-10-11-TKV-ATSV',date:'2026-10-11',time:'15:00',home:'TKV Forchheim',away:'ATSV Forchheim'},
 {id:'2026-10-18-ATSV-EGG',date:'2026-10-18',time:'15:00',home:'ATSV Forchheim',away:'SV DJK Eggolsheim'},
 {id:'2026-10-25-HEM-ATSV',date:'2026-10-25',time:'15:00',home:'TSV Hemhofen',away:'ATSV Forchheim'},
@@ -71,7 +71,7 @@ localStorage.setItem('atsv_tippspiel_participant_id',pid);
 const nameEl=document.getElementById('name');nameEl.value=localStorage.getItem('atsv_tippspiel_name')||'';
 const kick=g=>new Date(g.date+'T'+g.time+':00'),closed=g=>new Date()>=kick(g),date=g=>new Date(g.date+'T12:00:00').toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})+' · '+g.time+' Uhr';
 async function load(){try{const r=await fetch('data/results-26-27.json?v=9',{cache:'no-store'});results=(await r.json()).results||[]}catch(e){results=[]}const q=await db.from('tippspiel_tipps').select('participant_id,name,match_id,tip_home,tip_away');tips=q.data||[];render();board();compareTips()}
-const normalizeTeam=s=>(s||'').toLowerCase().replace(/[.]/g,'').replace(/\b2\b/g,'ii').replace(/\s+/g,' ').trim();
+const normalizeTeam=s=>(s||'').toLowerCase().replace(/[.]/g,'').replace(/\(sg\)/g,'').replace(/\b2\b/g,'ii').replace(/\s*\/\s*/g,'/').replace(/\s+/g,' ').trim();
 function result(g){return results.find(r=>r.date===g.date&&normalizeTeam(r.home)===normalizeTeam(g.home)&&normalizeTeam(r.away)===normalizeTeam(g.away)&&r.status==='finished')}
 function points(t,r){const th=+t.tip_home,ta=+t.tip_away,rh=+r.homeGoals,ra=+r.awayGoals;if(th===rh&&ta===ra)return 3;const tipDiff=th-ta,resDiff=rh-ra;const tipT=tipDiff===0?'D':tipDiff>0?'H':'A',resT=resDiff===0?'D':resDiff>0?'H':'A';if(tipT===resT&&tipDiff===resDiff)return 2;if(tipT===resT)return 1;return 0}
 function render(){document.getElementById('games').innerHTML=games.map(g=>{const t=tips.find(x=>x.participant_id===pid&&x.match_id===g.id),r=result(g),c=closed(g);return `<div class="game ${c?'closed':''}"><div class="top"><span>${date(g)}</span><span>${c?(r?'ERGEBNIS DA':'🔒 GESPERRT'):'TIPP MÖGLICH'}</span></div><div class="teams"><div class="team">${g.home}</div><div class="tipbox scores"><div class="tipfield"><span class="tiplabel">Heim</span><input type="number" min="0" max="99" inputmode="numeric" placeholder="–" data-id="${g.id}" data-side="h" value="${t?t.tip_home:''}" ${c?'disabled':''}></div><div class="colon">:</div><div class="tipfield"><span class="tiplabel">Gast</span><input type="number" min="0" max="99" inputmode="numeric" placeholder="–" data-id="${g.id}" data-side="a" value="${t?t.tip_away:''}" ${c?'disabled':''}></div></div><div class="team">${g.away}</div></div><div class="tiphint">${c?'<span class="locked">🔒 Tippabgabe endgültig gesperrt</span>':'Heim = '+g.home+' · Gast = '+g.away}</div><div class="status">${r?`Endstand: <span class="result">${r.homeGoals}:${r.awayGoals}</span>`:c?'Tippabgabe beendet.':'Bis zum Anpfiff tippbar.'}</div></div>`}).join('')}
