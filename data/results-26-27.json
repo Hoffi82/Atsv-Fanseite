@@ -39,12 +39,12 @@
       "position": 4,
       "team": "DJK Hallerndorf",
       "games": 10,
-      "wins": 6,
+      "wins": 5,
       "draws": 0,
-      "losses": 4,
-      "goalsFor": 24,
-      "goalsAgainst": 17,
-      "points": 18
+      "losses": 5,
+      "goalsFor": 19,
+      "goalsAgainst": 22,
+      "points": 15
     },
     {
       "position": 5,
@@ -105,12 +105,12 @@
       "position": 10,
       "team": "(SG) Hessdorf II/Großenseebach",
       "games": 10,
-      "wins": 3,
+      "wins": 4,
       "draws": 1,
-      "losses": 6,
-      "goalsFor": 12,
-      "goalsAgainst": 33,
-      "points": 10
+      "losses": 5,
+      "goalsFor": 17,
+      "goalsAgainst": 28,
+      "points": 13
     },
     {
       "position": 11,
@@ -163,8 +163,8 @@
       "date": "2026-10-10",
       "home": "(SG) Hessdorf II/Großenseebach",
       "away": "DJK Hallerndorf",
-      "homeGoals": 0,
-      "awayGoals": 5,
+      "homeGoals": 5,
+      "awayGoals": 0,
       "status": "finished"
     },
     {
