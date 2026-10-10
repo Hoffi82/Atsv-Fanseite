@@ -2,7 +2,7 @@
   'use strict';
 
   // Separater, kleiner Countdown – ohne Supabase und ohne Service Worker.
-  const target = new Date('2026-09-13T15:00:00+02:00').getTime();
+  const target = new Date('2026-10-11T15:00:00+02:00').getTime();
   const box = document.querySelector('.countdown');
   if (box) {
     const values = box.querySelectorAll('.countdown-box strong');
