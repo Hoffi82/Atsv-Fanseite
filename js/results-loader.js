@@ -16,7 +16,7 @@ function renderAtsvResults(results) {
   document.querySelectorAll('.matchday-box').forEach(box => box.remove());
 
   const grouped = {};
-  results.filter(r => r && r.status === 'finished').forEach(match => {
+  results.filter(r => r && (r.status === 'finished' || r.status === 'postponed')).forEach(match => {
     const md = Number(match.matchday) || 0;
     if (!grouped[md]) grouped[md] = [];
     grouped[md].push(match);
@@ -28,7 +28,7 @@ function renderAtsvResults(results) {
 
     const title = document.createElement('div');
     title.className = 'matchday-title';
-    title.textContent = 'Spieltag ' + matchday;
+    title.textContent = 'Spieltag ' + matchday + (grouped[matchday].some(m => m.status === 'postponed') ? ' · Spiel verlegt' : '');
     box.appendChild(title);
 
     grouped[matchday].forEach(match => {
@@ -48,8 +48,8 @@ function renderAtsvResults(results) {
       home.className = 'result-team home';
       home.textContent = match.home;
       const score = document.createElement('div');
-      score.className = 'result-score';
-      score.textContent = Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
+      score.className = 'result-score' + (match.status === 'postponed' ? ' postponed-score' : '');
+      score.textContent = match.status === 'postponed' ? 'VERLEGT · Nachholtermin offen' : Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
       const away = document.createElement('div');
       away.className = 'result-team away';
       away.textContent = match.away;
