@@ -49,12 +49,18 @@ function renderAtsvResults(results) {
       home.textContent = match.home;
       const score = document.createElement('div');
       score.className = 'result-score' + (match.status === 'postponed' ? ' postponed-score' : '');
-      score.textContent = match.status === 'postponed' ? 'VERLEGT · Nachholtermin offen' : Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
+      score.textContent = match.status === 'postponed' ? 'VERLEGT' : Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
       const away = document.createElement('div');
       away.className = 'result-team away';
       away.textContent = match.away;
       teams.append(home, score, away);
       card.appendChild(teams);
+      if (match.status === 'postponed') {
+        const note = document.createElement('div');
+        note.className = 'result-date postponed-note';
+        note.textContent = 'Nachholtermin offen';
+        card.appendChild(note);
+      }
       box.appendChild(card);
     });
 
