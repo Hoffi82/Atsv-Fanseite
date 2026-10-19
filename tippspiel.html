@@ -53,16 +53,19 @@ input{background:#181818;color:#fff;border:1px solid #444;border-radius:8px;padd
 <script>
 const SUPABASE_URL='https://xmtrtpibldbiiikkkmnd.supabase.co',SUPABASE_KEY='sb_publishable_5dbkLVYmSklCiPcjzzFk1g_ANJoqy9B',db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const games=[
+{id:'2026-08-09-ATSV-HALL',date:'2026-08-09',time:'15:00',home:'ATSV Forchheim',away:'DJK Hallerndorf'},
+{id:'2026-08-15-NIED-ATSV',date:'2026-08-15',time:'15:00',home:'ASV Niederndorf',away:'ATSV Forchheim'},
+{id:'2026-08-23-ATSV-ERL',date:'2026-08-23',time:'15:00',home:'ATSV Forchheim',away:'DJK Erlangen II'},
 {id:'2026-08-30-UEHL-ATSV',date:'2026-08-30',time:'15:00',home:'SpVgg Uehlfeld',away:'ATSV Forchheim'},
 {id:'2026-09-06-ATSV-HAUSEN',date:'2026-09-06',time:'15:00',home:'ATSV Forchheim',away:'SpVgg Hausen'},
 {id:'2026-09-13-BUCK-ATSV',date:'2026-09-13',time:'15:00',home:'SV Buckenhofen II',away:'ATSV Forchheim'},
 {id:'2026-09-20-ATSV-NEUHAUS',date:'2026-09-20',time:'15:00',home:'ATSV Forchheim',away:'TSV Neuhaus'},
 {id:'2026-09-27-HAMM-ATSV',date:'2026-09-27',time:'15:00',home:'Hammerbacher SV',away:'ATSV Forchheim'},
 {id:'2026-10-04-ATSV-HESS',date:'2026-10-04',time:'15:00',home:'ATSV Forchheim',away:'(SG) Hessdorf II/Großenseebach'},
-{id:'2026-10-11-TKV-ATSV',date:'2026-10-11',time:'15:00',home:'TKV Forchheim',away:'ATSV Forchheim'},
+{id:'2026-10-11-TKV-ATSV',date:'2026-11-22',time:'14:00',home:'TKV Forchheim',away:'ATSV Forchheim'},
 {id:'2026-10-18-ATSV-EGG',date:'2026-10-18',time:'15:00',home:'ATSV Forchheim',away:'SV DJK Eggolsheim'},
 {id:'2026-10-25-HEM-ATSV',date:'2026-10-25',time:'15:00',home:'TSV Hemhofen',away:'ATSV Forchheim'},
-{id:'2026-11-01-ATSV-HER',date:'2026-11-01',time:'14:30',home:'ATSV Forchheim',away:'SpVgg / DJK Heroldsbach / Thurn'},
+{id:'2026-11-01-ATSV-HER',date:'2026-11-01',time:'14:30',home:'ATSV Forchheim',away:'SpVgg/DJK Heroldsbach/Thurn'},
 {id:'2026-11-08-HALL-ATSV',date:'2026-11-08',time:'14:30',home:'DJK Hallerndorf',away:'ATSV Forchheim'},
 {id:'2026-11-15-ATSV-NIED',date:'2026-11-15',time:'14:30',home:'ATSV Forchheim',away:'ASV Niederndorf'}];
 let results=[],tips=[];
