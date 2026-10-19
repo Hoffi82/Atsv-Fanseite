@@ -38,13 +38,13 @@
     {
       "position": 4,
       "team": "ATSV Forchheim",
-      "games": 9,
+      "games": 10,
       "wins": 5,
-      "draws": 1,
+      "draws": 2,
       "losses": 3,
-      "goalsFor": 30,
-      "goalsAgainst": 14,
-      "points": 16
+      "goalsFor": 31,
+      "goalsAgainst": 15,
+      "points": 17
     },
     {
       "position": 5,
@@ -82,13 +82,13 @@
     {
       "position": 8,
       "team": "SV DJK Eggolsheim",
-      "games": 10,
+      "games": 11,
       "wins": 4,
-      "draws": 1,
+      "draws": 2,
       "losses": 5,
-      "goalsFor": 21,
-      "goalsAgainst": 20,
-      "points": 13
+      "goalsFor": 22,
+      "goalsAgainst": 21,
+      "points": 14
     },
     {
       "position": 9,
@@ -158,6 +158,15 @@
     }
   ],
   "results": [
+    {
+      "matchday": 11,
+      "date": "2026-10-18",
+      "home": "ATSV Forchheim",
+      "away": "SV DJK Eggolsheim",
+      "homeGoals": 1,
+      "awayGoals": 1,
+      "status": "finished"
+    },
     {
       "matchday": 10,
       "date": "2026-10-11",
