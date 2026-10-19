@@ -4,14 +4,26 @@ window.calculateAtsvTable = function(results) {
   // diese verwenden. Die Reihenfolge wird trotzdem immer nach den Tabellenregeln
   // neu berechnet: Punkte, Tordifferenz, erzielte Tore.
   if (Array.isArray(window.ATSV_STANDINGS) && window.ATSV_STANDINGS.length) {
+    const computed = {};
+    for (const match of (Array.isArray(results) ? results : [])) {
+      if (match.status !== 'finished') continue;
+      const hg = Number(match.homeGoals), ag = Number(match.awayGoals);
+      if (!Number.isFinite(hg) || !Number.isFinite(ag)) continue;
+      for (const team of [match.home, match.away]) {
+        if (!computed[team]) computed[team] = { wins: 0, draws: 0, losses: 0 };
+      }
+      if (hg > ag) { computed[match.home].wins++; computed[match.away].losses++; }
+      else if (hg < ag) { computed[match.away].wins++; computed[match.home].losses++; }
+      else { computed[match.home].draws++; computed[match.away].draws++; }
+    }
     return window.ATSV_STANDINGS
       .map(row => ({
         position: Number(row.position) || 999,
         team: row.team,
         games: Number(row.games) || 0,
-        wins: Number(row.wins) || 0,
-        draws: Number(row.draws) || 0,
-        losses: Number(row.losses) || 0,
+        wins: Number(row.wins ?? computed[row.team]?.wins) || 0,
+        draws: Number(row.draws ?? computed[row.team]?.draws) || 0,
+        losses: Number(row.losses ?? computed[row.team]?.losses) || 0,
         goalsFor: Number(row.goalsFor) || 0,
         goalsAgainst: Number(row.goalsAgainst) || 0,
         points: Number(row.points) || 0,
