@@ -84,8 +84,23 @@
       localStorage.setItem('atsv_tippspiel_participant_id', pid);
     }
 
-    document.getElementById('save').textContent = '💾 Tipps speichern / ändern';
-    await originalSaveClick();
+    const button = document.getElementById('save');
+    const message = document.getElementById('saveMsg');
+    button.disabled = true;
+    button.textContent = '⏳ Tipps werden gespeichert …';
+    message.textContent = '';
+    try {
+      await originalSaveClick();
+      if (!message.textContent) {
+        message.textContent = 'Es wurde nichts gespeichert. Bitte prüfe, ob mindestens ein zukünftiger Tipp vollständig ausgefüllt ist.';
+      }
+    } catch (error) {
+      console.error('Tippspiel-Speichern fehlgeschlagen:', error);
+      message.textContent = 'Speichern fehlgeschlagen: ' + (error?.message || 'Verbindung zu Supabase prüfen.');
+    } finally {
+      button.disabled = false;
+      button.textContent = '💾 Tipps speichern / ändern';
+    }
   };
 
   const saveButton = document.getElementById('save');
