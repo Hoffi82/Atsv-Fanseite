@@ -6,6 +6,7 @@ window.calculateAtsvTable = function(results) {
   if (Array.isArray(window.ATSV_STANDINGS) && window.ATSV_STANDINGS.length) {
     return window.ATSV_STANDINGS
       .map(row => ({
+        position: Number(row.position) || 999,
         team: row.team,
         games: Number(row.games) || 0,
         wins: Number(row.wins) || 0,
@@ -16,12 +17,7 @@ window.calculateAtsvTable = function(results) {
         points: Number(row.points) || 0,
         goalDifference: (Number(row.goalsFor) || 0) - (Number(row.goalsAgainst) || 0)
       }))
-      .sort((a, b) =>
-        b.points - a.points ||
-        b.goalDifference - a.goalDifference ||
-        b.goalsFor - a.goalsFor ||
-        a.team.localeCompare(b.team, 'de')
-      );
+      .sort((a, b) => a.position - b.position);
   }
 
   const table = {};
