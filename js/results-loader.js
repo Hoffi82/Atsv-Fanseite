@@ -16,7 +16,7 @@ function renderAtsvResults(results) {
   document.querySelectorAll('.matchday-box').forEach(box => box.remove());
 
   const grouped = {};
-  results.filter(r => r && (r.status === 'finished' || r.status === 'postponed')).forEach(match => {
+  results.filter(r => r && ['finished', 'postponed', 'special'].includes(r.status)).forEach(match => {
     const md = Number(match.matchday) || 0;
     if (!grouped[md]) grouped[md] = [];
     grouped[md].push(match);
@@ -28,7 +28,7 @@ function renderAtsvResults(results) {
 
     const title = document.createElement('div');
     title.className = 'matchday-title';
-    title.textContent = 'Spieltag ' + matchday + (grouped[matchday].some(m => m.status === 'postponed') ? ' · Spiel verlegt' : '');
+    title.textContent = 'Spieltag ' + matchday + (grouped[matchday].some(m => m.status === 'postponed') ? ' · Spiel verlegt' : '') + (grouped[matchday].some(m => m.status === 'special') ? ' · Sonderwertung' : '');
     box.appendChild(title);
 
     grouped[matchday].forEach(match => {
@@ -48,17 +48,17 @@ function renderAtsvResults(results) {
       home.className = 'result-team home';
       home.textContent = match.home;
       const score = document.createElement('div');
-      score.className = 'result-score' + (match.status === 'postponed' ? ' postponed-score' : '');
-      score.textContent = match.status === 'postponed' ? 'VERLEGT' : Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
+      score.className = 'result-score' + (match.status === 'postponed' ? ' postponed-score' : '') + (match.status === 'special' ? ' special-score' : '');
+      score.textContent = match.status === 'postponed' ? 'VERLEGT' : match.status === 'special' ? 'SONDERWERTUNG' : Number(match.homeGoals) + ' : ' + Number(match.awayGoals);
       const away = document.createElement('div');
       away.className = 'result-team away';
       away.textContent = match.away;
       teams.append(home, score, away);
       card.appendChild(teams);
-      if (match.status === 'postponed') {
+      if (match.status === 'postponed' || match.status === 'special') {
         const note = document.createElement('div');
         note.className = 'result-date postponed-note';
-        note.textContent = 'Nachholtermin offen';
+        note.textContent = match.status === 'postponed' ? 'Nachholtermin: 22.11.2026' : 'Ergebnis gemäß BFV-Sonderwertung';
         card.appendChild(note);
       }
       box.appendChild(card);
