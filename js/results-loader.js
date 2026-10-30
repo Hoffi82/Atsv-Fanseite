@@ -58,7 +58,7 @@ function renderAtsvResults(results) {
       if (match.status === 'postponed' || match.status === 'special') {
         const note = document.createElement('div');
         note.className = 'result-date postponed-note';
-        note.textContent = match.status === 'postponed' ? 'Nachholtermin: 22.11.2026' : 'Ergebnis gemäß BFV-Sonderwertung';
+        note.textContent = match.status === 'postponed' ? (match.rescheduledDate ? 'Nachholtermin: ' + formatDate(match.rescheduledDate) : 'Neuer Termin steht noch aus') : 'Ergebnis gemäß BFV-Sonderwertung';
         card.appendChild(note);
       }
       box.appendChild(card);
