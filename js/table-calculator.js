@@ -35,6 +35,28 @@ window.calculateAtsvTable = function(results) {
   const table = {};
 
   for (const match of (Array.isArray(results) ? results : [])) {
+    if (match.status === 'special') {
+      for (const team of [match.home, match.away]) {
+        if (!table[team]) table[team] = { team, games: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+      }
+      const home = table[match.home];
+      const away = table[match.away];
+      home.games++; away.games++;
+      home.goalsFor += Number(match.tableHomeGoalsFor) || 0;
+      home.goalsAgainst += Number(match.tableHomeGoalsAgainst) || 0;
+      away.goalsFor += Number(match.tableAwayGoalsFor) || 0;
+      away.goalsAgainst += Number(match.tableAwayGoalsAgainst) || 0;
+      if (match.tableAwayPoints > match.tableHomePoints) {
+        away.wins++; away.points += Number(match.tableAwayPoints) || 3; home.losses++;
+      } else if (match.tableHomePoints > match.tableAwayPoints) {
+        home.wins++; home.points += Number(match.tableHomePoints) || 3; away.losses++;
+      } else {
+        home.draws++; away.draws++;
+        home.points += Number(match.tableHomePoints) || 0;
+        away.points += Number(match.tableAwayPoints) || 0;
+      }
+      continue;
+    }
     if (match.status !== 'finished') continue;
 
     for (const team of [match.home, match.away]) {
