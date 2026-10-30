@@ -642,8 +642,12 @@
       "home": "SV Buckenhofen II",
       "away": "ASV Niederndorf",
       "status": "special",
-      "homeGoals": 0,
-      "awayGoals": 8
+      "tableHomeGoalsFor": 0,
+      "tableHomeGoalsAgainst": 8,
+      "tableAwayGoalsFor": 2,
+      "tableAwayGoalsAgainst": 0,
+      "tableHomePoints": 0,
+      "tableAwayPoints": 3
     },
     {
       "matchday": 8,
