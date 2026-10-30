@@ -747,7 +747,8 @@
       "date": "2026-11-22",
       "home": "TKV Forchheim",
       "away": "ATSV Forchheim",
-      "status": "postponed"
+      "status": "postponed",
+      "rescheduledDate": "2026-11-22"
     }
   ]
 }
