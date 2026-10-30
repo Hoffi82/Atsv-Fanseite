@@ -6,7 +6,7 @@ window.calculateAtsvTable = function(results) {
   if (Array.isArray(window.ATSV_STANDINGS) && window.ATSV_STANDINGS.length) {
     const computed = {};
     for (const match of (Array.isArray(results) ? results : [])) {
-      if (match.status !== 'finished') continue;
+      if (!['finished', 'special'].includes(match.status)) continue;
       const hg = Number(match.homeGoals), ag = Number(match.awayGoals);
       if (!Number.isFinite(hg) || !Number.isFinite(ag)) continue;
       for (const team of [match.home, match.away]) {
