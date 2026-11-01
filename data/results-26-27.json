@@ -6,6 +6,60 @@
     {
       "matchday": 13,
       "date": "2026-11-01",
+      "home": "DJK Hallerndorf",
+      "away": "TSV Hemhofen",
+      "homeGoals": 3,
+      "awayGoals": 2,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
+      "home": "ASV Niederndorf",
+      "away": "SV DJK Eggolsheim",
+      "homeGoals": 3,
+      "awayGoals": 0,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
+      "home": "SpVgg Uehlfeld",
+      "away": "(SG) Hessdorf II/Großenseebach",
+      "homeGoals": 0,
+      "awayGoals": 0,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
+      "home": "SpVgg Hausen",
+      "away": "Hammerbacher SV",
+      "homeGoals": 2,
+      "awayGoals": 5,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
+      "home": "SV Buckenhofen II",
+      "away": "TSV Neuhaus",
+      "homeGoals": 3,
+      "awayGoals": 4,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
+      "home": "DJK Erlangen II",
+      "away": "TKV Forchheim",
+      "homeGoals": 0,
+      "awayGoals": 4,
+      "status": "finished"
+    },
+    {
+      "matchday": 13,
+      "date": "2026-11-01",
       "home": "ATSV Forchheim",
       "away": "SpVgg/DJK Heroldsbach/Thurn",
       "homeGoals": 2,
