@@ -84,12 +84,34 @@ window.calculateAtsvTable = function(results) {
     }
   }
 
-  return Object.values(table)
-    .map(row => ({ ...row, goalDifference: row.goalsFor - row.goalsAgainst }))
-    .sort((a, b) =>
-      b.points - a.points ||
-      b.goalDifference - a.goalDifference ||
-      b.goalsFor - a.goalsFor ||
-      a.team.localeCompare(b.team, 'de')
-    );
+  // Bei Punktgleichheit zuerst den direkten Vergleich berücksichtigen,
+  // danach Tordifferenz und erzielte Tore.
+  const headToHead = {};
+  for (const match of (Array.isArray(results) ? results : [])) {
+    if (match.status !== 'finished') continue;
+    const hg = Number(match.homeGoals), ag = Number(match.awayGoals);
+    if (!Number.isFinite(hg) || !Number.isFinite(ag)) continue;
+    const key = [match.home, match.away].sort().join('|');
+    headToHead[key] = headToHead[key] || {};
+    headToHead[key][match.home] = headToHead[key][match.home] || 0;
+    headToHead[key][match.away] = headToHead[key][match.away] || 0;
+    if (hg > ag) headToHead[key][match.home] += 3;
+    else if (hg < ag) headToHead[key][match.away] += 3;
+    else { headToHead[key][match.home]++; headToHead[key][match.away]++; }
+  }
+
+  const rows = Object.values(table).map(row => ({ ...row, goalDifference: row.goalsFor - row.goalsAgainst }));
+  function directPoints(team, opponents) {
+    return opponents.reduce((sum, opponent) => {
+      const key = [team, opponent].sort().join('|');
+      return sum + (headToHead[key]?.[team] || 0);
+    }, 0);
+  }
+  return rows.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    const tied = rows.filter(r => r.points === a.points).map(r => r.team);
+    const ah = directPoints(a.team, tied.filter(t => t !== a.team));
+    const bh = directPoints(b.team, tied.filter(t => t !== b.team));
+    return bh - ah || b.goalDifference - a.goalDifference || b.goalsFor - a.goalsFor || a.team.localeCompare(b.team, 'de');
+  });
 };
