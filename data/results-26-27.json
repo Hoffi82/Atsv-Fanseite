@@ -188,10 +188,12 @@
     },
     {
       "matchday": 12,
-      "date": "2026-10-25",
+      "date": "2026-11-17",
       "home": "TSV Hemhofen",
       "away": "ATSV Forchheim",
-      "status": "postponed"
+      "status": "finished",
+      "homeGoals": 1,
+      "awayGoals": 4
     },
     {
       "matchday": 12,
