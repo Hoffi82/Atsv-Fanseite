@@ -4,3 +4,42 @@
 @media(max-width:900px) and (orientation:landscape) and (max-height:600px){.hero{padding:12px 16px 14px!important}.hero h1,.intro,.hero nav{max-width:43%!important}.music-player{position:absolute!important;left:4%!important;top:105px!important;width:40%!important;margin:0!important}.next-match{position:absolute!important;right:3%!important;top:12px!important;width:48%!important;margin:0!important}.home-feature-players{position:absolute!important;left:4%!important;right:4%!important;bottom:12px!important;width:auto!important;margin:0!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:12px!important}.home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:82px!important}.home-feature-player .player-role{font-size:7px!important}.home-feature-player .player-name{font-size:11px!important}.home-feature-player .player-info{font-size:7px!important}}
 @media(max-width:900px) and (orientation:landscape) and (max-height:600px){.hero{display:block!important;min-height:620px!important;height:auto!important;padding:14px 16px 22px!important}.hero h1,.intro,.hero nav{max-width:45%!important}.home-feature-players{position:absolute!important;left:50%!important;right:3%!important;top:105px!important;bottom:auto!important;width:47%!important;height:175px!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;align-items:start!important;margin:0!important;z-index:4!important}.home-feature-player,.home-feature-player.senad,.home-feature-player.migo,.home-feature-player.denis{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:1px!important;transform:none!important}.home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:78px!important;width:auto!important}.home-feature-player .player-role{font-size:6px!important;letter-spacing:.6px!important}.home-feature-player .player-name{font-size:10px!important;margin:0!important}.home-feature-player .player-info{font-size:6px!important}.music-player{position:absolute!important;left:50%!important;top:295px!important;width:47%!important;margin:0!important;padding:7px!important}.music-player p{font-size:8px!important;margin-bottom:4px!important}.music-player audio{height:27px!important}.next-match{position:absolute!important;left:50%!important;right:3%!important;top:365px!important;width:47%!important;margin:0!important;padding:8px!important}.next-match-title{font-size:8px!important;letter-spacing:1px!important;margin-bottom:4px!important}.next-match-date{font-size:7px!important;margin-bottom:5px!important}.next-match-teams{font-size:11px!important;gap:4px!important;min-height:24px!important;margin-bottom:4px!important}.next-match-teams span{font-size:7px!important}.countdown{gap:2px!important}.countdown-box{padding:3px 1px!important}.countdown-box strong{font-size:12px!important}.countdown-box span{font-size:5px!important}.install-app-button{top:6px!important;right:6px!important;padding:6px 8px!important;font-size:8px!important}}
 @media(max-width:900px) and (orientation:landscape) and (max-height:600px){.hero{min-height:520px!important;height:auto!important;padding:12px 16px 18px!important}.hero h1,.intro,.hero nav{max-width:44%!important}.home-feature-players{position:absolute!important;left:52%!important;right:3%!important;top:95px!important;bottom:auto!important;width:45%!important;height:auto!important;display:flex!important;flex-direction:row!important;align-items:flex-start!important;justify-content:space-between!important;gap:6px!important;margin:0!important;z-index:10!important}.home-feature-player,.home-feature-player.senad,.home-feature-player.migo,.home-feature-player.denis{position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;display:flex!important;flex:1 1 0!important;min-width:0!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;gap:1px!important}.home-feature-player img,.home-feature-player.senad img,.home-feature-player.migo img,.home-feature-player.denis img{height:78px!important;width:auto!important;max-width:100%!important}.home-feature-player .player-meta{text-align:center!important}.home-feature-player .player-role{font-size:6px!important;letter-spacing:.5px!important}.home-feature-player .player-name{font-size:10px!important;margin:0!important}.home-feature-player .player-info{font-size:6px!important}.music-player{position:absolute!important;left:52%!important;top:205px!important;width:45%!important;margin:0!important;padding:7px!important}.music-player p{font-size:8px!important;margin-bottom:4px!important}.music-player audio{height:27px!important}.next-match{position:absolute!important;left:52%!important;right:3%!important;top:275px!important;width:45%!important;margin:0!important;padding:8px!important}.next-match-title{font-size:8px!important;letter-spacing:1px!important;margin-bottom:4px!important}.next-match-date{font-size:7px!important;margin-bottom:5px!important}.next-match-teams{font-size:11px!important;gap:4px!important;min-height:24px!important;margin-bottom:4px!important}.next-match-teams span{font-size:7px!important}.countdown{gap:2px!important}.countdown-box{padding:3px 1px!important}.countdown-box strong{font-size:12px!important}.countdown-box span{font-size:5px!important}.install-app-button{top:6px!important;right:6px!important;padding:6px 8px!important;font-size:8px!important}}
+
+/* Dezenter ATSV-Wintereffekt: leichter, langsamer Schneefall auf allen Seiten */
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:-100px 0 0;
+  z-index:9998;
+  pointer-events:none;
+  background-repeat:repeat;
+  will-change:background-position;
+}
+body::before{
+  opacity:.34;
+  background-image:
+    radial-gradient(2px 2px at 35px 45px,rgba(255,255,255,.9) 98%,transparent),
+    radial-gradient(2px 2px at 115px 135px,rgba(255,255,255,.8) 98%,transparent),
+    radial-gradient(1.5px 1.5px at 185px 75px,rgba(255,255,255,.8) 98%,transparent),
+    radial-gradient(2px 2px at 255px 185px,rgba(255,255,255,.75) 98%,transparent);
+  background-size:280px 220px;
+  animation:atsvSnowFall 22s linear infinite;
+}
+body::after{
+  opacity:.2;
+  background-image:
+    radial-gradient(3px 3px at 70px 90px,rgba(255,255,255,.9) 98%,transparent),
+    radial-gradient(2px 2px at 210px 30px,rgba(255,255,255,.8) 98%,transparent),
+    radial-gradient(2.5px 2.5px at 165px 170px,rgba(255,255,255,.75) 98%,transparent);
+  background-size:340px 260px;
+  animation:atsvSnowFall 34s linear infinite;
+}
+@keyframes atsvSnowFall{
+  from{background-position:0 -40px}
+  to{background-position:35px 520px}
+}
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after{animation:none}
+}
+
